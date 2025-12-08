@@ -1,0 +1,29 @@
+﻿using UnityEngine;
+
+public abstract class Singleton<T> : MonoBehaviour where T : MonoBehaviour
+{
+    private static T _instance;
+    public static T Instance;
+
+    public void Awake()
+    {
+        if(_instance == null)
+        {
+            _instance = GetComponent<T>();
+            Init();
+        }
+        else
+        {
+            Destroy( _instance );
+        }
+    }
+
+    //세팅
+    public abstract void Init();
+    
+
+    public bool IsExist()
+    {
+        return _instance != null;
+    }
+}
