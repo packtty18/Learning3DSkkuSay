@@ -3,7 +3,7 @@
 public abstract class Singleton<T> : MonoBehaviour where T : MonoBehaviour
 {
     private static T _instance;
-    public static T Instance;
+    public static T Instance => _instance;
 
     public void Awake()
     {
@@ -14,7 +14,7 @@ public abstract class Singleton<T> : MonoBehaviour where T : MonoBehaviour
         }
         else
         {
-            Destroy( _instance );
+            Destroy( this );
         }
     }
 
