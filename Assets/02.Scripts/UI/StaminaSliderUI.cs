@@ -18,8 +18,8 @@ public class StaminaSliderUI : DoubleSliderUI
     private void Start()
     {
         _cachedChunkIndex = Mathf.Floor(Stamina.CurrentValue / _chunkValue);
-
         Init(Stamina.MaxValue, Stamina.CurrentValue);
+        ChangeValue();
     }
 
     private void OnEnable()
@@ -32,6 +32,8 @@ public class StaminaSliderUI : DoubleSliderUI
         _stat.Stemina.ValueChanged -= ChangeValue;
     }
 
+    //BehindSlider는 기본 스테미너 량
+    //FrontSlider는 점프 가능한 횟수로 나누는 스테미너
     public override void ChangeValue()
     {
         float value = Stamina.CurrentValue;
