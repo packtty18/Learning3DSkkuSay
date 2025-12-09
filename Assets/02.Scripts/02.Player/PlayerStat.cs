@@ -18,11 +18,8 @@ public class PlayerStat : MonoBehaviour
     public ValueStat DashConsume; // 달릴 때 초당 소비
     public ValueStat DoubleJumpConsume; // 이단점프 시 소비 => 스태미나 모션 기준
 
-    
 
-
-
-    private void Start()
+    private void Awake()
     {
         Stemina.Init(100,100,10);
         Health.Init(100,100,1);
