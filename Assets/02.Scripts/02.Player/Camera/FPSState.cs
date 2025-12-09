@@ -10,9 +10,8 @@ public class FPSState : ICameraState
     private readonly Transform _pivot;
     private readonly float _speed;
 
-    private float _accY;
-    private bool _isTweening = false;
-    private float tweenTime = 0.35f;
+    private float _accumulateY;
+    private float _tweenTime = 0.35f;
 
     private const int Y_CLAMP = 90;
 
@@ -27,36 +26,32 @@ public class FPSState : ICameraState
     public void Enter()
     {
         Debug.Log("📷 Enter FPS Mode");
-        _accY = _camera.localEulerAngles.x;
-
-        _isTweening = true;
-
+        _accumulateY = _camera.localEulerAngles.x;
         // 위치 이동
-        _camera.DOMove(_pivot.position, tweenTime)
+        _camera.DOMove(_pivot.position, _tweenTime)
             .SetEase(Ease.InOutSine);
 
         // 회전 이동
         _camera.DORotate(
-            new Vector3(_accY, _player.eulerAngles.y, 0f),
-            tweenTime
+            new Vector3(_accumulateY, _player.eulerAngles.y, 0f),
+            _tweenTime
         )
-        .SetEase(Ease.InOutSine)
-        .OnComplete(() => _isTweening = false);
+        .SetEase(Ease.InOutSine);
     }
 
     public void UpdateState(float mouseX, float mouseY)
     {
-        float sens = _speed * Time.deltaTime;
+        float rotateSpeed = _speed * Time.deltaTime;
 
         // 상하 회전
-        _accY -= mouseY * sens;
-        _accY = Mathf.Clamp(_accY, -Y_CLAMP, Y_CLAMP);
+        _accumulateY -= mouseY * rotateSpeed;
+        _accumulateY = Mathf.Clamp(_accumulateY, -Y_CLAMP, Y_CLAMP);
 
         // 카메라 위치는 pivot 위치에 고정
         _camera.position = _pivot.position;
 
         // 피봇의 회전과 상하회전을 합쳐서 적용
-        _camera.rotation = Quaternion.Euler(_accY, _player.eulerAngles.y, 0f);
+        _camera.rotation = Quaternion.Euler(_accumulateY, _player.eulerAngles.y, 0f);
     }
 
 

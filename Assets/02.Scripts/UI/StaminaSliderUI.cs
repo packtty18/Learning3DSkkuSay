@@ -1,17 +1,20 @@
-﻿using UnityEngine;
+﻿using MoreMountains.Feedbacks;
+using UnityEngine;
 
 public class StaminaSliderUI : DoubleSliderUI
 {
     [Header("Player Reference")]
-    [SerializeField] private PlayerMove player;
+    [SerializeField] private PlayerStat _stat;
+
+    private ConsumableStat _stemina => _stat.Stemina;
 
     private void Start()
     {
-        Init(player.MaxStamina, player.CurrentStamina);
+        Init(_stemina.MaxValue, _stemina.CurrentValue);
     }
 
     private void Update()
     {
-        SetValue(player.CurrentStamina);
+        SetValue(_stemina.CurrentValue);
     }
 }

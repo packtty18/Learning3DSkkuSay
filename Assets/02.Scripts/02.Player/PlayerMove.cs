@@ -1,5 +1,4 @@
-﻿using UnityEditor.Experimental.GraphView;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PlayerMove : MonoBehaviour
 {
@@ -8,28 +7,21 @@ public class PlayerMove : MonoBehaviour
     [Header("Components")]
     [SerializeField] private CameraController _cameraController;
     [SerializeField] private CharacterController _characterController;
+    [SerializeField] private PlayerStat _stat;
 
-    [Header("Movement Settings")]
-    [SerializeField] private float _moveSpeed = 5f;
-    [SerializeField] private float _dashSpeed = 10f;
-    [SerializeField] private float _jumpPower = 5f;
+    private ValueStat _staminaRegenDelay =>_stat.SteminaRegenDelay;
+    private ValueStat _dashConsume => _stat.DashConsume;
+    private ValueStat _doubleJumpCost => _stat.DoubleJumpConsume;
 
-    [Header("Stamina Settings")]
-    [SerializeField] private float _maxStamina = 100f;
-    [SerializeField] private float _currentStamina = 100f;
-    [SerializeField] private float _staminaRecoveryRate = 10f; // 초당 회복
-    [SerializeField] private float _staminaRecoveryDelay = 2f; // 회복 딜레이
-    [SerializeField] private float _staminaDashCostPerSec = 2f; // 달릴 때 초당 소비
-    [SerializeField] private float _doubleJumpCost = 20f; // 이단점프 시 소비 => 스태미나 모션 기준
+    private ValueStat _moveSpeed => _stat.MoveSpeed;
+    private ValueStat _dashSpeed => _stat.DashSpeed;
+    private ValueStat _jumpPower => _stat.JumpPower;
+    private ConsumableStat _stemina => _stat.Stemina;
 
-    public float MaxStamina => _maxStamina;
-    public float CurrentStamina => _currentStamina;
-    public float DoubleJumpCost => _doubleJumpCost;
+    private bool _isDash => Input.GetKey(KeyCode.LeftShift);
 
     private float _yVelocity;
     private bool _canDoubleJump = true;
-    private bool _isDash => Input.GetKey(KeyCode.LeftShift);
-
     private float _recoveryTimer = 0f;
 
     private void Awake()
@@ -44,7 +36,6 @@ public class PlayerMove : MonoBehaviour
     {
         HandleGravity();
         HandleMovement();
-        
         HandleStaminaRecovery();
     }
 
@@ -96,13 +87,13 @@ public class PlayerMove : MonoBehaviour
 
         direction.y = 0f;
 
-        float currentSpeed = _moveSpeed;
+        float currentSpeed = _moveSpeed.Value;
 
         // 대쉬 적용
-        if (_isDash && _currentStamina > 0f && direction.sqrMagnitude > 0.1f)
+        if (_isDash && _stemina.CurrentValue > 0f && direction.sqrMagnitude > 0.1f)
         {
-            currentSpeed = _dashSpeed;
-            ConsumeStamina(_staminaDashCostPerSec * Time.deltaTime);
+            currentSpeed = _dashSpeed.Value;
+            ConsumeStamina(_dashConsume.Value * Time.deltaTime);
         }
 
         //점프실행
@@ -121,14 +112,14 @@ public class PlayerMove : MonoBehaviour
         {
             if (_characterController.isGrounded)
             {
-                _yVelocity = _jumpPower;
+                _yVelocity = _jumpPower.Value;
                 DebugManager.Instance.Log("Jump!");
             }
-            else if (_canDoubleJump && _currentStamina >= _doubleJumpCost)
+            else if (_canDoubleJump && _stemina.CurrentValue >= _doubleJumpCost.Value)
             {
-                _yVelocity = _jumpPower;
+                _yVelocity = _jumpPower.Value;
                 _canDoubleJump = false;
-                ConsumeStamina(_doubleJumpCost);
+                ConsumeStamina(_doubleJumpCost.Value);
                 DebugManager.Instance.Log("Double Jump (Stamina -20)!");
             }
         }
@@ -144,18 +135,16 @@ public class PlayerMove : MonoBehaviour
             return;
         }
 
-        if (_currentStamina < _maxStamina)
+        if (_stemina.CurrentValue < _stemina.MaxValue)
         {
-            _currentStamina += _staminaRecoveryRate * Time.deltaTime;
-            _currentStamina = Mathf.Clamp(_currentStamina, 0, _maxStamina);
+            _stemina.Regenerate();
         }
     }
 
     // 스태미나 소비 처리
     private void ConsumeStamina(float amount)
     {
-        _currentStamina -= amount;
-        _currentStamina = Mathf.Clamp(_currentStamina, 0, _maxStamina);
-        _recoveryTimer = _staminaRecoveryDelay; 
+        _stemina.Consume(amount);
+        _recoveryTimer = _staminaRegenDelay.Value; 
     }
 }

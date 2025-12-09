@@ -9,7 +9,6 @@ public class TPSState : ICameraState
     private readonly Transform _pivot;
     private readonly float _speed;
 
-    private bool _isTweening = false;
     private float tweenTime = 0.35f;
 
     public TPSState(Transform cam, Transform player, Transform pivot, float speed)
@@ -23,12 +22,10 @@ public class TPSState : ICameraState
     public void Enter()
     {
         Debug.Log("📷 Enter TPS Mode");
-        _isTweening = true;
 
         _camera.DOMove(_pivot.position, tweenTime).SetEase(Ease.InOutSine);
         _camera.DORotate(_pivot.eulerAngles, tweenTime)
-            .SetEase(Ease.InOutSine)
-            .OnComplete(() => _isTweening = false);
+            .SetEase(Ease.InOutSine);
     }
 
     public void UpdateState(float mouseX, float mouseY)
