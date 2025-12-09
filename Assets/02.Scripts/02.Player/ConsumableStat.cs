@@ -12,6 +12,8 @@ public class ConsumableStat
     public float CurrentValue => _currentValue;
     public float RegenValue => _regenValue;
 
+    public event Action ValueChanged;
+
     public void Init(float max, float current, float regen)
     {
         SetMaxValue(max);
@@ -26,59 +28,74 @@ public class ConsumableStat
 
     public void Regenerate()
     {
-        if(_currentValue >= _maxValue)
+        if (_currentValue >= _maxValue)
         {
             return;
         }
         IncreaseCurrent(_regenValue * Time.deltaTime);
-        
     }
 
-
-    public void IncreaseMax(float amount)
-    {
-        SetMaxValue(_maxValue + amount);
+    public void IncreaseMax(float amount) 
+    { 
+        SetMaxValue(_maxValue + amount); 
     }
-
     public void DecreaseMax(float amount)
     {
         SetMaxValue(_maxValue - amount);
     }
+
     public void SetMaxValue(float amount)
     {
-        _maxValue = amount;
-        _maxValue = Mathf.Max(0, _maxValue);
+        float newMax = Mathf.Max(0, amount);
+
+        if (Mathf.Approximately(newMax, _maxValue))
+        {
+            return;
+        }
+        _maxValue = newMax;
+
+        _currentValue = Mathf.Clamp(_currentValue, 0, _maxValue);
+        ValueChanged?.Invoke();
     }
 
     public void IncreaseCurrent(float amount)
     {
         SetCurrentValue(_currentValue + amount);
-       
     }
-
     public void DecreaseCurrent(float amount)
     {
         SetCurrentValue(_currentValue - amount);
-        
     }
+
     public void SetCurrentValue(float amount)
     {
-        _currentValue = amount;
-        _currentValue = Mathf.Clamp(amount, 0f, _maxValue);
+        float newValue = Mathf.Clamp(amount, 0, _maxValue);
+
+        if (Mathf.Approximately(newValue, _currentValue))
+        {
+            return;
+        }
+
+        _currentValue = newValue;
+        ValueChanged?.Invoke();
     }
 
     public void IncreaseRegen(float amount)
     {
         SetRegenValue(_regenValue + amount);
     }
-
     public void DecreaseRegen(float amount)
     {
         SetRegenValue(_regenValue - amount);
     }
+
     public void SetRegenValue(float amount)
     {
-        _regenValue = amount;
-        _regenValue = Mathf.Max(0, _regenValue);
+        float newRegen = Mathf.Max(0, amount);
+        if (Mathf.Approximately(newRegen, _regenValue))
+            return;
+
+        _regenValue = newRegen;
+        ValueChanged?.Invoke();
     }
 }
