@@ -9,7 +9,6 @@ public class BackViewState : ICameraState
     private readonly Transform _pivot;
     private readonly float _speed;
 
-    private bool _isTweening = false;
     private float tweenTime = 0.35f;
 
     public BackViewState(Transform cam, Transform player, Transform pivot, float speed)
@@ -23,10 +22,10 @@ public class BackViewState : ICameraState
     public void Enter()
     {
         Debug.Log("📷 Enter BackView Mode");
+
         _camera.DOMove(_pivot.position, tweenTime).SetEase(Ease.InOutSine);
         _camera.DORotate(_pivot.eulerAngles, tweenTime)
-            .SetEase(Ease.InOutSine)
-            .OnComplete(() => _isTweening = false);
+            .SetEase(Ease.InOutSine);
     }
 
     public void UpdateState(float mouseX, float mouseY)
@@ -35,5 +34,7 @@ public class BackViewState : ICameraState
         _camera.rotation = _pivot.rotation;
     }
 
-    public void Exit() { }
+    public void Exit() 
+    { 
+    }
 }

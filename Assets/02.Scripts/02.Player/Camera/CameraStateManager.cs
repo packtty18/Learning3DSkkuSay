@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System;
 
-public class CameraStateMachine : MonoBehaviour
+public class CameraStateManager : MonoBehaviour
 {
     public event Action OnStateChanged;
 
@@ -17,7 +17,10 @@ public class CameraStateMachine : MonoBehaviour
 
     private void Update()
     {
-        if (_currentState == null) return;
+        if (_currentState == null)
+        {
+            return;
+        }
 
         float mouseX = Input.GetAxis("Mouse X");
         float mouseY = Input.GetAxis("Mouse Y");

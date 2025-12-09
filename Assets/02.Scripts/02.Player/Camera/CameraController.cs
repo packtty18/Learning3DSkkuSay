@@ -10,7 +10,7 @@ public enum CameraMode
 public class CameraController : MonoBehaviour
 {
     [Header("References")]
-    [SerializeField] private CameraStateMachine _stateMachine;
+    [SerializeField] private CameraStateManager _stateMachine;
     [SerializeField] private Transform _player;
 
     [SerializeField] private CameraMode _defaultMode = CameraMode.FPS;
