@@ -28,7 +28,7 @@ public class ConsumableStat
 
     public void Regenerate()
     {
-        if (_currentValue >= _maxValue)
+        if (_currentValue >= _maxValue || _regenValue <= 0)
         {
             return;
         }
