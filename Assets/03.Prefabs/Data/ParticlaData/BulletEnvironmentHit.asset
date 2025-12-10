@@ -9,10 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 60a4226aac5ce1141a2a7aa046e04e69, type: 3}
-  m_Name: Explosion
+  m_Script: {fileID: 11500000, guid: 19af9b08fe847084ba823b59cd3f312d, type: 3}
+  m_Name: BulletEnvironmentHit
   m_EditorClassIdentifier: 
-  _poolType: 1
-  PoolPrefab: {fileID: 1007127540951276732, guid: 8a3be5a3a1afd784996afe93da0e8437, type: 3}
-  DefaultCount: 5
-  MaxCount: 10
+  type: 1
+  particlePrefab: {fileID: 100002, guid: 6dec060e1dbdf1243be5a86742cc9069, type: 3}
+  emitCount: 20

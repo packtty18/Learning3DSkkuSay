@@ -5,26 +5,29 @@ using UnityEngine;
 public enum EPoolType
 {
     Bomb,
-    Explosion
+
 }
 
 public class PoolManager : Singleton<PoolManager>
 {
     private Dictionary<EPoolType, UnityPool> _pools =new Dictionary<EPoolType, UnityPool>();
-    [SerializeField] private Transform _roots;
+    private Transform _roots;
     [SerializeField] private List<PoolSO> _poolDatas;
     public override void Init()
     {
         _pools = new Dictionary<EPoolType, UnityPool>();
-        if(_roots == null)
+        if (_roots == null)
         {
             GameObject root = new GameObject("PoolRoots");
             _roots = root.GetComponent<Transform>();
         }
+    }
 
-        for (int i =0; i< _poolDatas.Count; i++)
+    private void Start()
+    {
+        for (int i = 0; i < _poolDatas.Count; i++)
         {
-            if (_pools.TryGetValue(_poolDatas[i]._poolType, out _))
+            if (_pools.TryGetValue(_poolDatas[i].PoolType, out _))
             {
                 Debug.LogWarning($"[PoolManager] Duplicate prefab detected: {_poolDatas[i].PoolPrefab.name}. Skipped.");
                 continue;
@@ -34,8 +37,10 @@ public class PoolManager : Singleton<PoolManager>
     }
     private UnityPool MakePool(PoolSO poolData)
     {
-        UnityPool pool = new UnityPool(poolData.PoolPrefab, _roots, poolData.DefaultCapacity,poolData.MaxSize ,poolData.DefaultInstantCount);
-        _pools[poolData._poolType] = pool;
+        UnityPool pool = new UnityPool(poolData, _roots);
+        _pools[poolData.PoolType] = pool;
+
+        pool.InitInstant(poolData.DefaultInstantCount);
         return pool;
     }
 
@@ -43,7 +48,7 @@ public class PoolManager : Singleton<PoolManager>
     {
         if (!_pools.TryGetValue(key, out var pool))
         {
-            DebugManager.Instance.Log($"[PoolManager] doesnt exist: {name}");
+            Debug.Log($"[PoolManager] doesnt exist: {name}");
             return null;
         }
 
@@ -52,13 +57,13 @@ public class PoolManager : Singleton<PoolManager>
 
     public void Release(EPoolType key, GameObject instance)
     {
-        if (_pools.TryGetValue(key, out var pool))
+        if (_pools.TryGetValue(key, out var pool) && instance.activeSelf)
         {
             pool.Release(instance);
         }
         else
         {
-            DebugManager.Instance.LogWarning($"[PoolManager] No pool exists for {name}. Destroy object.");
+            Debug.LogWarning($"[PoolManager] No pool exists for {name}. Destroy object.");
             Destroy(instance);
         }
     }
