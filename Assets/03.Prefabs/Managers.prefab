@@ -44,10 +44,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 205f7ac9921a4e84eb8170bbe6357b6b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _roots: {fileID: 3085981885693860749}
+  _roots: {fileID: 0}
   _poolDatas:
   - {fileID: 11400000, guid: 29739c7cbc1e4b84495824b4f1427c6d, type: 2}
   - {fileID: 11400000, guid: 54888f6fb4c1cee4fb287732d1629b84, type: 2}
+  - {fileID: 11400000, guid: f0987a3513c1b954f9fd9028b5a29470, type: 2}
 --- !u!1 &7702495018787523471
 GameObject:
   m_ObjectHideFlags: 0

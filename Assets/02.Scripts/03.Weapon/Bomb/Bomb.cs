@@ -24,8 +24,10 @@ public class Bomb : MonoBehaviour, IPoolable
             return;
         }
 
-        GameObject effect = PoolManager.Instance.Get(EPoolType.Explosion);
-        effect.transform.position = transform.position;
+        ParticleSystem effect = ParticleManager.Instance.Get(EParticleType.BombExplosion);
+        ParticleSystem.EmitParams emit = new ParticleSystem.EmitParams();
+        emit.position = transform.position;
+        effect.Emit(emit, 1);
         PoolManager.Instance.Release(EPoolType.Bomb,gameObject);
     }
 }
