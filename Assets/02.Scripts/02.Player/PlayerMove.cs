@@ -1,52 +1,150 @@
-﻿using Unity.VisualScripting;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PlayerMove : MonoBehaviour
 {
     private const float GRAVITY = -9.81f;
 
+    [Header("Components")]
+    [SerializeField] private CameraController _cameraController;
     [SerializeField] private CharacterController _characterController;
-    [SerializeField] private float _moveSpeed = 5;
-    [SerializeField] private float _DashSpeed = 10;
-    [SerializeField] private float _jumpPower = 5f;
+    [SerializeField] private PlayerStat _stat;
 
-    [SerializeField] private float _stamina = 100;
-    [SerializeField] private float _staminaRecoveryRatePerSecond = 1;
-    [SerializeField] private float _staminaDelayTime = 3;
+    private ValueStat _staminaRegenDelay =>_stat.SteminaRegenDelay;
+    private ValueStat _dashConsume => _stat.DashConsume;
+    private ValueStat _doubleJumpCost => _stat.DoubleJumpConsume;
 
-    
-    private float _yVelocity;
+    private ValueStat _moveSpeed => _stat.MoveSpeed;
+    private ValueStat _dashSpeed => _stat.DashSpeed;
+    private ValueStat _jumpPower => _stat.JumpPower;
+    private ConsumableStat _stemina => _stat.Stemina;
+
     private bool _isDash => Input.GetKey(KeyCode.LeftShift);
+
+    private float _yVelocity;
+    private bool _canDoubleJump = true;
+    private float _recoveryTimer = 0f;
+
     private void Awake()
     {
-        if(TryGetComponent(out CharacterController characterController))
+        if (!TryGetComponent(out _characterController))
         {
-            _characterController = characterController;
+            _characterController = gameObject.AddComponent<CharacterController>();
+        }
+    }
+
+    private void Update()
+    {
+        HandleGravity();
+        HandleMovement();
+        HandleStaminaRecovery();
+    }
+
+    // ⬇ 중력 처리
+    private void HandleGravity()
+    {
+        if (_characterController.isGrounded)
+        {
+            _yVelocity = -1f;
+            _canDoubleJump = true; // 착지 시 이단점프 회복
         }
         else
         {
-            transform.AddComponent<CharacterController>();
-            _characterController = transform.GetComponent<CharacterController>();
+            _yVelocity += GRAVITY * Time.deltaTime;
         }
     }
-    private void Update()
-    {
-        _yVelocity += GRAVITY * Time.deltaTime;
 
+    // ⬇ 이동 + 대시 스태미나 소모
+    private void HandleMovement()
+    {
         float h = Input.GetAxisRaw("Horizontal");
         float v = Input.GetAxisRaw("Vertical");
 
-        Vector3 direction = new Vector3(h, 0, v).normalized;
-        direction = Camera.main.transform.TransformDirection(direction);
+        Vector3 direction = new Vector3(h, 0f, v).normalized;
 
-        if(Input.GetButtonDown("Jump") && _characterController.isGrounded)
+        if (_cameraController.CurrentMode == CameraMode.FPS)
         {
-            _yVelocity = _jumpPower;
+            // FPS는 카메라 바라보는 방향 기준 이동
+            Vector3 camForward = Camera.main.transform.forward;
+            Vector3 camRight = Camera.main.transform.right;
+
+            camForward.y = 0f;
+            camRight.y = 0f;
+
+            direction = (camForward * v + camRight * h).normalized;
         }
+        else if (_cameraController.CurrentMode == CameraMode.TPS)
+        {
+            // TPS는 플레이어 바라보는 방향 기준 이동
+            direction = transform.TransformDirection(direction);
+            direction.y = 0f;
+        }
+        else if (_cameraController.CurrentMode == CameraMode.BackView)
+        {
+            // BackView는 기본적으로 플레이어 forward 기준 이동
+            direction = transform.TransformDirection(direction);
+            direction.y = 0f;
+        }
+
+        direction.y = 0f;
+
+        float currentSpeed = _moveSpeed.Value;
+
+        // 대쉬 적용
+        if (_isDash && _stemina.CurrentValue > 0f && direction.sqrMagnitude > 0.1f)
+        {
+            currentSpeed = _dashSpeed.Value;
+            ConsumeStamina(_dashConsume.Value * Time.deltaTime);
+        }
+
+        //점프실행
+        HandleJump();
+
+        // 중력 적용
         direction.y = _yVelocity;
 
+        _characterController.Move(direction * currentSpeed * Time.deltaTime);
+    }
 
-        float MoveSpeed = _isDash ? _DashSpeed : _moveSpeed;
-        _characterController.Move(direction * _moveSpeed * Time.deltaTime);
+    //점프 로직 분리
+    private void HandleJump()
+    {
+        if (Input.GetButtonDown("Jump"))
+        {
+            if (_characterController.isGrounded)
+            {
+                _yVelocity = _jumpPower.Value;
+                DebugManager.Instance.Log("Jump!");
+            }
+            else if (_canDoubleJump && _stemina.CurrentValue >= _doubleJumpCost.Value)
+            {
+                _yVelocity = _jumpPower.Value;
+                _canDoubleJump = false;
+                ConsumeStamina(_doubleJumpCost.Value);
+                DebugManager.Instance.Log("Double Jump (Stamina -20)!");
+            }
+        }
+    }
+
+    // 스태미나 회복
+    private void HandleStaminaRecovery()
+    {
+        //해당 시간이 지나야 회복 시작
+        if (_recoveryTimer > 0f)
+        {
+            _recoveryTimer -= Time.deltaTime;
+            return;
+        }
+
+        if (_stemina.CurrentValue < _stemina.MaxValue)
+        {
+            _stemina.Regenerate();
+        }
+    }
+
+    // 스태미나 소비 처리
+    private void ConsumeStamina(float amount)
+    {
+        _stemina.Consume(amount);
+        _recoveryTimer = _staminaRegenDelay.Value; 
     }
 }
