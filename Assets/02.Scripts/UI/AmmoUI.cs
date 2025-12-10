@@ -89,5 +89,6 @@ public class AmmoUI : MonoBehaviour
     {
         float ratio = 1f - (_reloadTime.CurrentValue / _reloadTime.MaxValue);
         ratio = Mathf.Clamp01(ratio);
+        _reloadFillImage.fillAmount = ratio;
     }
 }
