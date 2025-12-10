@@ -21,7 +21,7 @@ public class TPSState : ICameraState
 
     public void Enter()
     {
-        Debug.Log("📷 Enter TPS Mode");
+        DebugManager.Instance.Log("Enter TPS Mode");
 
         _camera.DOMove(_pivot.position, tweenTime).SetEase(Ease.InOutSine);
         _camera.DORotate(_pivot.eulerAngles, tweenTime)
