@@ -4,15 +4,22 @@ public class PlayerRotate : MonoBehaviour
 {
     [SerializeField] private float _sensitivity = 200f;
 
-    //변화를 -360~360으로 누적할 변수
-    private float _accumulateX = 0;
+    private float _accumulateX = 0f;
+    private bool _canRotate = true; // 모드에서 제어
 
-    private void Update()
+    public void SetRotateEnable(bool enable) => _canRotate = enable;
+
+    public void Rotate(float mouseX)
     {
-        float mouseX = Input.GetAxis("Mouse X") * _sensitivity * Time.deltaTime;
-        _accumulateX += mouseX;
+        if (!_canRotate) return;
 
+        _accumulateX += mouseX * _sensitivity * Time.deltaTime;
         transform.eulerAngles = new Vector3(0, _accumulateX, 0);
-
     }
+
+    public void SetDirection(Vector3 dir)
+    {
+        transform.forward = dir; // 바로 바라보게 설정
+    }
+
 }

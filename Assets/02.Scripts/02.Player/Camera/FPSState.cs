@@ -5,10 +5,12 @@ using static UnityEngine.InputSystem.Controls.AxisControl;
 //상하회전은 카메라를 기준, 좌우는 피봇을 따라서
 public class FPSState : ICameraState
 {
-    private readonly Transform _camera;
-    private readonly Transform _player;
-    private readonly Transform _pivot;
-    private readonly float _speed;
+    private readonly Transform _camera; //카메라 객체
+    private readonly Transform _player; //플레이어 트랜스폼
+    private readonly Transform _pivot;  //고정될 위치
+    private readonly float _speed;      //회전 속도
+
+    private PlayerRotate _playerRotate;
 
     private float _accumulateY;
     private float _tweenTime = 0.35f;
@@ -31,16 +33,16 @@ public class FPSState : ICameraState
     {
         Debug.Log(" Enter FPS Mode");
         FireRebound.OnRecoil += ApplyRecoil;
-        _accumulateY = _camera.localEulerAngles.x;
-        // 위치 이동
+
+        _playerRotate = _player.GetComponent<PlayerRotate>();
+
         _camera.DOMove(_pivot.position, _tweenTime)
             .SetEase(Ease.InOutSine);
 
+
+        _accumulateY = _camera.localEulerAngles.x;
         // 회전 이동
-        _camera.DORotate(
-            new Vector3(_accumulateY, _player.eulerAngles.y, 0f),
-            _tweenTime
-        )
+        _camera.DORotate(new Vector3(_accumulateY, _player.eulerAngles.y, 0f),_tweenTime)
         .SetEase(Ease.InOutSine);
     }
 
@@ -48,19 +50,19 @@ public class FPSState : ICameraState
     {
         float rotateSpeed = _speed * Time.deltaTime;
 
+        //좌우는 플레이어
+        _playerRotate.Rotate(mouseX * rotateSpeed);
+
+        // 상하는 카메라
+        _camera.position = _pivot.position;
         _accumulateY -= mouseY * rotateSpeed;
         _accumulateY = Mathf.Clamp(_accumulateY, -Y_CLAMP, Y_CLAMP);
 
-        // 카메라 위치 변경
-        _camera.position = _pivot.position;
-
-        // 반동값 원위치
         _xBound = Mathf.Lerp(_xBound, 0f, Time.deltaTime * _recoilReturnSpeed);
 
-        // 최종 회전: 마우스의 회전 + 반동 회전
+        // 최종 회전
         _camera.rotation = Quaternion.Euler(_accumulateY, _player.eulerAngles.y + _xBound, 0f);
     }
-
 
     public void Exit()
     {
@@ -75,5 +77,10 @@ public class FPSState : ICameraState
         //좌우 반동은 되돌아오는 반동
         float randomSide = Random.Range(-data.RecoilSide, data.RecoilSide);
         _xBound = randomSide;
+    }
+
+    public Vector3 GetFireDirection(Transform firePos)
+    {
+        return _camera.forward;
     }
 }
