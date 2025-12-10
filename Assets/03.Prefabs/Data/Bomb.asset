@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60a4226aac5ce1141a2a7aa046e04e69, type: 3}
+  m_Name: Bomb
+  m_EditorClassIdentifier: 
+  _poolType: 0
+  PoolPrefab: {fileID: 9181713667737782748, guid: fb1a27b94ae746e429105b9998c4e80f, type: 3}
+  DefaultCount: 5
+  MaxCount: 10
