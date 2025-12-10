@@ -9,14 +9,14 @@ public class PlayerMove : MonoBehaviour
     [SerializeField] private CharacterController _characterController;
     [SerializeField] private PlayerStat _stat;
 
-    private ValueStat _staminaRegenDelay =>_stat.SteminaRegenDelay;
-    private ValueStat _dashConsume => _stat.DashConsume;
-    private ValueStat _doubleJumpCost => _stat.DoubleJumpConsume;
+    private ValueStat<float> _staminaRegenDelay =>_stat.SteminaRegenDelay;
+    private ValueStat<float> _dashConsume => _stat.DashConsume;
+    private ValueStat<float> _doubleJumpCost => _stat.DoubleJumpConsume;
 
-    private ValueStat _moveSpeed => _stat.MoveSpeed;
-    private ValueStat _dashSpeed => _stat.DashSpeed;
-    private ValueStat _jumpPower => _stat.JumpPower;
-    private ConsumableStat _stemina => _stat.Stemina;
+    private ValueStat<float> _moveSpeed => _stat.MoveSpeed;
+    private ValueStat<float> _dashSpeed => _stat.DashSpeed;
+    private ValueStat<float> _jumpPower => _stat.JumpPower;
+    private ConsumableStat<float> _stemina => _stat.Stemina;
 
     private bool _isDash => Input.GetKey(KeyCode.LeftShift);
 
@@ -90,7 +90,7 @@ public class PlayerMove : MonoBehaviour
         float currentSpeed = _moveSpeed.Value;
 
         // 대쉬 적용
-        if (_isDash && _stemina.CurrentValue > 0f && direction.sqrMagnitude > 0.1f)
+        if (_isDash && !_stemina.IsEmpty() && direction.sqrMagnitude > 0.1f)
         {
             currentSpeed = _dashSpeed.Value;
             ConsumeStamina(_dashConsume.Value * Time.deltaTime);
@@ -135,7 +135,7 @@ public class PlayerMove : MonoBehaviour
             return;
         }
 
-        if (_stemina.CurrentValue < _stemina.MaxValue)
+        if (!_stemina.IsFull())
         {
             _stemina.Regenerate();
         }

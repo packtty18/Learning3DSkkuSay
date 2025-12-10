@@ -21,7 +21,7 @@ public class BackViewState : ICameraState
 
     public void Enter()
     {
-        Debug.Log("📷 Enter BackView Mode");
+        DebugManager.Instance.Log("Enter BackView Mode");
 
         _camera.DOMove(_pivot.position, tweenTime).SetEase(Ease.InOutSine);
         _camera.DORotate(_pivot.eulerAngles, tweenTime)

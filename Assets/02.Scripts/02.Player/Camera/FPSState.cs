@@ -15,6 +15,10 @@ public class FPSState : ICameraState
 
     private const int Y_CLAMP = 90;
 
+    private float _xBound = 0f;      
+    private float _recoilReturnSpeed = 8f; 
+
+
     public FPSState(Transform cam, Transform player, Transform pivot, float speed)
     {
         _camera = cam;
@@ -25,7 +29,8 @@ public class FPSState : ICameraState
 
     public void Enter()
     {
-        Debug.Log("📷 Enter FPS Mode");
+        Debug.Log(" Enter FPS Mode");
+        FireRebound.OnRecoil += ApplyRecoil;
         _accumulateY = _camera.localEulerAngles.x;
         // 위치 이동
         _camera.DOMove(_pivot.position, _tweenTime)
@@ -43,17 +48,32 @@ public class FPSState : ICameraState
     {
         float rotateSpeed = _speed * Time.deltaTime;
 
-        // 상하 회전
         _accumulateY -= mouseY * rotateSpeed;
         _accumulateY = Mathf.Clamp(_accumulateY, -Y_CLAMP, Y_CLAMP);
 
-        // 카메라 위치는 pivot 위치에 고정
+        // 카메라 위치 변경
         _camera.position = _pivot.position;
 
-        // 피봇의 회전과 상하회전을 합쳐서 적용
-        _camera.rotation = Quaternion.Euler(_accumulateY, _player.eulerAngles.y, 0f);
+        // 반동값 원위치
+        _xBound = Mathf.Lerp(_xBound, 0f, Time.deltaTime * _recoilReturnSpeed);
+
+        // 최종 회전: 마우스의 회전 + 반동 회전
+        _camera.rotation = Quaternion.Euler(_accumulateY, _player.eulerAngles.y + _xBound, 0f);
     }
 
 
-    public void Exit() { }
+    public void Exit()
+    {
+        FireRebound.OnRecoil -= ApplyRecoil;
+    }
+
+    private void ApplyRecoil(RecoilData data)
+    {
+        // 상하 반동은 영구적 적용
+        _accumulateY -= data.RecoilUp;
+
+        //좌우 반동은 되돌아오는 반동
+        float randomSide = Random.Range(-data.RecoilSide, data.RecoilSide);
+        _xBound = randomSide;
+    }
 }
