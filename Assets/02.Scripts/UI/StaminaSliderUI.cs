@@ -12,7 +12,7 @@ public class StaminaSliderUI : DoubleSliderUI
     private float _cachedChunkIndex = 0f;
     private float _lastValue = 0f;
 
-    private ConsumableStat Stamina => _stat.Stemina;
+    private ConsumableStat<float> Stamina => _stat.Stemina;
     
 
     private void Start()
