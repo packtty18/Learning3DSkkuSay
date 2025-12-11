@@ -7,7 +7,7 @@ public enum CameraMode
     BackView
 }
 
-public class CameraController : MonoBehaviour
+public class CameraController : Singleton<CameraController>
 {
     [Header("References")]
     [SerializeField] private CameraStateManager _stateMachine;
@@ -17,6 +17,7 @@ public class CameraController : MonoBehaviour
     [SerializeField] private CameraMode _currentMode;
 
     public CameraMode CurrentMode => _currentMode;
+    public ICameraState CurrentState => _stateMachine.CurrentState;
 
     [SerializeField] private Transform _fpsPivot;
     [SerializeField] private Transform _tpsPivot;
@@ -24,6 +25,10 @@ public class CameraController : MonoBehaviour
 
 
     [SerializeField] private float _rotationSpeed = 200;
+
+    public override void Init()
+    {
+    }
     private void Start()
     {
         ChangeMode(_defaultMode);
@@ -76,4 +81,5 @@ public class CameraController : MonoBehaviour
         _stateMachine.ChangeState(new BackViewState(transform, _player, _backPivot, _rotationSpeed));
     }
 
+    
 }

@@ -7,6 +7,8 @@ public class CameraStateManager : MonoBehaviour
 
     private ICameraState _currentState;
 
+    public ICameraState CurrentState => _currentState;
+
     public void ChangeState(ICameraState newState)
     {
         _currentState?.Exit();

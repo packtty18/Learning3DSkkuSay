@@ -6,18 +6,14 @@ public class UnityPool
 {
     private readonly ObjectPool<GameObject> _pool;
 
-    public UnityPool(GameObject prefab, Transform parent, int capacity, int size, int instantCount)
+    public UnityPool(PoolSO data, Transform parent)
     {
         _pool = new ObjectPool<GameObject>(
             createFunc: () =>
             {
-                var obj = Object.Instantiate(prefab, parent);
-                if(obj.TryGetComponent(out IPoolable pool))
-                {
-                    pool.Get();
-                }
+                var obj = Object.Instantiate(data.PoolPrefab, parent);
                 obj.SetActive(false);
-                Debug.Log($"[Pool] Created: {prefab.name}");
+                DebugManager.Instance.Log($"[Pool] Created: {data.PoolPrefab.name}");
                 return obj;
             },
             actionOnGet: obj =>
@@ -39,24 +35,22 @@ public class UnityPool
             actionOnDestroy: obj =>
             {
                 Object.Destroy(obj);
-                Debug.Log($"[Pool] Destroyed: {prefab.name}");
+                DebugManager.Instance.Log($"[Pool] Destroyed: {data.PoolPrefab.name}");
             },
             collectionCheck: false,
-            defaultCapacity: capacity,
-            maxSize: size
+            defaultCapacity: data.DefaultCapacity,
+            maxSize: data.MaxSize
         );
-
-        InitInstant(instantCount);
     }
 
-    private void InitInstant(int count)
+    public void InitInstant(int count)
     {
         var tempList = new List<GameObject>(count);
 
         // 1) Get()만 반복 → 강제로 createFunc를 여러 번 호출
         for (int i = 0; i < count; i++)
         {
-            var obj = _pool.Get();   // Always creates new obj until maxSize reached
+            var obj = _pool.Get();  
             tempList.Add(obj);
         }
 
@@ -66,7 +60,7 @@ public class UnityPool
             _pool.Release(obj);
         }
 
-        Debug.Log($"[Pool] Prewarmed {count} objects.");
+        DebugManager.Instance.Log($"[Pool] Prewarmed {count} objects.");
     }
 
     public GameObject Get() => _pool.Get();
