@@ -9,7 +9,7 @@ public class Barrel : MonoBehaviour, IDamageable
     public ValueStat<float> KnockbackPower;
     [SerializeField] private LayerMask _explosionLayer;
 
-    [SerializeField] private float _explosionPower = 5f;
+    [SerializeField] private float _explosionPower = 30f;
 
     private Rigidbody _rigid;
     private bool _isDead = false;
@@ -18,6 +18,13 @@ public class Barrel : MonoBehaviour, IDamageable
 
     private void Start()
     {
+        Health.Init(50, 50,0);
+        Damage.Init(50);
+        ExplosionRange.Init(3);
+        KnockbackPower.Init(30);
+        _explosionPower = 30f;
+
+        _rigid = GetComponent<Rigidbody>();
         _rigid = GetComponent<Rigidbody>();
     }
 
