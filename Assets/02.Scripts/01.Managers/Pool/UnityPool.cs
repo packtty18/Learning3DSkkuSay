@@ -21,7 +21,7 @@ public class UnityPool
                 obj.SetActive(true);
                 if (obj.TryGetComponent(out IPoolable pool))
                 {
-                    pool.Get();
+                    pool.Get(data.PoolType);
                 }
             },
             actionOnRelease: obj =>
