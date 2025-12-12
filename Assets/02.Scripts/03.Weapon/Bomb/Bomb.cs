@@ -3,6 +3,10 @@ using UnityEngine.Assertions.Must;
 
 public class Bomb : MonoBehaviour, IPoolable
 {
+    private EPoolType _type = EPoolType.None;
+    public EPoolType PoolType => _type;
+
+
     [SerializeField] private GameObject _explosionPrefab;
     [SerializeField] private LayerMask _explosionLayer;
     private PlayerStat _stat;
@@ -10,6 +14,7 @@ public class Bomb : MonoBehaviour, IPoolable
     private float _explosionRadius;
     private float _damage;
 
+    
     public void Init(PlayerStat stat)
     {
         _stat = stat;
@@ -17,8 +22,12 @@ public class Bomb : MonoBehaviour, IPoolable
         _damage = _stat.BombDamage.Value;
     }
 
-    public void Get()
+    public void Get(EPoolType type)
     {
+        if(_type == EPoolType.None)
+        {
+            _type = type;
+        }
     }
 
     public void Release()
@@ -55,7 +64,8 @@ public class Bomb : MonoBehaviour, IPoolable
         {
             if (hit.TryGetComponent(out IDamageable damage))
             {
-                AttackData data = new AttackData(_damage, hit.transform.position, gameObject , _stat.BombKnockbackPower.Value);
+                Vector3 dir = (hit.transform.position - center).normalized;
+                AttackData data = new AttackData(_damage, dir, gameObject , _stat.BombKnockbackPower.Value);
                 damage.ApplyDamage(data);
             }
         }

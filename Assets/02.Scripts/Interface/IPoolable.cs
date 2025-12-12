@@ -2,6 +2,7 @@
 
 public interface IPoolable
 {
-    void Get();
+    EPoolType PoolType { get; }
+    void Get(EPoolType type);
     void Release();
 }
