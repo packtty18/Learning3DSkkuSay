@@ -10,6 +10,7 @@ public class PlayerGunFire : MonoBehaviour
     [SerializeField] private FireRebound _bound;
 
     [Header("GunStat")]
+    [SerializeField] private ValueStat<float> _damage => _stat.GunDamage;
     [SerializeField] private ValueStat<int> _entireBulletCount => _stat.EntireBullet;
     [SerializeField] private ConsumableStat<int> _loadedBulletCount => _stat.LoadedBulletCount;    
     [SerializeField] private ValueStat<float> _gunRange => _stat.GunRange;      
@@ -63,6 +64,21 @@ public class PlayerGunFire : MonoBehaviour
             emit.rotation3D = Quaternion.LookRotation(hitInfo.normal).eulerAngles;
 
             hitEffect.Emit(emit, 1);
+
+            if (hitInfo.collider.TryGetComponent(out IDamageable damageable))
+            {
+                Vector3 knockDir = (hitInfo.collider.transform.position - _fireTransform.position).normalized;
+
+                AttackData attackData = new AttackData(
+                    _damage.Value,
+                    knockDir,
+                    gameObject,
+                    _stat.GunKnockbackPower.Value
+                );
+
+                damageable.ApplyDamage(attackData);
+            }
+
         }
 
         _bound.PlayRebound();
