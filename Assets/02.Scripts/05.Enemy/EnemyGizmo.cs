@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 [ExecuteAlways]
-public class EnemyDistanceDebug : MonoBehaviour
+public class EnemyGizmo : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private EnemyState _state;
