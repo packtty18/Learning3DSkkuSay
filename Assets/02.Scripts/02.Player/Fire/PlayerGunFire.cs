@@ -65,12 +65,20 @@ public class PlayerGunFire : MonoBehaviour
 
             hitEffect.Emit(emit, 1);
 
-            if(hitInfo.collider.TryGetComponent(out IDamageable damageable))
+            if (hitInfo.collider.TryGetComponent(out IDamageable damageable))
             {
-                AttackData attackData = new AttackData(_damage.Value, transform.forward, gameObject, _stat.GunKnockbackPower.Value);
+                Vector3 knockDir = (hitInfo.collider.transform.position - _fireTransform.position).normalized;
+
+                AttackData attackData = new AttackData(
+                    _damage.Value,
+                    knockDir,
+                    gameObject,
+                    _stat.GunKnockbackPower.Value
+                );
+
                 damageable.ApplyDamage(attackData);
-                DebugManager.Instance.Log($"어택 발생 : {hitInfo.collider.name}에게 {_damage.Value} 데미지");
             }
+
         }
 
         _bound.PlayRebound();
