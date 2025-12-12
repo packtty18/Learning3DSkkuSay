@@ -12,13 +12,13 @@ public class StaminaSliderUI : DoubleSliderUI
     private float _cachedChunkIndex = 0f;
     private float _lastValue = 0f;
 
-    private ConsumableStat<float> Stamina => _stat.Stemina;
+    private ConsumableStat<float> _stemina => _stat.Stemina;
     
 
     private void Start()
     {
-        _cachedChunkIndex = Mathf.Floor(Stamina.CurrentValue / _chunkValue);
-        Init(Stamina.MaxValue, Stamina.CurrentValue);
+        _cachedChunkIndex = Mathf.Floor(_stemina.CurrentValue / _chunkValue);
+        Init(_stemina.MaxValue, _stemina.CurrentValue);
         ChangeValue();
     }
 
@@ -36,7 +36,7 @@ public class StaminaSliderUI : DoubleSliderUI
     //FrontSlider는 점프 가능한 횟수로 나누는 스테미너
     public override void ChangeValue()
     {
-        float value = Stamina.CurrentValue;
+        float value = _stemina.CurrentValue;
         bool isIncreasing = value > _lastValue;
         _lastValue = value;
 
