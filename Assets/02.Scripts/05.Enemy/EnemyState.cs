@@ -28,6 +28,7 @@ public class EnemyState : MonoBehaviour, IDamageable
     private EnemyHealth _health;
     private Vector3 _spawnPos;
 
+    //추후 Enemystat으로 옮기고 도메인 추가하기
     [Header("Stat")]
     [SerializeField] private EEnemyState _state = EEnemyState.Idle;
 
