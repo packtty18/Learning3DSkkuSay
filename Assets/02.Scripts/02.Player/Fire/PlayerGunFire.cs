@@ -51,7 +51,7 @@ public class PlayerGunFire : MonoBehaviour
 
         // 탄약 소모
         _loadedBulletCount.Consume(1);
-        Ray ray = new Ray(_fireTransform.position, CameraController.Instance.CurrentState.GetFireDirection(_fireTransform));
+        Ray ray = new Ray(_fireTransform.position, CameraController.Instance.GetFireDirection(_fireTransform));
         RaycastHit hitInfo;
 
         if (Physics.Raycast(ray, out hitInfo, _gunRange.Value, _targetLayer))

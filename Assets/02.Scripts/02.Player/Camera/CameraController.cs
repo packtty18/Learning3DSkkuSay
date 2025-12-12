@@ -81,5 +81,9 @@ public class CameraController : Singleton<CameraController>
         _stateMachine.ChangeState(new BackViewState(transform, _player, _backPivot, _rotationSpeed));
     }
 
+    public Vector3 GetFireDirection(Transform firePoint)
+    {
+        return CurrentState.GetFireDirection(firePoint);
+    }
     
 }
