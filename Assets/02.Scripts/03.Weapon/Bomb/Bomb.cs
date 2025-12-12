@@ -13,13 +13,15 @@ public class Bomb : MonoBehaviour, IPoolable
 
     private float _explosionRadius;
     private float _damage;
+    private float _knockbackPower;
 
     
     public void Init(PlayerStat stat)
     {
         _stat = stat;
-        _explosionRadius = _stat.ExplosionRadius.Value;
-        _damage = _stat.BombDamage.Value;
+        _explosionRadius = stat.ExplosionRadius.Value;
+        _damage = stat.BombDamage.Value;
+        _knockbackPower = stat.BombKnockbackPower.Value;
     }
 
     public void Get(EPoolType type)
@@ -65,7 +67,7 @@ public class Bomb : MonoBehaviour, IPoolable
             if (hit.TryGetComponent(out IDamageable damage))
             {
                 Vector3 dir = (hit.transform.position - center).normalized;
-                AttackData data = new AttackData(_damage, dir, gameObject , _stat.BombKnockbackPower.Value);
+                AttackData data = new AttackData(_damage, dir, gameObject , _knockbackPower);
                 damage.ApplyDamage(data);
             }
         }

@@ -205,6 +205,7 @@ public class EnemyState : MonoBehaviour, IDamageable
             data.HitDirection = transform.forward;
             data.Attacker = gameObject;
             
+            //추후 : 공격 가능한 객체를 레이로 찾아서 IDamageable로 데미지 주기
             _attack.Attack(data);
         }
     }
