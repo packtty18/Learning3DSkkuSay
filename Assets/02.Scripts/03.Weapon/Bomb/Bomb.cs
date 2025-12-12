@@ -53,7 +53,7 @@ public class Bomb : MonoBehaviour, IPoolable
 
         ApplyExplosionDamage(transform.position);
 
-        gameObject.SetActive(false);
+        Util.ObjectDestroy(gameObject);
     }
 
     private void ApplyExplosionDamage(Vector3 center)

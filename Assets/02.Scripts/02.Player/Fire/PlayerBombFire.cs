@@ -51,7 +51,7 @@ public class PlayerBombFire : MonoBehaviour
         }
 
         bombObj.transform.position = _firePoint.position;
-        if (bomb.TryGetComponent(out Rigidbody rigid))
+        if (bombObj.TryGetComponent(out Rigidbody rigid))
         {
             rigid.AddForce(CameraController.Instance.CurrentState.GetFireDirection(_firePoint) * _bombForce.Value, ForceMode.Impulse);
         }
