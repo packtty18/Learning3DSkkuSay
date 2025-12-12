@@ -47,7 +47,7 @@ public class PlayerMove : MonoBehaviour
         }
         else
         {
-            _yVelocity += Utils.GRAVITY * Time.deltaTime;
+            _yVelocity += Util.GRAVITY * Time.deltaTime;
         }
     }
     private void HandleMovement()
