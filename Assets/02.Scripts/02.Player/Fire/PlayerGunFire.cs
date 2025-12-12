@@ -9,6 +9,7 @@ public class PlayerGunFire : MonoBehaviour
     [SerializeField] private LayerMask _targetLayer;
     [SerializeField] private FireRebound _bound;
 
+    //추후 : 총 도메인 만들어서 적용하기
     [Header("GunStat")]
     [SerializeField] private ValueStat<float> _damage => _stat.GunDamage;
     [SerializeField] private ValueStat<int> _entireBulletCount => _stat.EntireBullet;
