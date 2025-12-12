@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using TMPro;
 using UnityEditor.PackageManager;
 using UnityEngine;
@@ -12,6 +13,7 @@ public enum EEnemyState
     Attack,
     Hit,
     Death,
+    Patrol,
 }
 
 public class EnemyState : MonoBehaviour, IDamageable
@@ -31,10 +33,7 @@ public class EnemyState : MonoBehaviour, IDamageable
     [SerializeField] private float _moveSpeed = 5f;
     [SerializeField] private float _attackSpeed = 2f;
 
-    [SerializeField] private float _knockbackForce = 5f;
     [SerializeField] private float _knockbackTime = 0.15f;
-
-    private bool _isKnockback = false;
 
     public float DetectDistance => _detectDistance;
     public float AttackDistance => _attackDistance;
@@ -62,6 +61,9 @@ public class EnemyState : MonoBehaviour, IDamageable
             case EEnemyState.Trace:
                 Trace();
                 break;
+            case EEnemyState.Patrol:
+                Patrol();
+                break;
             case EEnemyState.Comeback:
                 Comeback();
                 break;
@@ -70,6 +72,8 @@ public class EnemyState : MonoBehaviour, IDamageable
                 break;
         }
     }
+
+    
 
     private void Idle()
     {
@@ -101,6 +105,12 @@ public class EnemyState : MonoBehaviour, IDamageable
             return;
         }
     }
+
+    private void Patrol()
+    {
+
+    }
+
 
     private void Comeback()
     {
@@ -152,7 +162,7 @@ public class EnemyState : MonoBehaviour, IDamageable
         {
             DebugManager.Instance.Log($"상태 전환 → Hit");
             _state = EEnemyState.Hit;
-            StartCoroutine(HitRoutine(data.HitDirection));
+            StartCoroutine(HitRoutine(data.HitDirection, data.KnockbackPower));
         }
         else
         {
@@ -162,10 +172,8 @@ public class EnemyState : MonoBehaviour, IDamageable
         }
     }
 
-    private IEnumerator HitRoutine(Vector3 direction)
+    private IEnumerator HitRoutine(Vector3 direction, float knockbackForce)
     {
-        _isKnockback = true;
-
         float timer = 0f;
         Vector3 knockDir = direction.normalized;
 
@@ -174,13 +182,10 @@ public class EnemyState : MonoBehaviour, IDamageable
             timer += Time.deltaTime;
 
             // CharacterController 넉백 이동
-            _move.Knockback(knockDir, _knockbackForce);
+            _move.Knockback(knockDir, knockbackForce);
 
             yield return null;
         }
-
-        _isKnockback = false;
-
         _state = EEnemyState.Idle;
     }
 

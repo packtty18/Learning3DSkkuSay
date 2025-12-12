@@ -2,7 +2,6 @@
 
 public class PlayerMove : MonoBehaviour
 {
-    private const float GRAVITY = -9.81f;
 
     [Header("Components")]
     [SerializeField] private CameraController _cameraController;
@@ -39,21 +38,18 @@ public class PlayerMove : MonoBehaviour
         HandleStaminaRecovery();
     }
 
-    // ⬇ 중력 처리
     private void HandleGravity()
     {
         if (_characterController.isGrounded)
         {
             _yVelocity = -1f;
-            _canDoubleJump = true; // 착지 시 이단점프 회복
+            _canDoubleJump = true; 
         }
         else
         {
-            _yVelocity += GRAVITY * Time.deltaTime;
+            _yVelocity += Utils.GRAVITY * Time.deltaTime;
         }
     }
-
-    // ⬇ 이동 + 대시 스태미나 소모
     private void HandleMovement()
     {
         float h = Input.GetAxisRaw("Horizontal");
@@ -63,7 +59,6 @@ public class PlayerMove : MonoBehaviour
 
         if (_cameraController.CurrentMode == CameraMode.FPS)
         {
-            // FPS는 카메라 바라보는 방향 기준 이동
             Vector3 camForward = Camera.main.transform.forward;
             Vector3 camRight = Camera.main.transform.right;
 
@@ -74,13 +69,11 @@ public class PlayerMove : MonoBehaviour
         }
         else if (_cameraController.CurrentMode == CameraMode.TPS)
         {
-            // TPS는 플레이어 바라보는 방향 기준 이동
             direction = transform.TransformDirection(direction);
             direction.y = 0f;
         }
         else if (_cameraController.CurrentMode == CameraMode.BackView)
         {
-            // BackView는 기본적으로 플레이어 forward 기준 이동
             direction = transform.TransformDirection(direction);
             direction.y = 0f;
         }
@@ -89,17 +82,13 @@ public class PlayerMove : MonoBehaviour
 
         float currentSpeed = _moveSpeed.Value;
 
-        // 대쉬 적용
         if (_isDash && !_stemina.IsEmpty() && direction.sqrMagnitude > 0.1f)
         {
             currentSpeed = _dashSpeed.Value;
             ConsumeStamina(_dashConsume.Value * Time.deltaTime);
         }
 
-        //점프실행
         HandleJump();
-
-        // 중력 적용
         direction.y = _yVelocity;
 
         _characterController.Move(direction * currentSpeed * Time.deltaTime);

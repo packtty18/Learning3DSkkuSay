@@ -44,12 +44,16 @@ public class PlayerBombFire : MonoBehaviour
 
         _bombCount.DecreaseCurrent(1);
 
-        GameObject bomb = PoolManager.Instance.Get(EPoolType.Bomb);
-        bomb.transform.position = _firePoint.position;
-        bomb.transform.rotation = _firePoint.rotation;
+        GameObject bombObj = PoolManager.Instance.Get(EPoolType.Bomb);
+        if (bombObj.TryGetComponent(out Bomb bomb))
+        {
+            bomb.Init(_stat);
+        }
+
+        bombObj.transform.position = _firePoint.position;
         if (bomb.TryGetComponent(out Rigidbody rigid))
         {
-            rigid.AddForce(_firePoint.forward * _bombForce.Value, ForceMode.Impulse);
+            rigid.AddForce(CameraController.Instance.CurrentState.GetFireDirection(_firePoint) * _bombForce.Value, ForceMode.Impulse);
         }
     }
 }

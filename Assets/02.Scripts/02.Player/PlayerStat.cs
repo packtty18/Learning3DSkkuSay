@@ -5,6 +5,7 @@ public class PlayerStat : MonoBehaviour
 {
     
     public ConsumableStat<float> Health;
+    public bool IsDead { get; private set; } = false;
 
     [Header("Move Settings")]
     public ValueStat<float> MoveSpeed;
@@ -17,6 +18,10 @@ public class PlayerStat : MonoBehaviour
     public ValueStat<float> DoubleJumpConsume; // 이단점프 시 소비 => 스태미나 모션 기준
 
     [Header("Bomb Settings")]
+    public ValueStat<float> BombDamage;
+    public ValueStat<float> ExplosionRadius;
+    public ValueStat<float> BombKnockbackPower;
+
     public ConsumableStat<int> BombCount;
     public ValueStat<float> BombForce;
     public ValueStat<float> BombDelay;
@@ -29,10 +34,12 @@ public class PlayerStat : MonoBehaviour
     public ValueStat<float> FireDelay;            //총의 발사 간격
     public ValueStat<float> GunRange;             //총의 사거리
     public ConsumableStat<float> ReloadTime;      //재장전 시간
+    public ValueStat<float> GunKnockbackPower;
 
     private void Awake()
     {
         Health.Init(100, 100, 1);
+        IsDead = false;
 
         MoveSpeed.Init(5);
         DashSpeed.Init(10);
@@ -42,6 +49,10 @@ public class PlayerStat : MonoBehaviour
         SteminaRegenDelay.Init(3);
         DashConsume.Init(5);
         DoubleJumpConsume.Init(20);
+
+        BombDamage.Init(20);
+        ExplosionRadius.Init(5);
+        BombKnockbackPower.Init(30);
 
         BombCount.Init(5, 5, 0);
         BombForce.Init(15f);
@@ -53,5 +64,12 @@ public class PlayerStat : MonoBehaviour
         FireDelay.Init(0.1f);
         GunRange.Init(30);
         ReloadTime.Init(1.6f, 1.6f, 1);
+        GunKnockbackPower.Init(5);
+    }
+
+
+    public void OnDead(bool tf)
+    {
+        IsDead = tf;
     }
 }

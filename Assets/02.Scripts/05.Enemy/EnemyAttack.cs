@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class EnemyAttack : MonoBehaviour, IAttackable
 {
-    private EnemyState _state;
+    [SerializeField]private EnemyState _state;
     private PlayerHealth _player => _state.Player.GetComponent<PlayerHealth>();
     public void Attack(AttackData data)
     {
