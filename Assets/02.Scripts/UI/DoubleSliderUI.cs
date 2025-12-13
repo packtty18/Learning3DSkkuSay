@@ -8,61 +8,105 @@ public abstract class DoubleSliderUI : MonoBehaviour
     [SerializeField] protected Slider _backSlider;
     [SerializeField] protected Slider _frontSlider;
 
-    [Header("Up Tween Settings")]
-    [SerializeField] protected Ease _frontSliderUpEase = Ease.OutQuad;
-    [SerializeField] protected Ease _backSliderUpEase = Ease.OutBounce;
+    [Header("Increase Tween Settings")]
+    [SerializeField] protected Ease _frontUpEase = Ease.OutQuad;
+    [SerializeField] protected Ease _backUpEase = Ease.OutBounce;
 
-    [SerializeField] protected float _backSliderUPDuration = 0.25f;
-    [SerializeField] protected float _frontSliderUPDuration = 0.15f;
+    [SerializeField] protected float _backUpDuration = 0.25f;
+    [SerializeField] protected float _frontUpDuration = 0.15f;
 
-    [Header("Down Tween")]
-    [SerializeField] protected Ease _frontSliderDownEase = Ease.OutQuad;
-    [SerializeField] protected Ease _backSliderDownEase = Ease.OutBounce;
+    [Header("Decrease Tween Settings")]
+    [SerializeField] protected Ease _frontDownEase = Ease.OutQuad;
+    [SerializeField] protected Ease _backDownEase = Ease.OutBounce;
 
-    [SerializeField] protected float _backSliderDownEDuration = 0.2f;
-    [SerializeField] protected float _frontSliderDownEDuration = 0.2f;
+    [SerializeField] protected float _backDownDuration = 0.2f;
+    [SerializeField] protected float _frontDownDuration = 0.2f;
+
+    #region Init / Sync
 
     public virtual void Init(float max, float current)
     {
+        SetMax(max);
+        Sync(current);
+    }
+
+    public virtual void SetMax(float max)
+    {
         _backSlider.maxValue = max;
         _frontSlider.maxValue = max;
+    }
 
+    // 즉시 동기화 (트윈 없음)
+    public virtual void Sync(float current)
+    {
         _backSlider.value = current;
         _frontSlider.value = current;
     }
 
-    //값이 수정될때 전방, 후방 슬라이더를 변경하는 방식
-    public abstract void ChangeValue();
+    #endregion
 
-    protected virtual void FrontIncrease(float frontTarget)
+    #region Apply Value
+    /// 값 변경 연출 적용
+    /// isIncrease는 외부에서 판단해서 전달
+    protected void ApplyValue(float current, bool isIncrease)
+    {
+        if (isIncrease)
+        {
+            PlayIncrease(current);
+        }
+        else
+        {
+            PlayDecrease(current);
+        }
+    }
+
+    #endregion
+
+    #region Tween Plays
+    protected virtual void PlayIncrease(float target)
+    {
+        FrontIncrease(target);
+        BehindIncrease(target);
+    }
+
+    protected virtual void PlayDecrease(float target)
+    {
+        FrontDecrease(target);
+        BehindDecrease(target);
+    }
+
+    protected virtual void FrontIncrease(float value)
     {
         _frontSlider.DOKill();
-        _frontSlider
-            .DOValue(frontTarget, _frontSliderUPDuration)
-            .SetEase(_frontSliderUpEase);
-    }
 
-    protected virtual void BehindIncrease( float behindTarget)
+        _frontSlider
+            .DOValue(value, _frontUpDuration)
+            .SetEase(_frontUpEase);
+    }
+    protected virtual void BehindIncrease(float value)
     {
         _backSlider.DOKill();
-        _backSlider
-            .DOValue(behindTarget, _backSliderUPDuration)
-            .SetEase(_backSliderUpEase);
-    }
 
-    protected virtual void FrontDecrease(float frontTarget)
+        _backSlider
+            .DOValue(value, _backUpDuration)
+            .SetEase(_backUpEase);
+    }
+    protected virtual void FrontDecrease(float value)
     {
         _frontSlider.DOKill();
-        _frontSlider
-            .DOValue(frontTarget, _frontSliderDownEDuration)
-            .SetEase(_frontSliderDownEase);
-    }
 
-    protected virtual void BehindDecrease(float behindTarget)
+        _frontSlider
+            .DOValue(value, _frontDownDuration)
+            .SetEase(_frontDownEase);
+    }
+    protected virtual void BehindDecrease(float value)
     {
         _backSlider.DOKill();
+
         _backSlider
-            .DOValue(behindTarget, _backSliderDownEDuration)
-            .SetEase(_backSliderDownEase);
+            .DOValue(value, _backDownDuration)
+            .SetEase(_backDownEase);
     }
+
+    #endregion
 }

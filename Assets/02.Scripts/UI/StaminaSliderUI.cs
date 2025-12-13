@@ -1,5 +1,4 @@
-﻿using Unity.VisualScripting;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class StaminaSliderUI : DoubleSliderUI
 {
@@ -9,59 +8,80 @@ public class StaminaSliderUI : DoubleSliderUI
     [Header("Chunk Settings")]
     [SerializeField] private float _chunkValue = 20f;
 
-    private float _cachedChunkIndex = 0f;
-    private float _lastValue = 0f;
+    private float _cachedChunkIndex;
+    private float _lastValue;
 
-    private ConsumableStat<float> _stemina => _stat.Stemina;
-    
+    private ConsumableStat<float> Stamina => _stat.Stemina;
 
     private void Start()
     {
-        _cachedChunkIndex = Mathf.Floor(_stemina.CurrentValue / _chunkValue);
-        Init(_stemina.MaxValue, _stemina.CurrentValue);
-        ChangeValue();
+        Init(Stamina.Max, Stamina.Current);
+        SyncInitialState();
     }
 
     private void OnEnable()
     {
-        _stat.Stemina.ValueChanged +=  ChangeValue;
+        if (Stamina == null)
+            return;
+
+        Stamina.OnCurrentChanged += OnStaminaChanged;
+        Stamina.OnMaxChanged += OnMaxStaminaChanged;
+
+        SyncInitialState();
     }
 
     private void OnDisable()
     {
-        _stat.Stemina.ValueChanged -= ChangeValue;
+        if (Stamina == null)
+            return;
+
+        Stamina.OnCurrentChanged -= OnStaminaChanged;
+        Stamina.OnMaxChanged -= OnMaxStaminaChanged;
     }
 
-    //BehindSlider는 기본 스테미너 량
-    //FrontSlider는 점프 가능한 횟수로 나누는 스테미너
-    public override void ChangeValue()
+    private void SyncInitialState()
     {
-        float value = _stemina.CurrentValue;
-        bool isIncreasing = value > _lastValue;
-        _lastValue = value;
+        float current = Stamina.Current;
+
+        _cachedChunkIndex = Mathf.Floor(current / _chunkValue);
+        _lastValue = current;
+
+        OnStaminaChanged(current);
+    }
+
+    private void OnStaminaChanged(float current)
+    {
+        bool isIncreasing = current > _lastValue;
 
         float currentChunkStart = _cachedChunkIndex * _chunkValue;
         float nextChunkStart = (_cachedChunkIndex + 1) * _chunkValue;
 
         if (!isIncreasing)
         {
-            if (value < currentChunkStart)
+            if (current < currentChunkStart)
             {
                 _cachedChunkIndex = Mathf.Max(0f, _cachedChunkIndex - 1);
             }
+
             FrontDecrease(_cachedChunkIndex * _chunkValue);
-            BehindDecrease(value);
-            return;
+            BehindDecrease(current);
         }
-
-        bool chunkPassed = value >= nextChunkStart;
-
-        if (chunkPassed)
+        else
         {
-            _cachedChunkIndex++;
+            if (current >= nextChunkStart)
+            {
+                _cachedChunkIndex++;
+            }
+
+            FrontIncrease(_cachedChunkIndex * _chunkValue);
+            BehindIncrease(current);
         }
 
-        FrontIncrease(_cachedChunkIndex * _chunkValue );
-        BehindIncrease(value);
+        _lastValue = current;
+    }
+
+    private void OnMaxStaminaChanged(float max)
+    {
+        SetMax(max);
     }
 }

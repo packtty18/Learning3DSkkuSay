@@ -2,19 +2,12 @@
 
 public class PlayerMove : MonoBehaviour
 {
-
     [Header("Components")]
     [SerializeField] private CameraController _cameraController;
     [SerializeField] private CharacterController _characterController;
     [SerializeField] private PlayerStat _stat;
 
-    private ValueStat<float> _staminaRegenDelay =>_stat.SteminaRegenDelay;
-    private ValueStat<float> _dashConsume => _stat.DashConsume;
-    private ValueStat<float> _doubleJumpCost => _stat.DoubleJumpConsume;
-
-    private ValueStat<float> _moveSpeed => _stat.MoveSpeed;
-    private ValueStat<float> _dashSpeed => _stat.DashSpeed;
-    private ValueStat<float> _jumpPower => _stat.JumpPower;
+    private MovementDataSO _data => _stat.MoveData;
     private ConsumableStat<float> _stemina => _stat.Stemina;
 
     private bool _isDash => Input.GetKey(KeyCode.LeftShift);
@@ -80,12 +73,12 @@ public class PlayerMove : MonoBehaviour
 
         direction.y = 0f;
 
-        float currentSpeed = _moveSpeed.Value;
+        float currentSpeed = _data.MoveSpeed;
 
         if (_isDash && !_stemina.IsEmpty() && direction.sqrMagnitude > 0.1f)
         {
-            currentSpeed = _dashSpeed.Value;
-            ConsumeStamina(_dashConsume.Value * Time.deltaTime);
+            currentSpeed = _data.DashSpeed;
+            ConsumeStamina(_data.DashConsume * Time.deltaTime);
         }
 
         HandleJump();
@@ -101,15 +94,15 @@ public class PlayerMove : MonoBehaviour
         {
             if (_characterController.isGrounded)
             {
-                _yVelocity = _jumpPower.Value;
+                _yVelocity = _data.JumpPower;
                 DebugManager.Instance.Log("Jump!");
             }
-            else if (_canDoubleJump && _stemina.CurrentValue >= _doubleJumpCost.Value)
+            else if (_canDoubleJump && _stemina.Current >= _data.DoubleJumpConsume)
             {
-                _yVelocity = _jumpPower.Value;
+                _yVelocity = _data.JumpPower;
                 _canDoubleJump = false;
-                ConsumeStamina(_doubleJumpCost.Value);
-                DebugManager.Instance.Log("Double Jump (Stamina -20)!");
+                ConsumeStamina(_data.DoubleJumpConsume);
+                DebugManager.Instance.Log($"Double Jump (Stamina - {_data.DoubleJumpConsume})!");
             }
         }
     }
@@ -118,15 +111,16 @@ public class PlayerMove : MonoBehaviour
     private void HandleStaminaRecovery()
     {
         //해당 시간이 지나야 회복 시작
+        float delta = Time.deltaTime;   
         if (_recoveryTimer > 0f)
         {
-            _recoveryTimer -= Time.deltaTime;
+            _recoveryTimer -= delta;
             return;
         }
 
         if (!_stemina.IsFull())
         {
-            _stemina.Regenerate();
+            _stemina.Regenerate(delta);
         }
     }
 
@@ -134,6 +128,6 @@ public class PlayerMove : MonoBehaviour
     private void ConsumeStamina(float amount)
     {
         _stemina.Consume(amount);
-        _recoveryTimer = _staminaRegenDelay.Value; 
+        _recoveryTimer = _data.RegenDelay; 
     }
 }
