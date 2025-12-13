@@ -4249,28 +4249,17 @@ MonoBehaviour:
     _max: 0
     _current: 0
     _regen: 0
-  MoveSpeed:
-    _value: 0
-  DashSpeed:
-    _value: 0
-  JumpPower:
-    _value: 0
+  MoveData: {fileID: 11400000, guid: 36d53bc37fc625549afb8f72bf7f4298, type: 2}
   Stemina:
     _max: 0
     _current: 0
     _regen: 0
-  SteminaRegenDelay:
-    _value: 0
-  DashConsume:
-    _value: 0
-  DoubleJumpConsume:
-    _value: 0
-  CurrentBombData: {fileID: 0}
+  CurrentBombData: {fileID: 11400000, guid: fee8ace35e335af448c50ca506cfb37b, type: 2}
   BombCount:
     _max: 0
     _current: 0
     _regen: 0
-  CurrentGunData: {fileID: 0}
+  CurrentGunData: {fileID: 11400000, guid: efdf1005089e2f54291e0a7dc49162f8, type: 2}
   InventoryBullet:
     _value: 0
   LoadedBullet:
@@ -4327,8 +4316,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 321adc53abb5aed4c996a4dc372d8eb9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _recoilUp: 1
-  _recoilSide: 1
+  _stat: {fileID: 1695678110}
 --- !u!114 &1695678114
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -58,7 +58,7 @@ public class BackViewState : ICameraState
 
     private void ApplyRecoil(RecoilData data)
     {
-        _accumulateY -= data.RecoilUp;
+        _accumulateY -= data.YStrength;
     }
 
     public Vector3 GetFireDirection(Transform firePos)

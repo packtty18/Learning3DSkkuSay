@@ -72,10 +72,10 @@ public class FPSState : ICameraState
     private void ApplyRecoil(RecoilData data)
     {
         // 상하 반동은 영구적 적용
-        _accumulateY -= data.RecoilUp;
+        _accumulateY -= data.YStrength;
 
         //좌우 반동은 되돌아오는 반동
-        float randomSide = Random.Range(-data.RecoilSide, data.RecoilSide);
+        float randomSide = Random.Range(-data.XStrength, data.XStrength);
         _xBound = randomSide;
     }
 
