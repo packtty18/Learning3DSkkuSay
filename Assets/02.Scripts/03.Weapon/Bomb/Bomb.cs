@@ -9,19 +9,17 @@ public class Bomb : MonoBehaviour, IPoolable
 
     [SerializeField] private GameObject _explosionPrefab;
     [SerializeField] private LayerMask _explosionLayer;
-    private PlayerStat _stat;
 
     private float _explosionRadius;
     private float _damage;
-    private float _knockbackPower;
+    private KnockbackData _knockback;
 
     
-    public void Init(PlayerStat stat)
+    public void Init(BombDataSO data)
     {
-        _stat = stat;
-        _explosionRadius = stat.ExplosionRadius.Value;
-        _damage = stat.BombDamage.Value;
-        _knockbackPower = stat.BombKnockbackPower.Value;
+        _explosionRadius = data.ExplosionRadius;
+        _damage = data.Damage;
+        _knockback = data.Knockback;
     }
 
     public void Get(EPoolType type)
@@ -67,7 +65,7 @@ public class Bomb : MonoBehaviour, IPoolable
             if (hit.TryGetComponent(out IDamageable damage))
             {
                 Vector3 dir = (hit.transform.position - center).normalized;
-                AttackData data = new AttackData(_damage, dir, gameObject , _knockbackPower);
+                AttackData data = new AttackData(_damage, dir, gameObject , _knockback);
                 damage.ApplyDamage(data);
             }
         }

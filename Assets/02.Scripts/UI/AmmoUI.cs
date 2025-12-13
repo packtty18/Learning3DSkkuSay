@@ -1,4 +1,5 @@
 ﻿using DG.Tweening;
+using MoreMountains.Feedbacks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -12,12 +13,11 @@ public class AmmoUI : MonoBehaviour
 
     [Header("Player Reference")]
     [SerializeField] private PlayerStat _stat;
+    private ValueStat<int> _invenAmmo => _stat.InventoryBullet;
+    private ConsumableStat<int> _loadedAmmo => _stat.LoadedBullet;
+    private ConsumableStat<float> _reloadTimer => _stat.ReloadTimer;
 
-    private ConsumableStat<int> _loadedAmmo => _stat.LoadedBulletCount;
-    private ValueStat<int> _entireAmmo => _stat.EntireBullet;
-    private ConsumableStat<float> _reloadTime => _stat.ReloadTime;
-
-    // Original & Target scales
+    // Scales
     private Vector3 _currentOriginalScale;
     private Vector3 _entireOriginalScale;
 
@@ -26,69 +26,109 @@ public class AmmoUI : MonoBehaviour
 
     private void Awake()
     {
-        // Save initial scales
         _currentOriginalScale = _currentAmmoText.rectTransform.localScale;
         _entireOriginalScale = _entireAmmoText.rectTransform.localScale;
 
-        // Define target punch scale
         _currentTargetScale = _currentOriginalScale + Vector3.one * 0.2f;
         _entireTargetScale = _entireOriginalScale + Vector3.one * 0.15f;
     }
 
     private void OnEnable()
     {
-        _loadedAmmo.ValueChanged += UpdateLoadAmmoText;
-        _entireAmmo.ValueChanged += UpdateEntireAmmoText;
-        _reloadTime.ValueChanged += UpdateReloadFill;
+        if (_stat == null)
+            return;
+
+        _invenAmmo.OnValueChanged += OnEntireAmmoChanged;
+
+        _loadedAmmo.OnCurrentChanged += OnLoadedAmmoChanged;
+        _loadedAmmo.OnMaxChanged += OnLoadedAmmoMaxChanged;
+
+        _reloadTimer.OnCurrentChanged += OnReloadTimeChanged;
+        _reloadTimer.OnMaxChanged += OnReloadTimeMaxChanged;
+
+        // 즉시 동기화
+        SyncAll();
     }
 
     private void OnDisable()
     {
-        _loadedAmmo.ValueChanged -= UpdateLoadAmmoText;
-        _entireAmmo.ValueChanged -= UpdateEntireAmmoText;
-        _reloadTime.ValueChanged -= UpdateReloadFill;
+        if (_stat == null)
+            return;
+
+        _invenAmmo.OnValueChanged -= OnEntireAmmoChanged;
+
+        _loadedAmmo.OnCurrentChanged -= OnLoadedAmmoChanged;
+        _loadedAmmo.OnMaxChanged -= OnLoadedAmmoMaxChanged;
+
+        _reloadTimer.OnCurrentChanged -= OnReloadTimeChanged;
+        _reloadTimer.OnMaxChanged -= OnReloadTimeMaxChanged;
     }
 
-    private void Start()
+    private void SyncAll()
     {
-        UpdateLoadAmmoText();
-        UpdateEntireAmmoText();
-        UpdateReloadFill();
+        OnLoadedAmmoChanged(_loadedAmmo.Current);
+        OnEntireAmmoChanged(_invenAmmo.Value);
+        UpdateReloadFill(_reloadTimer.Current, _reloadTimer.Max);
     }
 
-    private void UpdateLoadAmmoText()
+    #region Ammo Text
+
+    private void OnLoadedAmmoChanged(int current)
     {
-        _currentAmmoText.text = _loadedAmmo.CurrentValue.ToString();
+        _currentAmmoText.text = current.ToString();
         PlayPunch(_currentAmmoText.rectTransform, _currentOriginalScale, _currentTargetScale);
     }
 
-    private void UpdateEntireAmmoText()
+    // Max 변경 시에도 숫자 갱신 필요하면 사용
+    private void OnLoadedAmmoMaxChanged(int max)
     {
-        _entireAmmoText.text = _entireAmmo.Value.ToString();
+        // 현재는 UI 변화 없음 (확장 포인트)
+    }
+
+    private void OnEntireAmmoChanged(int current)
+    {
+        _entireAmmoText.text = current.ToString();
         PlayPunch(_entireAmmoText.rectTransform, _entireOriginalScale, _entireTargetScale);
     }
 
-    /// <summary>
-    /// 안전한 Punch 효과 (중간에 끊겨도 scale 누적 없음)
-    /// </summary>
-    private void PlayPunch(RectTransform rect, Vector3 original, Vector3 target)
-    {
-        rect.DOKill(true); // kill & complete
+    #endregion
 
-        // Move to target
-        rect.DOScale(target, 0.1f).SetEase(Ease.OutQuad)
-            .OnComplete(() =>
-            {
-                // Return to original
-                rect.DOScale(original, 0.15f).SetEase(Ease.OutQuad);
-            });
+    #region Reload Fill
+
+    private void OnReloadTimeChanged(float current)
+    {
+        UpdateReloadFill(current, _reloadTimer.Max);
     }
 
-    /// <summary> Reload gauge update </summary>
-    private void UpdateReloadFill()
+    private void OnReloadTimeMaxChanged(float max)
     {
-        float ratio = 1f - (_reloadTime.CurrentValue / _reloadTime.MaxValue);
-        ratio = Mathf.Clamp01(ratio);
-        _reloadFillImage.fillAmount = ratio;
+        UpdateReloadFill(_reloadTimer.Current, max);
+    }
+
+    private void UpdateReloadFill(float current, float max)
+    {
+        if (max <= 0f)
+        {
+            _reloadFillImage.fillAmount = 0f;
+            return;
+        }
+
+        float ratio = 1f - (current / max);
+        _reloadFillImage.fillAmount = Mathf.Clamp01(ratio);
+    }
+
+    #endregion
+
+    private void PlayPunch(RectTransform rect, Vector3 original, Vector3 target)
+    {
+        rect.DOKill(true);
+
+        rect.DOScale(target, 0.1f)
+            .SetEase(Ease.OutQuad)
+            .OnComplete(() =>
+            {
+                rect.DOScale(original, 0.15f)
+                    .SetEase(Ease.OutQuad);
+            });
     }
 }

@@ -20,14 +20,4 @@ public class FireRebound : MonoBehaviour
     }
 }
 
-public struct RecoilData
-{
-    public float RecoilUp;
-    public float RecoilSide;
 
-    public RecoilData(float up, float side)
-    {
-        RecoilUp = up;
-        RecoilSide = side;
-    }
-}

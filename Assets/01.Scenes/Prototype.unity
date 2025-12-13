@@ -2558,14 +2558,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _backSlider: {fileID: 1924282543}
   _frontSlider: {fileID: 935916752}
-  _frontSliderUpEase: 27
-  _backSliderUpEase: 6
-  _backSliderUPDuration: 0.25
-  _frontSliderUPDuration: 0.15
-  _frontSliderDownEase: 18
-  _backSliderDownEase: 6
-  _backSliderDownEDuration: 0.25
-  _frontSliderDownEDuration: 0.15
+  _frontUpEase: 6
+  _backUpEase: 30
+  _backUpDuration: 0.25
+  _frontUpDuration: 0.15
+  _frontDownEase: 6
+  _backDownEase: 30
+  _backDownDuration: 0.2
+  _frontDownDuration: 0.2
   _stat: {fileID: 1695678110}
 --- !u!1001 &1239863282
 PrefabInstance:
@@ -4074,14 +4074,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _backSlider: {fileID: 1544486653}
   _frontSlider: {fileID: 1341379680}
-  _frontSliderUpEase: 6
-  _backSliderUpEase: 30
-  _backSliderUPDuration: 0.25
-  _frontSliderUPDuration: 0.15
-  _frontSliderDownEase: 6
-  _backSliderDownEase: 30
-  _backSliderDownEDuration: 0.25
-  _frontSliderDownEDuration: 0.15
+  _frontUpEase: 6
+  _backUpEase: 30
+  _backUpDuration: 0.25
+  _frontUpDuration: 0.15
+  _frontDownEase: 6
+  _backDownEase: 30
+  _backDownDuration: 0.2
+  _frontDownDuration: 0.2
   _stat: {fileID: 1695678110}
   _chunkValue: 20
 --- !u!1 &1695678098
@@ -4246,9 +4246,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Health:
-    _maxValue: 0
-    _currentValue: 0
-    _regenValue: 0
+    _max: 0
+    _current: 0
+    _regen: 0
   MoveSpeed:
     _value: 0
   DashSpeed:
@@ -4256,47 +4256,31 @@ MonoBehaviour:
   JumpPower:
     _value: 0
   Stemina:
-    _maxValue: 0
-    _currentValue: 0
-    _regenValue: 0
+    _max: 0
+    _current: 0
+    _regen: 0
   SteminaRegenDelay:
     _value: 0
   DashConsume:
     _value: 0
   DoubleJumpConsume:
     _value: 0
-  BombDamage:
-    _value: 0
-  ExplosionRadius:
-    _value: 0
-  BombKnockbackPower:
-    _value: 0
+  CurrentBombData: {fileID: 0}
   BombCount:
-    _maxValue: 0
-    _currentValue: 0
-    _regenValue: 0
-  BombForce:
+    _max: 0
+    _current: 0
+    _regen: 0
+  CurrentGunData: {fileID: 0}
+  InventoryBullet:
     _value: 0
-  BombDelay:
-    _value: 0
-  EntireBullet:
-    _value: 0
-  LoadedBulletCount:
-    _maxValue: 0
-    _currentValue: 0
-    _regenValue: 0
-  GunDamage:
-    _value: 0
-  FireDelay:
-    _value: 0
-  GunRange:
-    _value: 0
-  ReloadTime:
-    _maxValue: 0
-    _currentValue: 0
-    _regenValue: 0
-  GunKnockbackPower:
-    _value: 0
+  LoadedBullet:
+    _max: 0
+    _current: 0
+    _regen: 0
+  ReloadTimer:
+    _max: 0
+    _current: 0
+    _regen: 0
 --- !u!114 &1695678111
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5380,15 +5364,15 @@ SceneRoots:
   - {fileID: 1351556314}
   - {fileID: 1738396182}
   - {fileID: 2015565471}
+  - {fileID: 1978017931}
   - {fileID: 269850979}
   - {fileID: 1311723961}
   - {fileID: 479595308}
   - {fileID: 1695678104}
   - {fileID: 5573684968672761036}
   - {fileID: 883468049}
+  - {fileID: 5731672107479256584}
+  - {fileID: 1239863282}
   - {fileID: 1386214429}
   - {fileID: 2029207594}
   - {fileID: 745537175}
-  - {fileID: 1978017931}
-  - {fileID: 5731672107479256584}
-  - {fileID: 1239863282}

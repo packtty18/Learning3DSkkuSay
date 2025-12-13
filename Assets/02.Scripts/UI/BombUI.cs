@@ -6,24 +6,29 @@ public class BombUI : MonoBehaviour
     [SerializeField] private PlayerStat _stat;
     [SerializeField] private Image[] _bombIcons;
 
-    private float currentCount => _stat.BombCount.CurrentValue;
-
     private void OnEnable()
     {
-        _stat.BombCount.ValueChanged += SetCount;
+        if (_stat == null || _stat.BombCount == null)
+            return;
+
+        _stat.BombCount.OnCurrentChanged += SetCount;
+
+        SetCount(_stat.BombCount.Current);
     }
 
     private void OnDisable()
     {
-        _stat.BombCount.ValueChanged -= SetCount;
+        if (_stat == null || _stat.BombCount == null)
+            return;
+
+        _stat.BombCount.OnCurrentChanged -= SetCount;
     }
 
-    public void SetCount()
+    private void SetCount(int current)
     {
         for (int i = 0; i < _bombIcons.Length; i++)
         {
-            bool isActive = i < currentCount;
-            _bombIcons[i].gameObject.SetActive(isActive);
+            _bombIcons[i].gameObject.SetActive(i < current);
         }
     }
 }

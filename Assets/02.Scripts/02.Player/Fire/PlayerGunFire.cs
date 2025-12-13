@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using Unity.Android.Gradle.Manifest;
 using UnityEngine;
 
 public class PlayerGunFire : MonoBehaviour
@@ -11,12 +12,10 @@ public class PlayerGunFire : MonoBehaviour
 
     //추후 : 총 도메인 만들어서 적용하기
     [Header("GunStat")]
-    [SerializeField] private ValueStat<float> _damage => _stat.GunDamage;
-    [SerializeField] private ValueStat<int> _entireBulletCount => _stat.EntireBullet;
-    [SerializeField] private ConsumableStat<int> _loadedBulletCount => _stat.LoadedBulletCount;    
-    [SerializeField] private ValueStat<float> _gunRange => _stat.GunRange;      
-    [SerializeField] private ValueStat<float> _fireDelay => _stat.FireDelay;        
-    [SerializeField] private ConsumableStat<float> _reloadTime => _stat.ReloadTime;      
+    private GunDataSO _data => _stat.CurrentGunData;
+    private ValueStat<int> _invenCount => _stat.InventoryBullet;
+    [SerializeField] private ConsumableStat<int> _currentCount => _stat.LoadedBullet;    
+    [SerializeField] private ConsumableStat<float> _loadTimer => _stat.ReloadTimer;      
 
     private bool _isFireDelay = true;
     private bool _isReloading = false;
@@ -38,7 +37,7 @@ public class PlayerGunFire : MonoBehaviour
             return;
         }
 
-        if (Input.GetMouseButton(0) && !_loadedBulletCount.IsEmpty()&&  _isFireDelay)
+        if (Input.GetMouseButton(0) && !_currentCount.IsEmpty()&&  _isFireDelay)
         {
             Fire();
         }
@@ -47,14 +46,14 @@ public class PlayerGunFire : MonoBehaviour
     private void Fire()
     {
         _isFireDelay = false;
-        _fireDelayRoutine = StartCoroutine(WaitFireDelay(_fireDelay.Value));
+        _fireDelayRoutine = StartCoroutine(WaitFireDelay(_data.FireDelay));
 
         // 탄약 소모
-        _loadedBulletCount.Consume(1);
+        _currentCount.Consume(1);
         Ray ray = new Ray(_fireTransform.position, CameraController.Instance.GetFireDirection(_fireTransform));
         RaycastHit hitInfo;
 
-        if (Physics.Raycast(ray, out hitInfo, _gunRange.Value, _targetLayer))
+        if (Physics.Raycast(ray, out hitInfo, _data.Range, _targetLayer))
         {
             DebugManager.Instance.Log($"히트 발생!! : {hitInfo.collider.name}");
 
@@ -69,12 +68,11 @@ public class PlayerGunFire : MonoBehaviour
             if (hitInfo.collider.TryGetComponent(out IDamageable damageable))
             {
                 Vector3 knockDir = (hitInfo.collider.transform.position - _fireTransform.position).normalized;
-
                 AttackData attackData = new AttackData(
-                    _damage.Value,
+                    _data.Damage,
                     knockDir,
                     gameObject,
-                    _stat.GunKnockbackPower.Value
+                    _data.KnockbackData
                 );
 
                 damageable.ApplyDamage(attackData);
@@ -97,7 +95,7 @@ public class PlayerGunFire : MonoBehaviour
     private IEnumerator ReloadRoutine()
     {
         //전체 탄약이 0이면 장전 불가
-        if (_entireBulletCount.Value <= 0)
+        if (_invenCount.Value <= 0)
         {
             DebugManager.Instance.Log("전체 탄약이 부족하여 장전 불가!");
             _isReloading = false;
@@ -108,7 +106,7 @@ public class PlayerGunFire : MonoBehaviour
         DebugManager.Instance.Log("재장전 시작!");
 
         // 재장전해야 할 양 계산
-        int targetCount = Mathf.Min(_loadedBulletCount.MaxValue - _loadedBulletCount.CurrentValue, _entireBulletCount.Value);
+        int targetCount = Mathf.Min(_currentCount.Max - _currentCount.Current, _invenCount.Value);
         // 장전할 탄약이 0이라면 중단
         if (targetCount <= 0)
         {
@@ -118,15 +116,15 @@ public class PlayerGunFire : MonoBehaviour
             yield break;
         }
 
-        _reloadTime.SetCurrentValue(0);
-        while (!_reloadTime.IsFull())
+        _loadTimer.SetCurrent(0);
+        while (!_loadTimer.IsFull())
         {
-            _reloadTime.Regenerate();
+            _loadTimer.Regenerate(Time.deltaTime);
             yield return null;
         }
 
-        _entireBulletCount.Decrease(targetCount);
-        _loadedBulletCount.IncreaseCurrent(targetCount);
+        _invenCount.Decrease(targetCount);
+        _currentCount.SetCurrent(_currentCount.Current + targetCount);
 
         DebugManager.Instance.Log($"재장전 완료! +{targetCount} 장전됨");
 
