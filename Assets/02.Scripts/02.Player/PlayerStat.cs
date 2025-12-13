@@ -3,7 +3,6 @@ using UnityEngine;
 
 public class PlayerStat : MonoBehaviour
 {
-    
     public ConsumableStat<float> Health;
     public bool IsDead { get; private set; } = false;
 
@@ -34,8 +33,6 @@ public class PlayerStat : MonoBehaviour
         LoadedBullet.Init(CurrentGunData.MaxBullet);
         ReloadTimer.Init(CurrentGunData.ReloadTime, default, 1);
     }
-
-
     public void OnDead(bool tf)
     {
         IsDead = tf;

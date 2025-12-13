@@ -6,13 +6,13 @@ using UnityEngine;
 public struct RecoilData
 {
     //¹Ýµ¿
-    public float RecoilUp;
-    public float RecoilSide;
+    public float YStrength;
+    public float XStrength;
 
-    public RecoilData(float up, float side)
+    public RecoilData(float upStrength, float sideStrength)
     {
-        RecoilUp = up;
-        RecoilSide = side;
+        YStrength = upStrength;
+        XStrength = sideStrength;
     }
 }
 

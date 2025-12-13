@@ -12,10 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 32b1faa9b9c7eb9438b85e31a0d41ca6, type: 3}
   m_Name: DefaultGun
   m_EditorClassIdentifier: 
-  MaxBullet: 0
+  MaxBullet: 30
   Damage: 10
   FireDelay: 0.1
   Range: 30
   ReloadTime: 1.6
   KnockbackData:
     Power: 5
+  RecoilData:
+    YStrength: 1
+    XStrength: 1
