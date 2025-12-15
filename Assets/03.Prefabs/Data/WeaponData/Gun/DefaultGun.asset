@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 32b1faa9b9c7eb9438b85e31a0d41ca6, type: 3}
+  m_Name: DefaultGun
+  m_EditorClassIdentifier: 
+  MaxBullet: 30
+  Damage: 10
+  FireDelay: 0.1
+  Range: 30
+  ReloadTime: 1.6
+  KnockbackData:
+    Power: 5
+  RecoilData:
+    YStrength: 1
+    XStrength: 1

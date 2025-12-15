@@ -8,7 +8,6 @@ public class EnemyMove : MonoBehaviour
 
     [Header("Settings")]
     [SerializeField] private float _rotateSpeed = 10f;
-    [SerializeField] private float _gravity = -9.81f;
 
     private float _yVelocity = 0f;
     private Vector3 _moveDirection = Vector3.zero;
@@ -32,7 +31,7 @@ public class EnemyMove : MonoBehaviour
     {
         if (!_controller.isGrounded)
         {
-            _yVelocity += _gravity * Time.deltaTime;
+            _yVelocity += Util.GRAVITY * Time.deltaTime;
         }
         else
         {

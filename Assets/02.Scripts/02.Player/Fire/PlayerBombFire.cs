@@ -1,28 +1,34 @@
-﻿using UnityEngine;
+﻿using ArtificeToolkit.Attributes;
+using Unity.Android.Gradle.Manifest;
+using UnityEngine;
 
 public class PlayerBombFire : MonoBehaviour
 {
-    [SerializeField] private PlayerStat _stat;
-    [SerializeField] private GameObject _firePrefab;
+    
+    [Required,SerializeField] private GameObject _firePrefab;
     [SerializeField] private Transform _firePoint;
 
+    [Title("Runtime Cache")]
+    [SerializeField] private PlayerStat _stat;
     private ConsumableStat<int> _bombCount => _stat.BombCount;
-    [SerializeField] private ValueStat<float> _bombForce => _stat.BombForce;
-    [SerializeField] private ValueStat<float> _bombDelay => _stat.BombDelay;
+    private BombDataSO _data => _stat.CurrentBombData;
 
-    private float _fireTimer = 0f;      // 남은 시간 타이머
+    [Title("Runtime State")]
+    [ReadOnly, SerializeField] private float _fireTimer;
 
-    [SerializeField] private bool _debugFire = false;
+    [SerializeField] private bool _debugFire;
 
     private void Update()
     {
+        if (GameManager.Instance.State != EGameState.Playing)
+            return;
         if (Input.GetMouseButtonDown(2) && _debugFire)
         {
             FireBomb();
             return;
         }
 
-        if (_bombCount.CurrentValue <= 0)
+        if (_bombCount.Current <= 0)
         {
             return;
         }
@@ -40,20 +46,20 @@ public class PlayerBombFire : MonoBehaviour
 
     private void FireBomb()
     {
-        _fireTimer = _bombDelay.Value;
+        _fireTimer = _data.Delay;
 
-        _bombCount.DecreaseCurrent(1);
+        _bombCount.Consume(1);
 
         GameObject bombObj = PoolManager.Instance.Get(EPoolType.Bomb);
         if (bombObj.TryGetComponent(out Bomb bomb))
         {
-            bomb.Init(_stat);
+            bomb.Init(_stat.CurrentBombData);
         }
 
         bombObj.transform.position = _firePoint.position;
         if (bombObj.TryGetComponent(out Rigidbody rigid))
         {
-            rigid.AddForce(CameraController.Instance.GetFireDirection(_firePoint) * _bombForce.Value, ForceMode.Impulse);
+            rigid.AddForce(CameraController.Instance.GetFireDirection(_firePoint) * _data.Force, ForceMode.Impulse);
         }
     }
 }

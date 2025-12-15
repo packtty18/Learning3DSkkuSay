@@ -30,9 +30,12 @@ public class Barrel : MonoBehaviour, IDamageable
 
     public void ApplyDamage(AttackData data)
     {
+        if (GameManager.Instance.State != EGameState.Playing)
+            return;
+
         if (_isDead) return;
 
-        Health.DecreaseCurrent(data.Damage);
+        Health.Consume(data.Damage);
 
         if (Health.IsEmpty())
         {
@@ -52,7 +55,6 @@ public class Barrel : MonoBehaviour, IDamageable
 
     private void Explosion(Vector3 hitDir)
     {
-
         //파티클
         ParticleSystem effect = ParticleManager.Instance.Get(EParticleType.BombExplosion);
         ParticleSystem.EmitParams emit = new ParticleSystem.EmitParams
@@ -77,12 +79,12 @@ public class Barrel : MonoBehaviour, IDamageable
             if (hit.TryGetComponent(out IDamageable target))
             {
                 Vector3 dir = (hit.transform.position - transform.position).normalized;
-
+                KnockbackData knockback = new KnockbackData(KnockbackPower.Value);
                 AttackData data = new AttackData(
                     Damage.Value,
                     dir,
                     gameObject,
-                    KnockbackPower.Value
+                    knockback
                 );
 
                 target.ApplyDamage(data);

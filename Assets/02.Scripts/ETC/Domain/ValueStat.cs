@@ -2,46 +2,34 @@
 using UnityEngine;
 
 [Serializable]
-public class ValueStat<T> where T : struct, IConvertible
+public class ValueStat<T> : StatBase<T> where T : struct, IConvertible
 {
     [SerializeField] private T _value;
     public T Value => _value;
 
-    public event Action ValueChanged;
-
     public void Init(T value)
     {
-        _value = value;
+        Set(value);
     }
 
-    public void Increase(float amount)
+    public void Increase(T amount)
     {
-        SetValue(ConvertTo<T>(ToDouble(_value) + amount));
+        Set(FromDouble(ToDouble(_value) + ToDouble(amount)));
     }
 
-    public void Decrease(float amount)
+    public void Decrease(T amount)
     {
-        SetValue(ConvertTo<T>(ToDouble(_value) - amount));
+        Set(FromDouble(ToDouble(_value) - ToDouble(amount)));
     }
 
-    public void SetValue(T newValue)
+    public void Set(T newValue)
     {
-        // Clamp to >= 0
-        double clamped = Math.Max(0, ToDouble(newValue));
+        T clamped = ClampMinZero(newValue);
 
-        _value = ConvertTo<T>(clamped);
+        if (EqualsValue(_value, clamped))
+            return;
 
-        Debug.Log($"[FloatValueStat] New Value: {_value}");
-        ValueChanged?.Invoke();
-    }
-
-    private double ToDouble(T value)
-    {
-        return Convert.ToDouble(value);
-    }
-
-    private U ConvertTo<U>(double value) where U : struct, IConvertible
-    {
-        return (U)Convert.ChangeType(value, typeof(U));
+        _value = clamped;
+        Notify(_value);
     }
 }

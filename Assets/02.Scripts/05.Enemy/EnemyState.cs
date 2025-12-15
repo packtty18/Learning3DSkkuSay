@@ -68,6 +68,8 @@ public class EnemyState : MonoBehaviour, IDamageable
 
     private void Update()
     {
+        if (GameManager.Instance.State != EGameState.Playing)
+            return;
         switch (_state)
         {
             case EEnemyState.Idle:
@@ -226,7 +228,7 @@ public class EnemyState : MonoBehaviour, IDamageable
                 StopCoroutine(hitRoutine);
             }
 
-            hitRoutine = StartCoroutine(HitRoutine(data.HitDirection, data.KnockbackPower));
+            hitRoutine = StartCoroutine(HitRoutine(data.HitDirection, data.Knockback.Power));
         }
         else
         {

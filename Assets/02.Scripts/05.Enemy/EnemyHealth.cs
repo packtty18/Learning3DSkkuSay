@@ -1,10 +1,14 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class EnemyHealth : MonoBehaviour
 {
     public float MaxHealth = 100f;
     private float _current;
     public float Current => _current;
+
+    public event Action OnHealthChange;
+
 
     private void Awake()
     {
@@ -15,7 +19,7 @@ public class EnemyHealth : MonoBehaviour
     public bool ApplyDamage(float damage)
     {
         _current -= damage;
-        
+        OnHealthChange.Invoke();
         return _current > 0;
     }
 }

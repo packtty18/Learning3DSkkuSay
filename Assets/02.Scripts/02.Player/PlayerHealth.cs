@@ -1,36 +1,21 @@
 ﻿using UnityEngine;
+using ArtificeToolkit.Attributes;
 
 public class PlayerHealth : MonoBehaviour, IDamageable
 {
-    [Header("References")]
+
+    [Title("References")]
     [SerializeField] private PlayerStat _stat;
-    private ConsumableStat<float> _health => _stat.Health;
-
-
-    private void Awake()
-    {
-
-    }
-
-    private void PlayHitEffect()
-    {
-        //추후 추가
-    }
-
-    private void Die()
-    {
-        _stat.OnDead(true);
-    }
+    private ConsumableStat<float> Health => _stat.Health;
 
     public void ApplyDamage(AttackData data)
     {
         if (_stat.IsDead)
-        {
             return;
-        }
 
-        _health.Consume(data.Damage);
-        if (_health.IsEmpty())
+        Health.Consume(data.Damage);
+
+        if (Health.IsEmpty())
         {
             Die();
         }
@@ -38,5 +23,16 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         {
             PlayHitEffect();
         }
+    }
+
+    private void PlayHitEffect()
+    {
+        Debug.Log("[PlayerHealth] Hit");
+    }
+
+    private void Die()
+    {
+        Debug.Log("[PlayerHealth] Die");
+        _stat.SetDead(true);
     }
 }

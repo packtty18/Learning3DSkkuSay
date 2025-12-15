@@ -2,135 +2,111 @@
 using UnityEngine;
 
 [Serializable]
-public class ConsumableStat<T> where T : struct, IConvertible
+public class ConsumableStat<T> : StatBase<T> where T : struct, IConvertible
 {
-    [SerializeField] private T _maxValue;
-    [SerializeField] private T _currentValue;
-    [SerializeField] private T _regenValue;
+    [SerializeField] private T _max;
+    [SerializeField] private T _current;
+    [SerializeField] private T _regen;
 
-    public T MaxValue => _maxValue;
-    public T CurrentValue => _currentValue;
-    public T RegenValue => _regenValue;
+    public T Max => _max;
+    public T Current => _current;
+    public T RegenValue => _regen;
 
-    public event Action ValueChanged;
+    public event Action<T> OnMaxChanged;
+    public event Action<T> OnCurrentChanged;
+    public event Action<T> OnRegenChanged;
 
-    public void Init(T max, T current, T regen)
+    public void Init(T max, T current = default, T regen = default)
     {
-        SetMaxValue(max);
-        SetCurrentValue(current);
-        SetRegenValue(regen);
+        SetMax(max);
+        if (ToDouble(current) <= 0.00001)
+        {
+            SetCurrent(_max);
+        }
+        else
+        {
+            SetCurrent(current);
+        }
+        if (ToDouble(regen) <= 0.00001)
+        {
+            SetRegen(FromDouble(0));
+        }
+        else
+        {
+            SetRegen(regen);
+        }
     }
 
+
+    #region 상태 체크
     public bool IsFull()
     {
-        return EqualsDouble(_maxValue , _currentValue);
+        return EqualsValue(_current, _max);
     }
 
     public bool IsEmpty()
     {
-        return ToDouble(_currentValue) <= 0.00001;
+        return ToDouble(_current) <= 0.00001;
     }
+    #endregion
 
+    #region Max
+    public void SetMax(T value)
+    {
+        T clamped = ClampMinZero(value);
+
+        if (EqualsValue(_max, clamped))
+            return;
+
+        _max = clamped;
+
+        // current 자동 보정
+        SetCurrent(_current);
+
+        OnMaxChanged?.Invoke(_max);
+    }
+    #endregion
+
+    #region Current
+    public void SetCurrent(T value)
+    {
+        double clamped =
+            Math.Clamp(ToDouble(value), 0, ToDouble(_max));
+
+        T newValue = FromDouble(clamped);
+
+        if (EqualsValue(_current, newValue))
+            return;
+
+        _current = newValue;
+        OnCurrentChanged?.Invoke(_current);
+    }
 
     public void Consume(T amount)
     {
-        DecreaseCurrent(amount);
+        SetCurrent(FromDouble(ToDouble(_current) - ToDouble(amount)));
     }
+    #endregion
 
-    public void Regenerate()
+    #region Regen
+    public void SetRegen(T value)
     {
-        if (ToDouble(_currentValue) >= ToDouble(_maxValue) ||
-            ToDouble(_regenValue) <= 0)
-        {
-            return;
-        }
+        T clamped = ClampMinZero(value);
 
-        double added = ToDouble(_regenValue) * Time.deltaTime;
-        IncreaseCurrent(FromDouble(added));
-    }
-
-    public void IncreaseMax(T amount)
-    {
-        SetMaxValue(FromDouble(ToDouble(_maxValue) + ToDouble(amount)));
-    }
-
-    public void DecreaseMax(T amount)
-    {
-        SetMaxValue(FromDouble(ToDouble(_maxValue) - ToDouble(amount)));
-    }
-
-    public void SetMaxValue(T amount)
-    {
-        double max = Math.Max(0, ToDouble(amount));
-        T newMax = FromDouble(max);
-
-        if (EqualsDouble(newMax, _maxValue))
+        if (EqualsValue(_regen, clamped))
             return;
 
-        _maxValue = newMax;
-
-        double current = Math.Clamp(ToDouble(_currentValue), 0, max);
-        _currentValue = FromDouble(current);
-
-        ValueChanged?.Invoke();
+        _regen = clamped;
+        OnRegenChanged?.Invoke(_regen);
     }
 
-    public void IncreaseCurrent(T amount)
+    public void Regenerate(float deltaTime)
     {
-        SetCurrentValue(FromDouble(ToDouble(_currentValue) + ToDouble(amount)));
-    }
-
-    public void DecreaseCurrent(T amount)
-    {
-        SetCurrentValue(FromDouble(ToDouble(_currentValue) - ToDouble(amount)));
-    }
-
-    public void SetCurrentValue(T amount)
-    {
-        double value = Math.Clamp(ToDouble(amount), 0, ToDouble(_maxValue));
-        T newValue = FromDouble(value);
-
-        if (EqualsDouble(newValue, _currentValue))
+        if (IsFull() || ToDouble(_regen) <= 0)
             return;
 
-        _currentValue = newValue;
-        ValueChanged?.Invoke();
+        double add = ToDouble(_regen) * deltaTime;
+        SetCurrent(FromDouble(ToDouble(_current) + add));
     }
-
-    public void IncreaseRegen(T amount)
-    {
-        SetRegenValue(FromDouble(ToDouble(_regenValue) + ToDouble(amount)));
-    }
-
-    public void DecreaseRegen(T amount)
-    {
-        SetRegenValue(FromDouble(ToDouble(_regenValue) - ToDouble(amount)));
-    }
-
-    public void SetRegenValue(T amount)
-    {
-        double regen = Math.Max(0, ToDouble(amount));
-        T newRegen = FromDouble(regen);
-
-        if (EqualsDouble(newRegen, _regenValue))
-            return;
-
-        _regenValue = newRegen;
-        ValueChanged?.Invoke();
-    }
-
-    private double ToDouble(T value)
-    {
-        return Convert.ToDouble(value);
-    }
-
-    private T FromDouble(double value)
-    {
-        return (T)Convert.ChangeType(value, typeof(T));
-    }
-
-    private bool EqualsDouble(T a, T b)
-    {
-        return Math.Abs(ToDouble(a) - ToDouble(b)) < 0.00001;
-    }
+    #endregion
 }
