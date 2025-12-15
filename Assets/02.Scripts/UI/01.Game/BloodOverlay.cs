@@ -11,44 +11,43 @@ public class BloodOverlay : MonoBehaviour
     private PlayerStat _stat;
     private ConsumableStat<float> _health => _stat.Health;
 
-    [SerializeField, Tooltip("얼마나 빨리 알파가 줄어드는지")]
+    [SerializeField]
     private float fadeDuration = 0.5f;
 
     private void Start()
     {
-        UpdateOverlayImmediate();
+        float alpha = 1f - (_health.Current / _health.Max);
+        SetAlpha(alpha);
     }
 
     private void OnEnable()
     {
-        _health.OnCurrentChanged += OnHealthChanged;
-        _health.OnMaxChanged += OnHealthChanged;
+        _health.OnCurrentChanged += ChangedWithEffect;
+        _health.OnMaxChanged += ChangedWithoutEffect;
     }
 
     private void OnDisable()
     {
-        _health.OnCurrentChanged -= OnHealthChanged;
-        _health.OnMaxChanged -= OnHealthChanged;
+        _health.OnCurrentChanged -= ChangedWithEffect;
+        _health.OnMaxChanged -= ChangedWithoutEffect;
     }
 
-    private void OnHealthChanged(float notUse)
+    private void ChangedWithEffect(float notUse)
     {
         float targetAlpha = 1f;
-        SetOverlayAlpha(targetAlpha);
+        SetAlpha(targetAlpha);
+        ChangedWithoutEffect(notUse);
+    }
 
+    private void ChangedWithoutEffect(float notUse)
+    {
         float finalAlpha = 1f - (_health.Current / _health.Max);
 
         OverlayUI.DOKill();
         OverlayUI.DOFade(finalAlpha, fadeDuration).SetEase(Ease.OutQuad);
     }
 
-    private void UpdateOverlayImmediate()
-    {
-        float alpha = 1f - (_health.Current / _health.Max);
-        SetOverlayAlpha(alpha);
-    }
-
-    private void SetOverlayAlpha(float alpha)
+    private void SetAlpha(float alpha)
     {
         Color color = OverlayUI.color;
         color.a = alpha;

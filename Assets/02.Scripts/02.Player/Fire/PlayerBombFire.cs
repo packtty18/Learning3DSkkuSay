@@ -9,7 +9,7 @@ public class PlayerBombFire : MonoBehaviour
     [SerializeField] private Transform _firePoint;
 
     [Title("Runtime Cache")]
-    [ReadOnly, SerializeField] private PlayerStat _stat;
+    [SerializeField] private PlayerStat _stat;
     private ConsumableStat<int> _bombCount => _stat.BombCount;
     private BombDataSO _data => _stat.CurrentBombData;
 
@@ -17,16 +17,6 @@ public class PlayerBombFire : MonoBehaviour
     [ReadOnly, SerializeField] private float _fireTimer;
 
     [SerializeField] private bool _debugFire;
-
-    public void Init()
-    {
-        if (!PlayerController.IsExist())
-        {
-            DebugManager.Instance.Log("PlayerController is not Setted");
-            return;
-        }
-        _stat = PlayerController.Instance.Stat;
-    }
 
     private void Update()
     {

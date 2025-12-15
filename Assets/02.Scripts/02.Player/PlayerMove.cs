@@ -6,7 +6,7 @@ public class PlayerMove : MonoBehaviour
 {
     [Title("Components")]
     [ReadOnly, SerializeField] private CharacterController _characterController;
-    [ReadOnly, SerializeField] private PlayerStat _stat;
+    [SerializeField] private PlayerStat _stat;
 
     private MovementDataSO _data => _stat.MoveData;
     private ConsumableStat<float> _stemina => _stat.Stemina;
@@ -22,17 +22,9 @@ public class PlayerMove : MonoBehaviour
 
 
 
-    public void Init()
+    public void Awake()
     {
         _characterController = GetComponent<CharacterController>();
-
-        if (!PlayerController.IsExist())
-        {
-            DebugManager.Instance.Log("PlayerController is not Setted");
-            return;
-        }
-
-        _stat = PlayerController.Instance.Stat;
     }
 
     private void Update()
