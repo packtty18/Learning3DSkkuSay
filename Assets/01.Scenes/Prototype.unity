@@ -2916,7 +2916,7 @@ MonoBehaviour:
     bottomLeft: {r: 1, g: 1, b: 1, a: 1}
     bottomRight: {r: 1, g: 1, b: 1, a: 1}
   m_fontColorGradientPreset: {fileID: 0}
-  m_spriteAsset: {fileID: 0}
+  m_spriteAsset: {fileID: 11400000, guid: c41005c129ba4d66911b75229fd70b45, type: 2}
   m_tintAllSprites: 0
   m_StyleSheet: {fileID: 0}
   m_TextStyleHashCode: -1183493901
@@ -5656,7 +5656,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e444cccd98cdbc40939df776070c8e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _minimapCamera: {fileID: 0}
+  _minimapCamera: {fileID: 93354020}
   _maxInSize: 2
   _maxOutSize: 10
   _amount: 1
