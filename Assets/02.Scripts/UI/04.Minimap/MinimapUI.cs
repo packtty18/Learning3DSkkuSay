@@ -1,57 +1,32 @@
 ﻿using ArtificeToolkit.Attributes;
+using DG.Tweening;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class MinimapUI : MonoBehaviour
 {
     [Title("Reference")]
-    [Required, SerializeField] private Image _backGroundImage;
-    [Required, SerializeField] private Image _maskImage;
+    [SerializeField] private Camera _minimapCamera;
 
-    [Title("Image Source")]
-    [Required, SerializeField] private Sprite _maxSprite;
-    [Required, SerializeField] private Sprite _minSprite;
+    [Title("Size Settings")]
+    [SerializeField] private float _maxInSize = 2f;    // 축소
+    [SerializeField] private float _maxOutSize = 10f;  // 확대
+    [SerializeField] private float _amount = 1f;
+    [SerializeField] private float _tweenDuration = 1f;
 
-    [Title("Size Set")]
-    [SerializeField] private float _maxSize = 1000f;
-    [SerializeField] private float _minSize = 320f;
-
-    [Title("Position Set")]
-    [SerializeField] private Vector2 _maxPosition = new Vector2(0, 0);
-    [SerializeField] private Vector2 _minPosition = new Vector2(700, 300);
-
-    private bool _isMaximized = false;
-
-    private void Start()
+    private Tween _tween;
+    public void ZoomIn()
     {
-        ApplyMinimapState();
+        float target = _minimapCamera.orthographicSize - _amount;
+        target = Mathf.Clamp(target, _maxInSize, _maxOutSize);
+        _tween?.Kill();
+        _tween = _minimapCamera.DOOrthoSize(target, _tweenDuration).SetEase(Ease.OutCubic);
     }
 
-    public void ChangeMode()
+    public void ZoomOut()
     {
-        _isMaximized = !_isMaximized;
-        ApplyMinimapState();
-    }
-
-    private void ApplyMinimapState()
-    {
-        if (_isMaximized)
-        {
-            _backGroundImage.sprite = _maxSprite;
-            _maskImage.sprite = _maxSprite;
-            SetRectTransform(_backGroundImage.rectTransform, _maxSize, _maxPosition);
-        }
-        else
-        {
-            _backGroundImage.sprite = _minSprite;
-            _maskImage.sprite = _minSprite;
-            SetRectTransform(_backGroundImage.rectTransform, _minSize, _minPosition);
-        }
-    }
-
-    private void SetRectTransform(RectTransform rect, float size, Vector2 position)
-    {
-        rect.sizeDelta = new Vector2(size, size);
-        rect.anchoredPosition = position;
+        float target = _minimapCamera.orthographicSize + _amount;
+        target = Mathf.Clamp(target, _maxInSize, _maxOutSize);
+        _tween?.Kill();
+        _tween = _minimapCamera.DOOrthoSize(target, _tweenDuration).SetEase(Ease.OutCubic);
     }
 }
