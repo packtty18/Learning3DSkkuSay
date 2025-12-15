@@ -1,13 +1,22 @@
-﻿using UnityEngine;
+﻿using ArtificeToolkit.Attributes;
+using UnityEngine;
 
 public class PlayerRotate : MonoBehaviour
 {
     [SerializeField] private float _sensitivity = 200f;
 
-    private float _accumulateX = 0f;
-    private bool _canRotate = true; // 모드에서 제어
+    [ReadOnly]private float _accumulateX = 0f;
+    [ReadOnly, SerializeField] private bool _canRotate = true; // 모드에서 제어
 
-    public void SetRotateEnable(bool enable) => _canRotate = enable;
+    public void SetRotateEnable(bool enable)
+    {
+        _canRotate = enable;
+    }
+
+    public void Init()
+    {
+        
+    }
 
     public void Rotate(float mouseX)
     {

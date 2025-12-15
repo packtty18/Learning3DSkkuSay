@@ -1,21 +1,37 @@
-﻿using Unity.Android.Gradle.Manifest;
+﻿using ArtificeToolkit.Attributes;
+using Unity.Android.Gradle.Manifest;
 using UnityEngine;
 
 public class PlayerBombFire : MonoBehaviour
 {
-    [SerializeField] private PlayerStat _stat;
-    [SerializeField] private GameObject _firePrefab;
+    
+    [Required,SerializeField] private GameObject _firePrefab;
     [SerializeField] private Transform _firePoint;
 
+    [Title("Runtime Cache")]
+    [ReadOnly, SerializeField] private PlayerStat _stat;
     private ConsumableStat<int> _bombCount => _stat.BombCount;
     private BombDataSO _data => _stat.CurrentBombData;
 
-    private float _fireTimer = 0f;      // 남은 시간 타이머
+    [Title("Runtime State")]
+    [ReadOnly, SerializeField] private float _fireTimer;
 
-    [SerializeField] private bool _debugFire = false;
+    [SerializeField] private bool _debugFire;
+
+    public void Init()
+    {
+        if (!PlayerController.IsExist())
+        {
+            DebugManager.Instance.Log("PlayerController is not Setted");
+            return;
+        }
+        _stat = PlayerController.Instance.Stat;
+    }
 
     private void Update()
     {
+        if (GameManager.Instance.State != EGameState.Playing)
+            return;
         if (Input.GetMouseButtonDown(2) && _debugFire)
         {
             FireBomb();

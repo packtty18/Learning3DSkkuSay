@@ -1,26 +1,45 @@
 ﻿using System;
 using UnityEngine;
+using ArtificeToolkit.Attributes;
 
 public class PlayerStat : MonoBehaviour
 {
+    [Title("Runtime State")]
+    [ReadOnly]
     public ConsumableStat<float> Health;
+
     public bool IsDead { get; private set; } = false;
 
-    [Header("Move Settings")]
+    public event Action OnDead;
+
+
+    [Title("Move Settings")]
+    [Required,SerializeField, PreviewScriptable]
     public MovementDataSO MoveData;
+
+    [ReadOnly]
     public ConsumableStat<float> Stemina;
 
-    [Header("Bomb Settings")]
+    [Title("Bomb Settings")]
+    [Required, SerializeField, PreviewScriptable]
     public BombDataSO CurrentBombData;
+
+    [ReadOnly]
     public ConsumableStat<int> BombCount;
 
-    [Header("GunFire Settings")]
+    [Title("GunFire Settings")]
+    [Required, SerializeField, PreviewScriptable]
     public GunDataSO CurrentGunData;
+
+    [ReadOnly]
     public ValueStat<int> InventoryBullet;
+    [ReadOnly]
     public ConsumableStat<int> LoadedBullet;
+    [ReadOnly]
     public ConsumableStat<float> ReloadTimer;
 
-    private void Awake()
+
+    public void Init()
     {
         Health.Init(100, 100, 1);
         IsDead = false;
@@ -32,9 +51,18 @@ public class PlayerStat : MonoBehaviour
         InventoryBullet.Init(150);
         LoadedBullet.Init(CurrentGunData.MaxBullet);
         ReloadTimer.Init(CurrentGunData.ReloadTime, default, 1);
+
+        Debug.Log("[PlayerStat] Initialized");
     }
-    public void OnDead(bool tf)
+
+    public void SetDead(bool tf)
     {
+        if (IsDead == tf)
+            return;
+
         IsDead = tf;
+        Debug.Log("[PlayerStat] Dead State Changed");
+
+        OnDead?.Invoke();
     }
 }

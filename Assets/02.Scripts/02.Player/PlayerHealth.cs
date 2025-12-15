@@ -1,36 +1,36 @@
 ﻿using UnityEngine;
+using ArtificeToolkit.Attributes;
 
 public class PlayerHealth : MonoBehaviour, IDamageable
 {
-    [Header("References")]
-    [SerializeField] private PlayerStat _stat;
-    private ConsumableStat<float> _health => _stat.Health;
+    // ===============================
+    // References
+    // ===============================
+
+    [Title("References")]
+    [ReadOnly, SerializeField]
+    private PlayerStat _stat;
+    private ConsumableStat<float> Health => _stat.Health;
 
 
-    private void Awake()
+    public void Init()
     {
-
-    }
-
-    private void PlayHitEffect()
-    {
-        //추후 추가
-    }
-
-    private void Die()
-    {
-        _stat.OnDead(true);
+        if(!PlayerController.IsExist())
+        {
+            DebugManager.Instance.Log("PlayerController is not Setted");
+            return;
+        }
+        _stat = PlayerController.Instance.Stat;
     }
 
     public void ApplyDamage(AttackData data)
     {
         if (_stat.IsDead)
-        {
             return;
-        }
 
-        _health.Consume(data.Damage);
-        if (_health.IsEmpty())
+        Health.Consume(data.Damage);
+
+        if (Health.IsEmpty())
         {
             Die();
         }
@@ -38,5 +38,16 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         {
             PlayHitEffect();
         }
+    }
+
+    private void PlayHitEffect()
+    {
+        Debug.Log("[PlayerHealth] Hit");
+    }
+
+    private void Die()
+    {
+        Debug.Log("[PlayerHealth] Die");
+        _stat.SetDead(true);
     }
 }

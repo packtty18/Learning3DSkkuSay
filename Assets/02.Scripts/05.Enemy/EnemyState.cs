@@ -68,6 +68,8 @@ public class EnemyState : MonoBehaviour, IDamageable
 
     private void Update()
     {
+        if (GameManager.Instance.State != EGameState.Playing)
+            return;
         switch (_state)
         {
             case EEnemyState.Idle:
