@@ -1,35 +1,47 @@
 ﻿using System.Collections;
-using Unity.Android.Gradle.Manifest;
 using UnityEngine;
+using ArtificeToolkit.Attributes;
 
 public class PlayerGunFire : MonoBehaviour
 {
-    [Header("Components")]
-    [SerializeField] private PlayerStat _stat;
-    [SerializeField] private Transform _fireTransform;
+    [Title("Components")]
+    
+    [Required, SerializeField] private Transform _fireTransform;
     [SerializeField] private LayerMask _targetLayer;
-    [SerializeField] private FireRebound _bound;
+    [Required, SerializeField] private FireRebound _bound;
 
-    //추후 : 총 도메인 만들어서 적용하기
-    [Header("GunStat")]
+    [Title("Gun Runtime Stat")]
+    [ReadOnly, SerializeField] private PlayerStat _stat;
     private GunDataSO _data => _stat.CurrentGunData;
     private ValueStat<int> _invenCount => _stat.InventoryBullet;
-    [SerializeField] private ConsumableStat<int> _currentCount => _stat.LoadedBullet;    
-    [SerializeField] private ConsumableStat<float> _loadTimer => _stat.ReloadTimer;      
+    private ConsumableStat<int> _currentCount => _stat.LoadedBullet;
+    private ConsumableStat<float> _loadTimer => _stat.ReloadTimer;
 
-    private bool _isFireDelay = true;
-    private bool _isReloading = false;
+    [Title("State")]
+    [ReadOnly, SerializeField] private bool _isFireDelay = true;
+    [ReadOnly, SerializeField] private bool _isReloading = false;
 
     private Coroutine _fireDelayRoutine;
     private Coroutine _reloadRoutine;
 
-    private void Update()
+    public void Init()
     {
-        // 재장전 중이면 아무 행동 불가
-        if (_isReloading)
+        if (!PlayerController.IsExist())
         {
+            DebugManager.Instance.Log("PlayerController is not Setted");
             return;
         }
+
+        _stat = PlayerController.Instance.Stat;
+    }
+
+    private void Update()
+    {
+        if (GameManager.Instance.State != EGameState.Playing)
+            return;
+
+        if (_isReloading)
+            return;
 
         if (Input.GetKeyDown(KeyCode.R))
         {
@@ -37,7 +49,7 @@ public class PlayerGunFire : MonoBehaviour
             return;
         }
 
-        if (Input.GetMouseButton(0) && !_currentCount.IsEmpty()&&  _isFireDelay)
+        if (Input.GetMouseButton(0) && !_currentCount.IsEmpty() && _isFireDelay)
         {
             Fire();
         }
@@ -48,8 +60,8 @@ public class PlayerGunFire : MonoBehaviour
         _isFireDelay = false;
         _fireDelayRoutine = StartCoroutine(WaitFireDelay(_data.FireDelay));
 
-        // 탄약 소모
         _currentCount.Consume(1);
+
         Ray ray = new Ray(_fireTransform.position, CameraController.Instance.GetFireDirection(_fireTransform));
         RaycastHit hitInfo;
 
@@ -59,9 +71,11 @@ public class PlayerGunFire : MonoBehaviour
 
             ParticleSystem hitEffect = ParticleManager.Instance.Get(EParticleType.BulletEnvironmentHit);
 
-            ParticleSystem.EmitParams emit = new ParticleSystem.EmitParams();
-            emit.position = hitInfo.point;
-            emit.rotation3D = Quaternion.LookRotation(hitInfo.normal).eulerAngles;
+            ParticleSystem.EmitParams emit = new ParticleSystem.EmitParams
+            {
+                position = hitInfo.point,
+                rotation3D = Quaternion.LookRotation(hitInfo.normal).eulerAngles
+            };
 
             hitEffect.Emit(emit, 1);
 
@@ -77,16 +91,15 @@ public class PlayerGunFire : MonoBehaviour
 
                 damageable.ApplyDamage(attackData);
             }
-
         }
 
         _bound.PlayRebound();
     }
 
-
     private void StartReload()
     {
-        if (_isReloading) return;
+        if (_isReloading)
+            return;
 
         _isReloading = true;
         _reloadRoutine = StartCoroutine(ReloadRoutine());
@@ -94,7 +107,6 @@ public class PlayerGunFire : MonoBehaviour
 
     private IEnumerator ReloadRoutine()
     {
-        //전체 탄약이 0이면 장전 불가
         if (_invenCount.Value <= 0)
         {
             DebugManager.Instance.Log("전체 탄약이 부족하여 장전 불가!");
@@ -105,9 +117,8 @@ public class PlayerGunFire : MonoBehaviour
 
         DebugManager.Instance.Log("재장전 시작!");
 
-        // 재장전해야 할 양 계산
         int targetCount = Mathf.Min(_currentCount.Max - _currentCount.Current, _invenCount.Value);
-        // 장전할 탄약이 0이라면 중단
+
         if (targetCount <= 0)
         {
             DebugManager.Instance.Log("탄창이 이미 가득 차 있어 장전할 필요 없음!");
@@ -117,6 +128,7 @@ public class PlayerGunFire : MonoBehaviour
         }
 
         _loadTimer.SetCurrent(0);
+
         while (!_loadTimer.IsFull())
         {
             _loadTimer.Regenerate(Time.deltaTime);
@@ -131,7 +143,6 @@ public class PlayerGunFire : MonoBehaviour
         _isReloading = false;
         _reloadRoutine = null;
     }
-
 
     private IEnumerator WaitFireDelay(float delay)
     {

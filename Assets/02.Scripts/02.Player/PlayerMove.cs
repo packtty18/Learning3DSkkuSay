@@ -1,31 +1,44 @@
-﻿using UnityEngine;
+﻿using ArtificeToolkit.Attributes;
+using UnityEngine;
 
+[RequireComponent(typeof(CharacterController))]
 public class PlayerMove : MonoBehaviour
 {
-    [Header("Components")]
-    [SerializeField] private CameraController _cameraController;
-    [SerializeField] private CharacterController _characterController;
-    [SerializeField] private PlayerStat _stat;
+    [Title("Components")]
+    [ReadOnly, SerializeField] private CharacterController _characterController;
+    [ReadOnly, SerializeField] private PlayerStat _stat;
 
     private MovementDataSO _data => _stat.MoveData;
     private ConsumableStat<float> _stemina => _stat.Stemina;
 
+    [Title("Runtime State")]
+    [ReadOnly] private float _yVelocity;
+    [ReadOnly] private bool _canDoubleJump = true;
+    [ReadOnly] private float _recoveryTimer = 0f;
+
+    private CameraController _cameraController => CameraController.Instance;
     private bool _isDash => Input.GetKey(KeyCode.LeftShift);
 
-    private float _yVelocity;
-    private bool _canDoubleJump = true;
-    private float _recoveryTimer = 0f;
 
-    private void Awake()
+
+
+    public void Init()
     {
-        if (!TryGetComponent(out _characterController))
+        _characterController = GetComponent<CharacterController>();
+
+        if (!PlayerController.IsExist())
         {
-            _characterController = gameObject.AddComponent<CharacterController>();
+            DebugManager.Instance.Log("PlayerController is not Setted");
+            return;
         }
+
+        _stat = PlayerController.Instance.Stat;
     }
 
     private void Update()
     {
+        if (GameManager.Instance.State != EGameState.Playing)
+            return;
         HandleGravity();
         HandleMovement();
         HandleStaminaRecovery();

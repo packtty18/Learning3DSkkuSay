@@ -1,12 +1,13 @@
 ﻿using UnityEngine;
 using System;
+using ArtificeToolkit.Attributes;
 
 public class CameraStateManager : MonoBehaviour
 {
     public event Action OnStateChanged;
 
+    [ReadOnly, SerializeField]
     private ICameraState _currentState;
-
     public ICameraState CurrentState => _currentState;
 
     public void ChangeState(ICameraState newState)
@@ -19,6 +20,9 @@ public class CameraStateManager : MonoBehaviour
 
     private void Update()
     {
+        if (GameManager.Instance.State != EGameState.Playing)
+            return;
+
         if (_currentState == null)
         {
             return;

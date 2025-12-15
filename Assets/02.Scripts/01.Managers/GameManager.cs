@@ -1,0 +1,71 @@
+﻿using System;
+using System.Collections;
+using UnityEngine;
+using ArtificeToolkit.Attributes;
+
+public class GameManager : Singleton<GameManager>
+{
+    [Title("Game State")]
+    [ReadOnly, SerializeField]
+    private EGameState _state = EGameState.Ready;
+    public EGameState State => _state;
+
+    [Title("UI")]
+    [Required, SerializeField]
+    private TextAnimatorBase _mainTextUI;
+
+    [Title("Player")]
+    [Required, SerializeField]
+    private PlayerController Player;
+
+    public event Action OnGameStart;
+    public event Action OnGameOver;
+
+    public override void Init()
+    {
+        Player.Init();
+        Player.Stat.OnDead += OnPlayerDead;
+
+        StartCoroutine(GameStartRoutine());
+    }
+
+    private void OnDestroy()
+    {
+        if (Player != null && Player.Stat != null)
+            Player.Stat.OnDead -= OnPlayerDead;
+    }
+
+    private IEnumerator GameStartRoutine()
+    {
+        _mainTextUI.ShowText("<wave a=2 s=1>레디...</wave>");
+        yield return new WaitForSeconds(2f);
+
+        _mainTextUI.ShowText("<bounce a=15>시작!!</bounce>");
+        yield return new WaitForSeconds(1f);
+
+        _mainTextUI.HideText();
+
+        _state = EGameState.Playing;
+        OnGameStart?.Invoke();
+
+        DebugManager.Instance.Log("[GameManager] Playing");
+    }
+
+    private void OnPlayerDead()
+    {
+        if (_state == EGameState.GameOver)
+            return;
+
+        GameOver();
+        OnGameOver?.Invoke();
+    }
+
+    private void GameOver()
+    {
+        _state = EGameState.GameOver;
+
+        DebugManager.Instance.Log("[GameManager] GameOver");
+
+        _mainTextUI.ShowText("<slideh>게임 오버...</slideh>");
+    }
+}

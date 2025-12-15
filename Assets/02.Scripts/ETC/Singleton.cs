@@ -22,7 +22,7 @@ public abstract class Singleton<T> : MonoBehaviour where T : MonoBehaviour
     public abstract void Init();
     
 
-    public bool IsExist()
+    public static bool IsExist()
     {
         return _instance != null;
     }
