@@ -11,7 +11,7 @@ public class PlayerGunFire : MonoBehaviour
     [Required, SerializeField] private FireRebound _bound;
 
     [Title("Gun Runtime Stat")]
-    [ReadOnly, SerializeField] private PlayerStat _stat;
+    [SerializeField] private PlayerStat _stat;
     private GunDataSO _data => _stat.CurrentGunData;
     private ValueStat<int> _invenCount => _stat.InventoryBullet;
     private ConsumableStat<int> _currentCount => _stat.LoadedBullet;
@@ -24,16 +24,6 @@ public class PlayerGunFire : MonoBehaviour
     private Coroutine _fireDelayRoutine;
     private Coroutine _reloadRoutine;
 
-    public void Init()
-    {
-        if (!PlayerController.IsExist())
-        {
-            DebugManager.Instance.Log("PlayerController is not Setted");
-            return;
-        }
-
-        _stat = PlayerController.Instance.Stat;
-    }
 
     private void Update()
     {

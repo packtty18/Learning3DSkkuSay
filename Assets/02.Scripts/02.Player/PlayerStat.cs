@@ -39,7 +39,7 @@ public class PlayerStat : MonoBehaviour
     public ConsumableStat<float> ReloadTimer;
 
 
-    public void Init()
+    public void Awake()
     {
         Health.Init(100, 100, 1);
         IsDead = false;

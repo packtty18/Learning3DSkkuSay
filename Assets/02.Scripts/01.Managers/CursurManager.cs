@@ -1,5 +1,7 @@
-﻿using UnityEngine;
+﻿using Unity.VisualScripting;
+using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.PlayerLoop;
 
 public class CursorManager : Singleton<CursorManager>
 {
@@ -36,9 +38,11 @@ public class CursorManager : Singleton<CursorManager>
         }
     }
 
+    
+
     public bool IsPointerOverUI()
     {
-        return EventSystem.current != null && EventSystem.current.IsPointerOverGameObject();
+        return EventSystem.current.IsPointerOverGameObject();
     }
 
     

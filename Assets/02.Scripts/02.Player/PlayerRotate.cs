@@ -12,12 +12,6 @@ public class PlayerRotate : MonoBehaviour
     {
         _canRotate = enable;
     }
-
-    public void Init()
-    {
-        
-    }
-
     public void Rotate(float mouseX)
     {
         if (!_canRotate) return;

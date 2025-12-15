@@ -17,8 +17,8 @@ public class MinimapUI : MonoBehaviour
     [SerializeField] private float _minSize = 320f;
 
     [Title("Position Set")]
-    [SerializeField] private Vector2 _maxPosition = new Vector2(0, 0); // 화면 중앙
-    [SerializeField] private Vector2 _minPosition = new Vector2(700, 300); // 왼쪽 상단 기준
+    [SerializeField] private Vector2 _maxPosition = new Vector2(0, 0);
+    [SerializeField] private Vector2 _minPosition = new Vector2(700, 300);
 
     private bool _isMaximized = false;
 

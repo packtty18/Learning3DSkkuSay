@@ -28,7 +28,6 @@ public class PlayerController : Singleton<PlayerController>
     public override void Init()
     {
         CacheComponents();
-        InitComponent();
     }
 
     
@@ -41,15 +40,4 @@ public class PlayerController : Singleton<PlayerController>
         _gunFire = GetComponent<PlayerGunFire>();
         _bombFire = GetComponent<PlayerBombFire>();
     }
-
-    private void InitComponent()
-    {
-        _stat.Init();
-        _move.Init();
-        _rotate.Init();
-        _health.Init();
-        _gunFire.Init();
-        _bombFire.Init();
-    }
-
 }
