@@ -40,6 +40,11 @@ public class PlayerGunFire : MonoBehaviour
         if (GameManager.Instance.State != EGameState.Playing)
             return;
 
+        if (CursorManager.Instance.IsPointerOverUI())
+        {
+            return;
+        }
+
         if (_isReloading)
             return;
 
