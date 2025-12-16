@@ -5,7 +5,6 @@ using ArtificeToolkit.Attributes;
 public class PlayerGunFire : MonoBehaviour
 {
     [Title("Components")]
-    
     [Required, SerializeField] private Transform _fireTransform;
     [SerializeField] private LayerMask _targetLayer;
     [Required, SerializeField] private FireRebound _bound;
@@ -24,40 +23,45 @@ public class PlayerGunFire : MonoBehaviour
     private Coroutine _fireDelayRoutine;
     private Coroutine _reloadRoutine;
 
-
     private void Update()
     {
         if (GameManager.Instance.State != EGameState.Playing)
             return;
 
         if (CursorManager.Instance.IsPointerOverUI())
-        {
             return;
-        }
 
         if (_isReloading)
             return;
 
+        // 재장전
         if (Input.GetKeyDown(KeyCode.R))
         {
             StartReload();
             return;
         }
 
-        if (Input.GetMouseButton(0) && !_currentCount.IsEmpty() && _isFireDelay)
+        // FPS / BackView에서만 마우스 발사 가능
+        if ((CameraController.Instance.CurrentMode == CameraMode.FPS ||
+             CameraController.Instance.CurrentMode == CameraMode.BackView) &&
+            Input.GetMouseButton(0) && !_currentCount.IsEmpty() && _isFireDelay)
         {
             Fire();
         }
     }
 
-    private void Fire()
+    public void Fire()
     {
+        if (!_isFireDelay || _currentCount.IsEmpty())
+            return;
+
         _isFireDelay = false;
         _fireDelayRoutine = StartCoroutine(WaitFireDelay(_data.FireDelay));
 
         _currentCount.Consume(1);
 
-        Ray ray = new Ray(_fireTransform.position, CameraController.Instance.GetFireDirection(_fireTransform));
+        Ray ray = new Ray(_fireTransform.position,
+            CameraController.Instance.GetFireDirection(_fireTransform));
         RaycastHit hitInfo;
 
         if (Physics.Raycast(ray, out hitInfo, _data.Range, _targetLayer))
@@ -113,10 +117,9 @@ public class PlayerGunFire : MonoBehaviour
         DebugManager.Instance.Log("재장전 시작!");
 
         int targetCount = Mathf.Min(_currentCount.Max - _currentCount.Current, _invenCount.Value);
-
         if (targetCount <= 0)
         {
-            DebugManager.Instance.Log("탄창이 이미 가득 차 있어 장전할 필요 없음!");
+            DebugManager.Instance.Log("탄창이 이미 가득 차 있음!");
             _isReloading = false;
             _reloadRoutine = null;
             yield break;

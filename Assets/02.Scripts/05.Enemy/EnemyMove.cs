@@ -37,6 +37,7 @@ public class EnemyMove : MonoBehaviour
 
         if (_agent.isOnOffMeshLink)
         {
+            Debug.Log("점프 발생");
             StartJump();
         }
     }
@@ -65,13 +66,12 @@ public class EnemyMove : MonoBehaviour
     private void StartJump()
     {
         Debug.Log("Enemy Start OffMeshLink Jump");
-
         _isJumping = true;
         _agent.isStopped = true;
-        _agent.updatePosition = false;
-
         OffMeshLinkData data = _agent.currentOffMeshLinkData;
 
+        //반드시 데이터를 가져온다음에 reset Path 실행
+        _agent.ResetPath();
         Vector3 start = transform.position;
         Vector3 end = data.endPos;
 
@@ -98,9 +98,7 @@ public class EnemyMove : MonoBehaviour
 
         _agent.CompleteOffMeshLink();
 
-        _agent.updatePosition = true;
         _agent.Warp(transform.position);
-
         _agent.isStopped = false;
         _isJumping = false;
     }

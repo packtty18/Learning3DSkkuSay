@@ -39,6 +39,7 @@ public class CameraController : Singleton<CameraController>
     {
         if (GameManager.Instance.State != EGameState.Playing)
             return;
+
         if(Input.GetKeyDown(KeyCode.T))
         {
             _currentMode = (CameraMode)(((int)_currentMode + 1) % 3);

@@ -1,11 +1,9 @@
-﻿using ArtificeToolkit.Attributes;
-using Unity.Android.Gradle.Manifest;
-using UnityEngine;
+﻿using UnityEngine;
+using ArtificeToolkit.Attributes;
 
 public class PlayerBombFire : MonoBehaviour
 {
-    
-    [Required,SerializeField] private GameObject _firePrefab;
+    [Required, SerializeField] private GameObject _firePrefab;
     [SerializeField] private Transform _firePoint;
 
     [Title("Runtime Cache")]
@@ -22,39 +20,33 @@ public class PlayerBombFire : MonoBehaviour
     {
         if (GameManager.Instance.State != EGameState.Playing)
             return;
-        if (Input.GetMouseButtonDown(2) && _debugFire)
+
+        // FPS / BackView에서만 폭탄 발사
+        if ((CameraController.Instance.CurrentMode == CameraMode.FPS ||
+             CameraController.Instance.CurrentMode == CameraMode.BackView) &&
+            (Input.GetMouseButtonDown(2) || _debugFire))
         {
             FireBomb();
-            return;
         }
 
         if (_bombCount.Current <= 0)
-        {
             return;
-        }
 
         if (_fireTimer > 0f)
-        {
             _fireTimer -= Time.deltaTime;
-        }
-
-        if (Input.GetMouseButtonDown(2) && _fireTimer <= 0f)
-        {
-            FireBomb();
-        }
     }
 
-    private void FireBomb()
+    public void FireBomb()
     {
-        _fireTimer = _data.Delay;
+        if (_bombCount.Current <= 0 || _fireTimer > 0f)
+            return;
 
+        _fireTimer = _data.Delay;
         _bombCount.Consume(1);
 
         GameObject bombObj = PoolManager.Instance.Get(EPoolType.Bomb);
         if (bombObj.TryGetComponent(out Bomb bomb))
-        {
-            bomb.Init(_stat.CurrentBombData);
-        }
+            bomb.Init(_data);
 
         bombObj.transform.position = _firePoint.position;
         if (bombObj.TryGetComponent(out Rigidbody rigid))
