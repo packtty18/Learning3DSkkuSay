@@ -957,6 +957,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 221300844}
   m_CullTransparentMesh: 1
+--- !u!1 &228012178 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 9101118255666888040, guid: e04a6dc3ddeb95642ad9bd1a2c230d61, type: 3}
+  m_PrefabInstance: {fileID: 475016234}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &235696498
 GameObject:
   m_ObjectHideFlags: 0
@@ -1059,8 +1064,8 @@ Transform:
   m_GameObject: {fileID: 235696498}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -13.847641, y: 1.5, z: -14.610001}
-  m_LocalScale: {x: 3, y: 3, z: 3}
+  m_LocalPosition: {x: -14, y: 1.5, z: -2}
+  m_LocalScale: {x: 30, y: 3, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1351556314}
@@ -2573,7 +2578,7 @@ MonoBehaviour:
     IsHidden: 0
   - Type: 0
     Name: 
-    GameObject: {fileID: 0}
+    GameObject: {fileID: 4134234708078233301, guid: db00aee7c8f4b11488b898d6fddfe420, type: 3}
     Ordinal: 3
     Priority: 0
     IconType: 0
@@ -2697,6 +2702,42 @@ MonoBehaviour:
     Ordinal: 13
     Priority: 0
     IconType: 139180
+    IconTexture: {fileID: 0}
+    IsIconRecursive: 0
+    BackgroundType: 1000
+    BackgroundTexture: {fileID: 0}
+    IsBackgroundRecursive: 0
+    IsHidden: 0
+  - Type: 0
+    Name: 
+    GameObject: {fileID: 228012178}
+    Ordinal: 14
+    Priority: 0
+    IconType: 103000
+    IconTexture: {fileID: 0}
+    IsIconRecursive: 0
+    BackgroundType: 0
+    BackgroundTexture: {fileID: 0}
+    IsBackgroundRecursive: 0
+    IsHidden: 0
+  - Type: 0
+    Name: 
+    GameObject: {fileID: 77347255}
+    Ordinal: 15
+    Priority: 0
+    IconType: 103000
+    IconTexture: {fileID: 0}
+    IsIconRecursive: 0
+    BackgroundType: 0
+    BackgroundTexture: {fileID: 0}
+    IsBackgroundRecursive: 0
+    IsHidden: 0
+  - Type: 0
+    Name: 
+    GameObject: {fileID: 1718154357}
+    Ordinal: 16
+    Priority: 0
+    IconType: 0
     IconTexture: {fileID: 0}
     IsIconRecursive: 0
     BackgroundType: 1000

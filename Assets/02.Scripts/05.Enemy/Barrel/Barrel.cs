@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-public class Barrel : MonoBehaviour, IDamageable
+public class Barrel : MonoBehaviour, IDamageable, IPoolable
 {
     public ConsumableStat<float> Health;
     public ValueStat<float> Damage;
@@ -14,18 +14,35 @@ public class Barrel : MonoBehaviour, IDamageable
     private Rigidbody _rigid;
     private bool _isDead = false;
 
-    
+    [SerializeField] private EPoolType _poolType = EPoolType.Barrel;
+    public EPoolType PoolType => _poolType;
+
+    public void Get(EPoolType type)
+    {
+        _poolType = type;
+        _isDead = false;
+
+        SetStat();
+    }
+
+    public void Release()
+    {
+        
+    }
 
     private void Start()
     {
-        Health.Init(50, 50,0);
+        SetStat();
+        _explosionPower = 30f;
+        _rigid = GetComponent<Rigidbody>();
+    }
+
+    private void SetStat()
+    {
+        Health.Init(50, 50, 0);
         Damage.Init(50);
         ExplosionRange.Init(3);
         KnockbackPower.Init(30);
-        _explosionPower = 30f;
-
-        _rigid = GetComponent<Rigidbody>();
-        _rigid = GetComponent<Rigidbody>();
     }
 
     public void ApplyDamage(AttackData data)
@@ -92,4 +109,6 @@ public class Barrel : MonoBehaviour, IDamageable
         }
         StartCoroutine(Util.DestroyAfterTime(5, gameObject));
     }
+
+    
 }
