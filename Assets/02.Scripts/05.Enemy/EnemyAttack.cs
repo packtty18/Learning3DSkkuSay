@@ -2,7 +2,7 @@
 
 public class EnemyAttack : MonoBehaviour, IAttackable
 {
-    [SerializeField]private EnemyState _state;
+    [SerializeField]private EnemyController _state;
     private PlayerHealth _player => _state.Player.GetComponent<PlayerHealth>();
     public void Attack(AttackData data)
     {

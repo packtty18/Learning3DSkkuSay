@@ -1,0 +1,255 @@
+﻿using System.Collections;
+using UnityEngine;
+
+
+public abstract class EnemyBaseState
+{
+    protected EnemyController _controller;
+    public virtual void Enter(EnemyController controller)
+    {
+        _controller = controller;
+    }
+    public abstract void Update();
+    public virtual void Exit() 
+    { 
+
+    }
+}
+#region Spawn
+public class SpawnState : EnemyBaseState
+{
+    public override void Enter(EnemyController controller)
+    {
+        base.Enter(controller);
+        Debug.Log("Enter SpawnState");
+    }
+
+    public override void Update()
+    {
+        if (!_controller.SetComplete)
+            return;
+        _controller.transform.position = _controller.SpawnPosition;
+
+        _controller.TransitionToState(new IdleState());
+
+    }
+}
+#endregion
+#region Idle
+public class IdleState : EnemyBaseState
+{
+    private float idleTimer = 0f;
+
+    public override void Enter(EnemyController controller)
+    {
+        base.Enter(controller);
+        idleTimer = 0f;
+        Debug.Log("Enter IdleState");
+    }
+
+    public override void Update()
+    {
+        float distance = Vector3.Distance(_controller.transform.position, _controller.Player.transform.position);
+
+        if (distance <= _controller.Stat.DetectDistance.Value)
+        {
+            _controller.TransitionToState(new TraceState());
+            return;
+        }
+
+        idleTimer += Time.deltaTime;
+        if (_controller.PatrolPoints.Length > 0 && idleTimer >= _controller.Stat.IdleWaitTime)
+        {
+            _controller.TransitionToState(new PatrolState());
+        }
+    }
+}
+#endregion
+
+#region patrol
+public class PatrolState : EnemyBaseState
+{
+    private int patrolIndex = 0;
+
+    public override void Enter(EnemyController _controller)
+    {
+        base.Enter(_controller);
+        Debug.Log("Enter PatrolState");
+        patrolIndex = 0;
+    }
+
+    public override void Update()
+    {
+        if (_controller.PatrolPoints.Length == 0) return;
+
+        Transform targetPoint = _controller.PatrolPoints[patrolIndex];
+        _controller.Move.MoveTo(targetPoint.position, _controller.Stat.MoveSpeed.Value);
+
+        float distance = Vector3.Distance(_controller.transform.position, targetPoint.position);
+        if (distance < _controller.Stat.ArrivalThreshold)
+        {
+            patrolIndex = (patrolIndex + 1) % _controller.PatrolPoints.Length;
+            _controller.TransitionToState(new IdleState());
+        }
+
+        // 플레이어 발견 시 Trace 상태
+        float playerDistance = Vector3.Distance(_controller.transform.position, _controller.Player.transform.position);
+        if (playerDistance <= _controller.Stat.DetectDistance.Value)
+        {
+            _controller.TransitionToState(new TraceState());
+        }
+    }
+}
+
+#endregion
+
+#region Trace
+public class TraceState : EnemyBaseState
+{
+    public override void Enter(EnemyController _controller)
+    {
+        base.Enter(_controller);
+        _controller.LastTracePosition = _controller.transform.position;
+        Debug.Log("Enter TraceState");
+    }
+
+    public override void Update()
+    {
+        float distance = Vector3.Distance(_controller.transform.position, _controller.Player.transform.position);
+
+        _controller.Move.MoveTo(_controller.Player.transform.position, _controller.Stat.MoveSpeed.Value);
+
+        if (distance <= _controller.Stat.AttackDistance.Value)
+        {
+            _controller.TransitionToState(new AttackState());
+        }
+
+        if (distance > _controller.Stat.DetectDistance.Value * 1.2f)
+        {
+            _controller.TransitionToState(new ComebackState());
+        }
+    }
+}
+
+#endregion
+
+#region Comeback
+public class ComebackState : EnemyBaseState
+{
+    public override void Enter(EnemyController _controller)
+    {
+        base.Enter(_controller);
+        Debug.Log("Enter ComebackState");
+    }
+
+    public override void Update()
+    {
+        Vector3 targetPos = _controller.SpawnPosition;
+        if (_controller.LastTracePosition != Vector3.zero && _controller.PatrolPoints.Length > 0)
+        {
+            targetPos = _controller.LastTracePosition;
+        }
+
+        _controller.Move.MoveTo(targetPos, _controller.Stat.MoveSpeed.Value);
+
+        if (Vector3.Distance(_controller.transform.position, targetPos) < 0.3f)
+        {
+            _controller.LastTracePosition = Vector3.zero;
+            _controller.TransitionToState(new IdleState());
+        }
+    }
+}
+
+#endregion
+
+#region Attack
+public class AttackState : EnemyBaseState
+{
+    private float attackTimer = 0f;
+
+    public override void Enter(EnemyController enemy)
+    {
+        base.Enter(enemy);
+        attackTimer = 0f;
+        Debug.Log("Enter AttackState");
+    }
+
+    public override void Update()
+    {
+        float distance = Vector3.Distance(_controller.transform.position, _controller.Player.transform.position);
+
+        if (distance > _controller.Stat.AttackDistance.Value)
+        {
+            _controller.TransitionToState(new TraceState());
+            return;
+        }
+
+        attackTimer += Time.deltaTime;
+        if (attackTimer >= _controller.Stat.AttackSpeed.Value)
+        {
+            attackTimer = 0f;
+
+            var data = new AttackData
+            {
+                Damage = _controller.Stat.AttackDamage.Value,
+                HitDirection = _controller.transform.forward,
+                Attacker = _controller.gameObject
+            };
+
+            _controller.Attack.Attack(data);
+        }
+    }
+}
+
+#endregion
+
+#region Hit
+public class HitState : EnemyBaseState
+{
+    private Vector3 knockDir;
+    private float knockbackPower;
+
+    public HitState(Vector3 direction, float power)
+    {
+        knockDir = direction.normalized;
+        knockbackPower = power;
+    }
+
+    public override void Enter(EnemyController _controller)
+    {
+        base.Enter(_controller);
+        _controller.StartCoroutine(HitRoutine());
+    }
+
+    private IEnumerator HitRoutine()
+    {
+        float timer = 0f;
+        while (timer < _controller.Stat.KnockbackTime)
+        {
+            timer += Time.deltaTime;
+            _controller.Move.MoveDirection(knockDir, knockbackPower);
+            yield return null;
+        }
+
+        _controller.TransitionToState(new IdleState());
+    }
+
+    public override void Update() { }
+}
+
+
+#endregion
+
+#region Death
+public class DeathState : EnemyBaseState
+{
+    public override void Enter(EnemyController _controller)
+    {
+        base.Enter(_controller);
+        _controller.StartCoroutine(Util.DestroyAfterTime(2f, _controller.gameObject));
+    }
+
+    public override void Update() { }
+}
+
+#endregion

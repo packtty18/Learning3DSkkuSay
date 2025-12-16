@@ -5,7 +5,7 @@ using ArtificeToolkit.Attributes;
 
 public class EnemyHealthbarUI : MonoBehaviour
 {
-    [Required,SerializeField] private EnemyHealth _enemy;
+    [Required,SerializeField] private EnemyController _enemy;
     [Required, SerializeField] private RectTransform _guageRect;
     [Required, SerializeField] private Image _frontGuage;
     [Required, SerializeField] private Image _backGuage;
@@ -28,28 +28,26 @@ public class EnemyHealthbarUI : MonoBehaviour
     private Color _frontOriginalColor;
     private Color _backOriginalColor;
 
-    private void Start()
+
+    private void OnEnable()
     {
         _frontOriginalColor = _frontGuage.color;
         _backOriginalColor = _backGuage.color;
 
-        _frontGuage.fillAmount = _enemy.Current / _enemy.MaxHealth;
+        _frontGuage.fillAmount = _enemy.Stat.Health.Current / _enemy.Stat.Health.Max;
         _backGuage.fillAmount = _frontGuage.fillAmount;
-    }
 
-    private void OnEnable()
-    {
-        _enemy.OnHealthChange += UpdateUI;
+        _enemy.Stat.Health.OnCurrentChanged += UpdateForCurrent;
     }
 
     private void OnDisable()
     {
-        _enemy.OnHealthChange -= UpdateUI;
+        _enemy.Stat.Health.OnCurrentChanged -= UpdateForCurrent;
     }
 
-    private void UpdateUI()
+    private void UpdateForCurrent(float current)
     {
-        float targetFill = _enemy.Current / _enemy.MaxHealth;
+        float targetFill = current / _enemy.Stat.Health.Max;
 
         _frontGuage.fillAmount = targetFill;
 

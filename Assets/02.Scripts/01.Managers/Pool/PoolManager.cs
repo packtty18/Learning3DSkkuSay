@@ -6,7 +6,7 @@ public enum EPoolType
 {
     None,
     Bomb,
-
+    Enemy,
 }
 
 public class PoolManager : Singleton<PoolManager>

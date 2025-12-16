@@ -4,7 +4,7 @@
 public class EnemyGizmo : MonoBehaviour
 {
     [Header("References")]
-    [SerializeField] private EnemyState _state;
+    [SerializeField] private EnemyController _state;
 
     [Header("Gizmo Toggle")]
     [SerializeField] private bool _showDetectRange = true;
@@ -24,13 +24,13 @@ public class EnemyGizmo : MonoBehaviour
         if (_showDetectRange)
         {
             Gizmos.color = _detectColor;
-            Gizmos.DrawWireSphere(transform.position, _state.DetectDistance);
+            Gizmos.DrawWireSphere(transform.position, _state.Stat.DetectDistance.Value);
         }
 
         if (_showAttackRange)
         {
             Gizmos.color = _attackColor;
-            Gizmos.DrawWireSphere(transform.position, _state.AttackDistance);
+            Gizmos.DrawWireSphere(transform.position, _state.Stat.AttackDistance.Value);
         }
     }
 }
