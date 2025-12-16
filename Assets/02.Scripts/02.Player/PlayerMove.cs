@@ -66,7 +66,6 @@ public class PlayerMove : MonoBehaviour
         }
     }
 
-    // FPS / BackView 이동
     private void HandleFPSSimpleMove()
     {
         float h = Input.GetAxisRaw("Horizontal");
@@ -78,7 +77,8 @@ public class PlayerMove : MonoBehaviour
         {
             Vector3 camForward = Camera.main.transform.forward;
             Vector3 camRight = Camera.main.transform.right;
-            camForward.y = 0f; camRight.y = 0f;
+            camForward.y = 0f; 
+            camRight.y = 0f;
             direction = (camForward * v + camRight * h).normalized;
         }
         else if (_cameraController.CurrentMode == CameraMode.BackView)
@@ -104,8 +104,6 @@ public class PlayerMove : MonoBehaviour
     private void HandleTPSMove()
     {
         _agent.isStopped = false;
-
-        // 마우스 클릭 위치 이동
         if (Input.GetMouseButtonDown(1))
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -116,7 +114,6 @@ public class PlayerMove : MonoBehaviour
             }
         }
 
-        // 이동 방향에 따라 플레이어 회전
         Vector3 horizontalVelocity = new Vector3(_agent.velocity.x, 0, _agent.velocity.z);
         if (horizontalVelocity.sqrMagnitude > 0.01f)
         {
