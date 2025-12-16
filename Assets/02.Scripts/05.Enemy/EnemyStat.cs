@@ -31,8 +31,7 @@ public class EnemyStat : MonoBehaviour
 
         AttackDamage.Init(10);
         AttackSpeed.Init(2);
-        AttackDistance.Init(1.2f
-            );
-        DetectDistance.Init(10);
+        AttackDistance.Init(2f);
+        DetectDistance.Init(30);
     }
 }

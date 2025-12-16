@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 5496016612304445011}
   - component: {fileID: 5408742424316265062}
   - component: {fileID: 7926900393010915016}
+  - component: {fileID: -192487905708813800}
   - component: {fileID: 1489117084459329256}
   - component: {fileID: 6221013490454473032}
   m_Layer: 9
@@ -140,6 +141,22 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
+--- !u!208 &-192487905708813800
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4382907148107128725}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 0
+  m_Extents: {x: 0.5000001, y: 1, z: 0.5000001}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0.00000005960464, y: 0, z: -0.00000008940697}
+  m_TimeToStationary: 0.5
 --- !u!114 &1489117084459329256
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -153,9 +170,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Health:
-    _maxValue: 50
-    _currentValue: 50
-    _regenValue: 0
+    _max: 0
+    _current: 0
+    _regen: 0
   Damage:
     _value: 50
   ExplosionRange:
@@ -166,6 +183,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 640
   _explosionPower: 30
+  _poolType: 3
 --- !u!114 &6221013490454473032
 MonoBehaviour:
   m_ObjectHideFlags: 0

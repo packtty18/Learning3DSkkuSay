@@ -30,7 +30,7 @@ RectTransform:
   m_GameObject: {fileID: 1323236126744864819}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.01, y: 0.02, z: 1}
+  m_LocalScale: {x: 0.01, y: 0.01, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1146486918175302983}
@@ -38,7 +38,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 1.37}
   m_SizeDelta: {x: 200, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &961270027294747286
@@ -219,7 +219,8 @@ GameObject:
   - component: {fileID: 1866424427249345060}
   - component: {fileID: 9066641866864501116}
   - component: {fileID: 798391708093593667}
-  - component: {fileID: 3227762795238206093}
+  - component: {fileID: -2418998813089482991}
+  - component: {fileID: -5834883168898510795}
   - component: {fileID: 1139668290282596633}
   - component: {fileID: 5293005335712996489}
   - component: {fileID: 9057611543511565744}
@@ -303,8 +304,30 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!143 &3227762795238206093
-CharacterController:
+--- !u!195 &-2418998813089482991
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4134234708078233301}
+  m_Enabled: 1
+  m_AgentTypeID: -1372625422
+  m_Radius: 0.5
+  m_Speed: 3.5
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 0
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 2
+  m_BaseOffset: 1
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
+--- !u!136 &-5834883168898510795
+CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -318,15 +341,13 @@ CharacterController:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
+  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Height: 2
+  serializedVersion: 2
   m_Radius: 0.5
-  m_SlopeLimit: 45
-  m_StepOffset: 0.3
-  m_SkinWidth: 0.08
-  m_MinMoveDistance: 0.001
+  m_Height: 2
+  m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &1139668290282596633
 MonoBehaviour:
@@ -345,6 +366,9 @@ MonoBehaviour:
   Move: {fileID: 0}
   Attack: {fileID: 0}
   UICanvas: {fileID: 1323236126744864819}
+  _patrolPoints: []
+  _spawnPosition: {x: 0, y: 0, z: 0}
+  SetComplete: 0
   LastTracePosition: {x: 0, y: 0, z: 0}
 --- !u!114 &5293005335712996489
 MonoBehaviour:
@@ -369,7 +393,7 @@ MonoBehaviour:
   AttackSpeed:
     _value: 0
   AttackDistance:
-    _value: 0
+    _value: 2
   DetectDistance:
     _value: 0
   IdleWaitTime: 3
@@ -387,8 +411,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89b305ec37b00304db7530a96e71569c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _controller: {fileID: 3227762795238206093}
-  _rotateSpeed: 10
+  _jumpHeight: 1.5
+  _jumpDuration: 0.4
 --- !u!114 &2994339907772240029
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -414,7 +438,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8eaab6dddfa16084d9e29c9c5700ae12, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _state: {fileID: 1139668290282596633}
+  _stat: {fileID: 5293005335712996489}
   _showDetectRange: 1
   _showAttackRange: 1
   _detectColor: {r: 0, g: 0.5, b: 1, a: 0.4}
@@ -531,7 +555,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 72}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 200, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &793410887458697679

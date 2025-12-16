@@ -1,78 +1,141 @@
-﻿using UnityEngine;
+﻿using DG.Tweening;
+using UnityEngine;
+using UnityEngine.AI;
+using UnityEngine.Rendering;
 
-[RequireComponent(typeof(CharacterController))]
+[RequireComponent(typeof(NavMeshAgent))]
 public class EnemyMove : MonoBehaviour
 {
-    [Header("Components")]
-    [SerializeField] private CharacterController _controller;
+    private EnemyController _controller;
+    private EnemyStat _enemyStat => _controller.Stat;
+    private NavMeshAgent _agent;
 
-    [Header("Settings")]
-    [SerializeField] private float _rotateSpeed = 10f;
+    private Tween _knockbackTween;
 
-    private float _yVelocity = 0f;
-    private Vector3 _moveDirection = Vector3.zero;
+    private bool _isKnockback;
+
+    //점프
+    [SerializeField] private float _jumpHeight = 1.5f;
+    [SerializeField] private float _jumpDuration = 0.4f;
+
+    private Tween _jumpTween;
+    private bool _isJumping;
+
 
     private void Awake()
     {
-        if (!_controller)
-            _controller = GetComponent<CharacterController>();
+        _controller = GetComponent<EnemyController>();
+        _agent = GetComponent<NavMeshAgent>();
+
+        _agent.speed = _enemyStat.MoveSpeed.Value;
     }
 
     private void Update()
     {
-        ApplyGravity();
+        if (_isJumping)
+            return;
 
-        //누적된 이동과 중력을 실행
-        _controller.Move((_moveDirection + Vector3.up * _yVelocity) * Time.deltaTime);
-        _moveDirection = Vector3.zero;
-    }
-
-    private void ApplyGravity()
-    {
-        if (!_controller.isGrounded)
+        if (_agent.isOnOffMeshLink)
         {
-            _yVelocity += Util.GRAVITY * Time.deltaTime;
-        }
-        else
-        {
-            _yVelocity = -1f; // grounded일 때 초기화
+            StartJump();
         }
     }
 
-    //목적지 이동 용도
-    public void MoveTo(Vector3 targetPos, float speed, bool isRotate = true)
-    {
-        Vector3 dir = (targetPos - transform.position);
-        dir.y = 0f;
-        dir.Normalize();
+    #region Normal Move
 
-        if (isRotate)
-        {
-            RotateTowards(dir);
-        }
-        _moveDirection += dir * speed;
+    public void MoveTo(Vector3 targetPos, float speed)
+    {
+        if (_isKnockback)
+            return;
+
+        _agent.isStopped = false;
+        _agent.speed = speed;
+        _agent.SetDestination(targetPos);
     }
 
-    //넉백등 단순 이동 용도
-    public void MoveDirection(Vector3 direction, float speed, bool isRotate = false)
+    public void AgentStopImmediate()
     {
+        _agent.velocity = Vector3.zero;
+        _agent.isStopped = true;
+        _agent.ResetPath();
+    }
+
+    #endregion
+    #region Jump
+    private void StartJump()
+    {
+        Debug.Log("Enemy Start OffMeshLink Jump");
+
+        _isJumping = true;
+        _agent.isStopped = true;
+        _agent.updatePosition = false;
+
+        OffMeshLinkData data = _agent.currentOffMeshLinkData;
+
+        Vector3 start = transform.position;
+        Vector3 end = data.endPos;
+
+        _jumpTween = DOTween.To(
+            () => 0f,
+            t =>
+            {
+                Vector3 pos = Vector3.Lerp(start, end, t);
+
+                float height = 4f * _jumpHeight * t * (1f - t);
+                pos.y += height;
+
+                transform.position = pos;
+            },
+            1f,
+            _jumpDuration
+        )
+        .SetEase(Ease.Linear)
+        .OnComplete(EndJump);
+    }
+    private void EndJump()
+    {
+        Debug.Log("Enemy End OffMeshLink Jump");
+
+        _agent.CompleteOffMeshLink();
+
+        _agent.updatePosition = true;
+        _agent.Warp(transform.position);
+
+        _agent.isStopped = false;
+        _isJumping = false;
+    }
+
+    #endregion
+    #region Knockback
+
+    public void PlayKnockback(Vector3 direction, float power, float duration)
+    {
+        if (_isKnockback)
+            _knockbackTween?.Kill();
+
+        _isKnockback = true;
+
+        _agent.isStopped = true;
+        _agent.ResetPath();
+
         Vector3 dir = direction;
         dir.y = 0f;
         dir.Normalize();
-        _moveDirection += dir * speed;
 
-        if (isRotate)
-        {
-            RotateTowards(dir);
-        }
+        Vector3 targetPos = transform.position + dir * power;
+
+        _knockbackTween = transform.DOMove(targetPos, duration)
+            .SetEase(Ease.OutQuad)
+            .OnComplete(EndKnockback);
     }
 
-    private void RotateTowards(Vector3 dir)
+    private void EndKnockback()
     {
-        if (dir.sqrMagnitude > 0.01f)
-        {
-            Quaternion targetRot = Quaternion.LookRotation(dir);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, _rotateSpeed * Time.deltaTime);
-        }
+        _isKnockback = false;
+
+        _agent.Warp(transform.position);
     }
+
+    #endregion
+
 }

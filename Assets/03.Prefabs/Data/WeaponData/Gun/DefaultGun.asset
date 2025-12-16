@@ -18,7 +18,7 @@ MonoBehaviour:
   Range: 30
   ReloadTime: 1.6
   KnockbackData:
-    Power: 5
+    Power: 1
   RecoilData:
     YStrength: 1
     XStrength: 1

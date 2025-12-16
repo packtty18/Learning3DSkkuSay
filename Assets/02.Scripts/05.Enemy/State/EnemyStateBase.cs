@@ -80,7 +80,8 @@ public class PatrolState : EnemyBaseState
 
     public override void Update()
     {
-        if (_controller.PatrolPoints.Length == 0) return;
+        if (_controller.PatrolPoints.Length == 0) 
+            return;
 
         Transform targetPoint = _controller.PatrolPoints[patrolIndex];
         _controller.Move.MoveTo(targetPoint.position, _controller.Stat.MoveSpeed.Value);
@@ -157,6 +158,12 @@ public class ComebackState : EnemyBaseState
             _controller.LastTracePosition = Vector3.zero;
             _controller.TransitionToState(new IdleState());
         }
+
+        float playerDistance = Vector3.Distance(_controller.transform.position, _controller.Player.transform.position);
+        if (playerDistance <= _controller.Stat.DetectDistance.Value)
+        {
+            _controller.TransitionToState(new TraceState());
+        }
     }
 }
 
@@ -171,6 +178,8 @@ public class AttackState : EnemyBaseState
     {
         base.Enter(enemy);
         attackTimer = 0f;
+
+        enemy.Move.AgentStopImmediate();
         Debug.Log("Enter AttackState");
     }
 
@@ -206,30 +215,27 @@ public class AttackState : EnemyBaseState
 #region Hit
 public class HitState : EnemyBaseState
 {
-    private Vector3 knockDir;
-    private float knockbackPower;
+    private Vector3 _dir;
+    private float _power;
 
-    public HitState(Vector3 direction, float power)
+    public HitState(Vector3 dir, float power)
     {
-        knockDir = direction.normalized;
-        knockbackPower = power;
+        _dir = dir;
+        _power = power;
     }
 
-    public override void Enter(EnemyController _controller)
+    public override void Enter(EnemyController controller)
     {
-        base.Enter(_controller);
-        _controller.StartCoroutine(HitRoutine());
-    }
+        base.Enter(controller);
 
-    private IEnumerator HitRoutine()
-    {
-        float timer = 0f;
-        while (timer < _controller.Stat.KnockbackTime)
-        {
-            timer += Time.deltaTime;
-            _controller.Move.MoveDirection(knockDir, knockbackPower);
-            yield return null;
-        }
+        float knockDistance = _power;
+        float knockDuration = controller.Stat.KnockbackTime;
+
+        controller.Move.PlayKnockback(
+            _dir,
+            knockDistance,
+            knockDuration
+        );
 
         _controller.TransitionToState(new IdleState());
     }

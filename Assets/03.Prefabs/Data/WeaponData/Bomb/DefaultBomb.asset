@@ -18,4 +18,4 @@ MonoBehaviour:
   Force: 15
   Delay: 1
   Knockback:
-    Power: 30
+    Power: 5
