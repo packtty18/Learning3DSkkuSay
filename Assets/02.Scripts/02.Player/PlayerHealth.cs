@@ -27,12 +27,12 @@ public class PlayerHealth : MonoBehaviour, IDamageable
 
     private void PlayHitEffect()
     {
-        Debug.Log("[PlayerHealth] Hit");
+        DebugManager.Instance.Log("[PlayerHealth] Hit");
     }
 
     private void Die()
     {
-        Debug.Log("[PlayerHealth] Die");
+        DebugManager.Instance.Log("[PlayerHealth] Die");
         _stat.SetDead(true);
     }
 }

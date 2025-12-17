@@ -6,7 +6,7 @@ public class EnemyAttack : MonoBehaviour, IAttackable
     private PlayerHealth _player => _state.Player.GetComponent<PlayerHealth>();
     public void Attack(AttackData data)
     {
-        Debug.Log("적 공격 발동!");
+        DebugManager.Instance.Log("적 공격 발동!");
         _player.ApplyDamage(data);
     }
 }

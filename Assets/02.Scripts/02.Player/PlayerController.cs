@@ -5,8 +5,6 @@ using ArtificeToolkit.Attributes;
 [RequireComponent(typeof(PlayerMove))]
 [RequireComponent(typeof(PlayerRotate))]
 [RequireComponent(typeof(PlayerHealth))]
-[RequireComponent(typeof(PlayerGunFire))]
-[RequireComponent(typeof(PlayerBombFire))]
 public class PlayerController : Singleton<PlayerController>
 {
     [Title("Cached Components (Read Only)")]
@@ -14,8 +12,7 @@ public class PlayerController : Singleton<PlayerController>
     public PlayerMove Move;
     public PlayerRotate Rotate;
     public PlayerHealth Health;
-    public PlayerGunFire GunFire;
-    public PlayerBombFire BombFire;
+    public PlayerAttack Attack;
 
     public override void Init()
     {
@@ -29,7 +26,6 @@ public class PlayerController : Singleton<PlayerController>
         Move = GetComponent<PlayerMove>();
         Rotate = GetComponent<PlayerRotate>();
         Health = GetComponent<PlayerHealth>();
-        GunFire = GetComponent<PlayerGunFire>();
-        BombFire = GetComponent<PlayerBombFire>();
+        Attack = GetComponent<PlayerAttack>();
     }
 }

@@ -37,7 +37,9 @@ public class TPSState : ICameraState
         // 플레이어 회전
         _playerRotate.Rotate(mouseX * rotateSpeed);
 
-        // 카메라 위치
+    }
+    public void SetCameraPosition()
+    {
         _camera.position = _pivot.position;
     }
 

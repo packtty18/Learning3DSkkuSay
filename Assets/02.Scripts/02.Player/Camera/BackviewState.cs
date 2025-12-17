@@ -44,13 +44,14 @@ public class BackViewState : ICameraState
         _playerRotate.Rotate(mouseX * rotateSpeed);
 
         // 상하 회전은 카메라
-        _camera.position = _pivot.position;
         _accumulateY -= mouseY * rotateSpeed;
         _accumulateY = Mathf.Clamp(_accumulateY, -Y_CLAMP, Y_CLAMP);
-
+    }
+    public void SetCameraPosition()
+    {
+        _camera.position = _pivot.position;
         _camera.rotation = Quaternion.Euler(_accumulateY, _player.eulerAngles.y, 0f);
     }
-
     public void Exit()
     {
         FireRebound.OnRecoil -= ApplyRecoil;

@@ -43,7 +43,7 @@ public class EnemyController : MonoBehaviour, IDamageable, IPoolable
         Player = PlayerController.Instance;
         Stat.Init();
         Stat.Health.OnCurrentChanged += JudgeDeathInHealthChange;
-
+        Agent.SetAgent(Stat.MoveSpeed.Value);
         TransitionToState(new SpawnState());
 
         UICanvas.SetActive(true);

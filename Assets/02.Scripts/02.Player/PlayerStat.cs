@@ -46,7 +46,7 @@ public class PlayerStat : MonoBehaviour
 
         Stemina.Init(MoveData.MaxStamina, default, MoveData.StaminaRegen);
 
-        BombCount.Init(CurrentBombData.MaxCount);
+        BombCount.Init(CurrentBombData.MaxCount, default ,0.2f);
 
         InventoryBullet.Init(150);
         LoadedBullet.Init(CurrentGunData.MaxBullet);

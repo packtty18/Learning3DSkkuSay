@@ -40,13 +40,13 @@ public class FPSState : ICameraState
         _playerRotate.Rotate(mouseX * rotateSpeed);
 
         // 상하는 카메라
-
-        Debug.Log(_pivot.position);
         _accumulateY -= mouseY * rotateSpeed;
         _accumulateY = Mathf.Clamp(_accumulateY, -Y_CLAMP, Y_CLAMP);
+    }
 
+    public void SetCameraPosition()
+    {
         _camera.position = _pivot.position;
-
         _camera.rotation = Quaternion.Euler(_accumulateY, _player.eulerAngles.y, 0f);
     }
 
@@ -71,4 +71,6 @@ public class FPSState : ICameraState
     {
         return _camera.forward;
     }
+
+    
 }

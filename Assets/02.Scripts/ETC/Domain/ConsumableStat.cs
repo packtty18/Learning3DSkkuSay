@@ -6,39 +6,33 @@ public class ConsumableStat<T> : StatBase<T> where T : struct, IConvertible
 {
     [SerializeField] private T _max;
     [SerializeField] private T _current;
-    [SerializeField] private T _regen;
+
+    [SerializeField] private float _regen;
+
+    private float _regenAccumulator;
 
     public T Max => _max;
     public T Current => _current;
-    public T RegenValue => _regen;
+    public float RegenValue => _regen;
 
     public event Action<T> OnMaxChanged;
     public event Action<T> OnCurrentChanged;
-    public event Action<T> OnRegenChanged;
+    public event Action<float> OnRegenChanged;
 
-    public void Init(T max, T current = default, T regen = default)
+    public void Init(T max, T current = default, float regen = 0f)
     {
         SetMax(max);
+
         if (ToDouble(current) <= 0.00001)
-        {
             SetCurrent(_max);
-        }
         else
-        {
             SetCurrent(current);
-        }
-        if (ToDouble(regen) <= 0.00001)
-        {
-            SetRegen(FromDouble(0));
-        }
-        else
-        {
-            SetRegen(regen);
-        }
+
+        SetRegen(regen);
+        _regenAccumulator = 0f;
     }
 
-
-    #region 상태 체크
+    #region State Check
     public bool IsFull()
     {
         return EqualsValue(_current, _max);
@@ -70,8 +64,10 @@ public class ConsumableStat<T> : StatBase<T> where T : struct, IConvertible
     #region Current
     public void SetCurrent(T value)
     {
-        double clamped =
-            Math.Clamp(ToDouble(value), 0, ToDouble(_max));
+        double clamped = Math.Clamp(
+            ToDouble(value),
+            0,
+            ToDouble(_max));
 
         T newValue = FromDouble(clamped);
 
@@ -89,11 +85,11 @@ public class ConsumableStat<T> : StatBase<T> where T : struct, IConvertible
     #endregion
 
     #region Regen
-    public void SetRegen(T value)
+    public void SetRegen(float value)
     {
-        T clamped = ClampMinZero(value);
+        float clamped = Mathf.Max(0f, value);
 
-        if (EqualsValue(_regen, clamped))
+        if (Mathf.Approximately(_regen, clamped))
             return;
 
         _regen = clamped;
@@ -102,10 +98,23 @@ public class ConsumableStat<T> : StatBase<T> where T : struct, IConvertible
 
     public void Regenerate(float deltaTime)
     {
-        if (IsFull() || ToDouble(_regen) <= 0)
+        if (IsFull() || _regen <= 0f)
             return;
 
-        double add = ToDouble(_regen) * deltaTime;
+        _regenAccumulator += _regen * deltaTime;
+
+        if (typeof(T) == typeof(float))
+        {
+            SetCurrent(FromDouble(ToDouble(_current) + _regen * deltaTime));
+            return;
+        }
+
+        if (_regenAccumulator < 1f)
+            return;
+
+        int add = Mathf.FloorToInt(_regenAccumulator);
+        _regenAccumulator -= add;
+
         SetCurrent(FromDouble(ToDouble(_current) + add));
     }
     #endregion

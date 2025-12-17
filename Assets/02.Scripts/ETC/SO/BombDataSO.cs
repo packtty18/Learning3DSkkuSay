@@ -1,14 +1,14 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
 [CreateAssetMenu(menuName = "WeaponStat/Bomb Data")]
 public class BombDataSO : ScriptableObject
 {
-    public int MaxCount;            //ÃÖ´ë ¼ÒÀ¯ °³¼ö
+    public int MaxCount;            //ìµœëŒ€ ì†Œìœ  ê°œìˆ˜
 
-    public float Damage;            //µ¥¹ÌÁö
-    public float ExplosionRadius;   //Æø¹ß ¹İ°æ
-    public float Force;             //ÆøÅºÀ» ´øÁö´Â Èû
-    public float Delay;             //´ÙÀ½ ÆøÅºÀ» ´øÁö±â ±îÁö µô·¹ÀÌ
+    public float Damage;            //ë°ë¯¸ì§€
+    public float ExplosionRadius;   //í­ë°œ ë°˜ê²½
+    public float Force;             //í­íƒ„ì„ ë˜ì§€ëŠ” í˜
+    public float Delay;             //ë‹¤ìŒ í­íƒ„ì„ ë˜ì§€ê¸° ê¹Œì§€ ë”œë ˆì´
 
-    public KnockbackData Knockback; //³Ë¹é¿¡ ´ëÇÑ Á¤º¸
+    public KnockbackData Knockback; //ë„‰ë°±ì— ëŒ€í•œ ì •ë³´
 }

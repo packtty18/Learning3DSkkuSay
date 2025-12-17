@@ -40,6 +40,10 @@ public class CameraStateManager : MonoBehaviour
 
         _currentState.UpdateState(mouseX, mouseY);
     }
+    private void LateUpdate()
+    {
+        _currentState.SetCameraPosition();
+    }
 }
 
 

@@ -1,16 +1,16 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
 [CreateAssetMenu(menuName = "WeaponStat/Gun Data")]
 public class GunDataSO : ScriptableObject
 {
-    public int MaxBullet;    //ÅºÃ¢ÀÇ Å©±â
+    public int MaxBullet;    //íƒ„ì°½ì˜ í¬ê¸°
 
-    public float Damage;    //ÃÑÀÇ µ¥¹ÌÁö
-    public float FireDelay; //ÃÑÀÇ ¹ß»ç °£°İ
-    public float Range;     //»ç°Å¸®
+    public float Damage;    //ì´ì˜ ë°ë¯¸ì§€
+    public float FireDelay; //ì´ì˜ ë°œì‚¬ ê°„ê²©
+    public float Range;     //ì‚¬ê±°ë¦¬
 
-    public float ReloadTime;    //ÀçÀåÀü ½Ã°£
+    public float ReloadTime;    //ì¬ì¥ì „ ì‹œê°„
 
-    public KnockbackData KnockbackData; //³Ë¹é Á¤º¸
-    public RecoilData RecoilData;       //¹İµ¿ Á¤º¸
+    public KnockbackData KnockbackData; //ë„‰ë°± ì •ë³´
+    public RecoilData RecoilData;       //ë°˜ë™ ì •ë³´
 }

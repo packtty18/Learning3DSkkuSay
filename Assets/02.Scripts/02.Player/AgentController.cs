@@ -10,12 +10,12 @@ public class AgentController : MonoBehaviour
 
     private NavMeshAgent _agent;
 
-    private void Start()
+    private void Awake()
     {
         _agent = GetComponent<NavMeshAgent>();
     }
 
-    public void SetAgent(float moveSpeed, bool InitActive = true)
+    public void SetAgent( float moveSpeed, bool InitActive = true)
     {
         _agent.speed = moveSpeed;
 

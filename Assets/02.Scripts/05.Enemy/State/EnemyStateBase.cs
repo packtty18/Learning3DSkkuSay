@@ -21,7 +21,7 @@ public class SpawnState : EnemyBaseState
     public override void Enter(EnemyController controller)
     {
         base.Enter(controller);
-        Debug.Log("Enter SpawnState");
+        DebugManager.Instance.Log("Enter SpawnState");
     }
 
     public override void Update()
@@ -44,7 +44,7 @@ public class IdleState : EnemyBaseState
     {
         base.Enter(controller);
         idleTimer = 0f;
-        Debug.Log("Enter IdleState");
+        DebugManager.Instance.Log("Enter IdleState");
     }
 
     public override void Update()
@@ -74,7 +74,7 @@ public class PatrolState : EnemyBaseState
     public override void Enter(EnemyController _controller)
     {
         base.Enter(_controller);
-        Debug.Log("Enter PatrolState");
+        DebugManager.Instance.Log("Enter PatrolState");
         patrolIndex = 0;
     }
 
@@ -111,7 +111,7 @@ public class TraceState : EnemyBaseState
     {
         base.Enter(_controller);
         _controller.LastTracePosition = _controller.transform.position;
-        Debug.Log("Enter TraceState");
+        DebugManager.Instance.Log("Enter TraceState");
     }
 
     public override void Update()
@@ -140,7 +140,7 @@ public class ComebackState : EnemyBaseState
     public override void Enter(EnemyController _controller)
     {
         base.Enter(_controller);
-        Debug.Log("Enter ComebackState");
+        DebugManager.Instance.Log("Enter ComebackState");
     }
 
     public override void Update()
@@ -178,13 +178,12 @@ public class AttackState : EnemyBaseState
     {
         base.Enter(enemy);
         attackTimer = 0f;
-        Debug.Log("Enter AttackState");
+        DebugManager.Instance.Log("Enter AttackState");
     }
 
     public override void Update()
     {
         float distance = Vector3.Distance(_controller.transform.position, _controller.Player.transform.position);
-
         if (distance > _controller.Stat.AttackDistance.Value)
         {
             _controller.TransitionToState(new TraceState());

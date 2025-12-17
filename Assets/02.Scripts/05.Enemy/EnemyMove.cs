@@ -27,14 +27,10 @@ public class EnemyMove : MonoBehaviour
         _controller = GetComponent<EnemyController>();
     }
 
-    private void Start()
-    {
-        EnemyStat stat = _controller.Stat;
-        _agent.SetAgent(stat.MoveSpeed.Value);
-    }
-
     private void Update()
     {
+        if (GameManager.Instance.State != EGameState.Playing)
+            return;
         if (_isJumping)
             return;
 
