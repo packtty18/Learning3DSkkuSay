@@ -3,12 +3,11 @@ using UnityEngine.AI;
 using ArtificeToolkit.Attributes;
 
 [RequireComponent(typeof(CharacterController))]
-[RequireComponent(typeof(NavMeshAgent))]
 public class PlayerMove : MonoBehaviour
 {
     [Title("Components")]
     [ReadOnly, SerializeField] private CharacterController _characterController;
-    [ReadOnly, SerializeField] private NavMeshAgent _agent;
+    [ReadOnly, SerializeField] private AgentController _agent;
     [SerializeField] private PlayerStat _stat;
 
     private MovementDataSO _data => _stat.MoveData;
@@ -26,9 +25,15 @@ public class PlayerMove : MonoBehaviour
     private void Awake()
     {
         _characterController = GetComponent<CharacterController>();
-        _agent = GetComponent<NavMeshAgent>();
-        _agent.updateRotation = false; // NavMeshAgent 회전은 직접 처리
-        _agent.updateUpAxis = true;
+        _agent = GetComponent<AgentController>();
+
+        //_agent.updateRotation = false; // NavMeshAgent 회전은 직접 처리
+        //_agent.updateUpAxis = true;
+    }
+
+    private void Start()
+    {
+        _agent.SetAgent(_stat.MoveData.MoveSpeed, false);
     }
 
     private void Update()
@@ -103,22 +108,21 @@ public class PlayerMove : MonoBehaviour
     // TPS 이동 (NavMesh)
     private void HandleTPSMove()
     {
-        _agent.isStopped = false;
         if (Input.GetMouseButtonDown(1))
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out RaycastHit hit, 500f))
             {
-                _agent.SetDestination(hit.point);
+                _agent.SetAgentDestination(hit.point);
                 Debug.Log($"TPS 이동: {hit.point}");
             }
         }
 
-        Vector3 horizontalVelocity = new Vector3(_agent.velocity.x, 0, _agent.velocity.z);
-        if (horizontalVelocity.sqrMagnitude > 0.01f)
-        {
-            _playerRotate.SetDirection(horizontalVelocity.normalized);
-        }
+        //Vector3 horizontalVelocity = new Vector3(_agent.velocity.x, 0, _agent.velocity.z);
+        //if (horizontalVelocity.sqrMagnitude > 0.01f)
+        //{
+        //    _playerRotate.SetDirection(horizontalVelocity.normalized);
+        //}
     }
 
     private void HandleJump()

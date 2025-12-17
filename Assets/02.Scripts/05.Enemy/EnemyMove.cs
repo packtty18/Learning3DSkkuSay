@@ -1,4 +1,5 @@
-﻿using DG.Tweening;
+﻿using ArtificeToolkit.Attributes;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Rendering;
@@ -7,27 +8,29 @@ using UnityEngine.Rendering;
 public class EnemyMove : MonoBehaviour
 {
     private EnemyController _controller;
-    private EnemyStat _enemyStat => _controller.Stat;
-    private NavMeshAgent _agent;
+    private AgentController _agent => _controller.Agent;
 
-    private Tween _knockbackTween;
-
-    private bool _isKnockback;
-
-    //점프
+    [Title("Jump")]
     [SerializeField] private float _jumpHeight = 1.5f;
     [SerializeField] private float _jumpDuration = 0.4f;
 
     private Tween _jumpTween;
     private bool _isJumping;
 
+    [Title("Knockback")]
+    private Tween _knockbackTween;
+    [ReadOnly,SerializeField] private bool _isKnockback;
+
 
     private void Awake()
     {
         _controller = GetComponent<EnemyController>();
-        _agent = GetComponent<NavMeshAgent>();
+    }
 
-        _agent.speed = _enemyStat.MoveSpeed.Value;
+    private void Start()
+    {
+        EnemyStat stat = _controller.Stat;
+        _agent.SetAgent(stat.MoveSpeed.Value);
     }
 
     private void Update()
@@ -35,7 +38,7 @@ public class EnemyMove : MonoBehaviour
         if (_isJumping)
             return;
 
-        if (_agent.isOnOffMeshLink)
+        if (_agent.IsOffMeshLink())
         {
             Debug.Log("점프 발생");
             StartJump();
@@ -49,29 +52,18 @@ public class EnemyMove : MonoBehaviour
         if (_isKnockback)
             return;
 
-        _agent.isStopped = false;
-        _agent.speed = speed;
-        _agent.SetDestination(targetPos);
+        _agent.SetAgentDestination(targetPos);
     }
 
-    public void AgentStopImmediate()
-    {
-        _agent.velocity = Vector3.zero;
-        _agent.isStopped = true;
-        _agent.ResetPath();
-    }
-
+    
     #endregion
     #region Jump
     private void StartJump()
     {
         Debug.Log("Enemy Start OffMeshLink Jump");
+        OffMeshLinkData data = _agent.GetOffMeshLinkData(); //ResetPath 전에 가져와야함
         _isJumping = true;
-        _agent.isStopped = true;
-        OffMeshLinkData data = _agent.currentOffMeshLinkData;
-
-        //반드시 데이터를 가져온다음에 reset Path 실행
-        _agent.ResetPath();
+        _agent.AgentStop();
         Vector3 start = transform.position;
         Vector3 end = data.endPos;
 
@@ -96,10 +88,7 @@ public class EnemyMove : MonoBehaviour
     {
         Debug.Log("Enemy End OffMeshLink Jump");
 
-        _agent.CompleteOffMeshLink();
-
-        _agent.Warp(transform.position);
-        _agent.isStopped = false;
+        _agent.AgentJumpEnd();
         _isJumping = false;
     }
 
@@ -113,8 +102,7 @@ public class EnemyMove : MonoBehaviour
 
         _isKnockback = true;
 
-        _agent.isStopped = true;
-        _agent.ResetPath();
+        _agent.AgentStop();
 
         Vector3 dir = direction;
         dir.y = 0f;
@@ -130,8 +118,7 @@ public class EnemyMove : MonoBehaviour
     private void EndKnockback()
     {
         _isKnockback = false;
-
-        _agent.Warp(transform.position);
+        _agent.AgentWarp(transform.position);
     }
 
     #endregion

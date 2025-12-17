@@ -13,6 +13,7 @@ public class EnemyController : MonoBehaviour, IDamageable, IPoolable
     [ReadOnly] public PlayerController Player;
     [ReadOnly] public EnemyMove Move;
     [ReadOnly] public EnemyAttack Attack;
+    [ReadOnly] public AgentController Agent;
 
     public GameObject UICanvas;
     // 상태 관리
@@ -22,7 +23,6 @@ public class EnemyController : MonoBehaviour, IDamageable, IPoolable
     public Transform[] PatrolPoints => _patrolPoints;
     public Vector3 SpawnPosition => _spawnPosition;
 
-
     public bool SetComplete = false;
 
     [ReadOnly] public Vector3 LastTracePosition;
@@ -31,6 +31,7 @@ public class EnemyController : MonoBehaviour, IDamageable, IPoolable
         Stat=GetComponent<EnemyStat>();
         Move = GetComponent<EnemyMove>();
         Attack = GetComponent<EnemyAttack>();
+        Agent = GetComponent<AgentController>();
     }
 
     #region Pool
@@ -59,7 +60,6 @@ public class EnemyController : MonoBehaviour, IDamageable, IPoolable
         SetComplete = false;
 
         OnReturnedToPool?.Invoke(this);
-
         UICanvas.SetActive(false);
     }
 
@@ -107,6 +107,7 @@ public class EnemyController : MonoBehaviour, IDamageable, IPoolable
 
         if (Stat.Health.IsEmpty())
         {
+            Agent.AgentStop();
             TransitionToState(new DeathState());
         }
         else

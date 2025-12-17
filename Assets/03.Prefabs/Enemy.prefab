@@ -226,6 +226,7 @@ GameObject:
   - component: {fileID: 9057611543511565744}
   - component: {fileID: 2994339907772240029}
   - component: {fileID: 7931295140898166559}
+  - component: {fileID: 8972649815063281320}
   m_Layer: 9
   m_Name: Enemy
   m_TagString: Untagged
@@ -365,6 +366,7 @@ MonoBehaviour:
   Player: {fileID: 0}
   Move: {fileID: 0}
   Attack: {fileID: 0}
+  Agent: {fileID: 0}
   UICanvas: {fileID: 1323236126744864819}
   _patrolPoints: []
   _spawnPosition: {x: 0, y: 0, z: 0}
@@ -413,6 +415,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _jumpHeight: 1.5
   _jumpDuration: 0.4
+  _isKnockback: 0
 --- !u!114 &2994339907772240029
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -443,6 +446,18 @@ MonoBehaviour:
   _showAttackRange: 1
   _detectColor: {r: 0, g: 0.5, b: 1, a: 0.4}
   _attackColor: {r: 1, g: 0, b: 0, a: 0.4}
+--- !u!114 &8972649815063281320
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4134234708078233301}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 89d7f9aaaee84fc4ca41669b90118680, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4262288871575496393
 GameObject:
   m_ObjectHideFlags: 0

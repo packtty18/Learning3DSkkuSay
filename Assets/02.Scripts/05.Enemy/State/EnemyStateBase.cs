@@ -178,8 +178,6 @@ public class AttackState : EnemyBaseState
     {
         base.Enter(enemy);
         attackTimer = 0f;
-
-        enemy.Move.AgentStopImmediate();
         Debug.Log("Enter AttackState");
     }
 

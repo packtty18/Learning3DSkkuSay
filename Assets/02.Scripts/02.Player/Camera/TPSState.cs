@@ -10,7 +10,7 @@ public class TPSState : ICameraState
     private readonly float _rotationSpeed;
 
     private PlayerRotate _playerRotate;
-    private NavMeshAgent _agent;
+    private AgentController _agent;
 
     public TPSState(Transform cam, Transform player, Transform pivot, float speed)
     {
@@ -18,12 +18,12 @@ public class TPSState : ICameraState
         _player = player;
         _pivot = pivot;
         _rotationSpeed = speed;
-        _agent = player.GetComponent<NavMeshAgent>();
+        _agent = player.GetComponent<AgentController>();
     }
 
     public void Enter()
     {
-        _agent.enabled = true;
+        _agent.SetEnable(true);
         _playerRotate = _player.GetComponent<PlayerRotate>();
 
         _camera.DOMove(_pivot.position, 0.35f).SetEase(Ease.InOutSine);
@@ -39,25 +39,12 @@ public class TPSState : ICameraState
 
         // 카메라 위치
         _camera.position = _pivot.position;
-
-        // 이동 처리 (마우스 클릭 위치 이동)
-        if (Input.GetMouseButtonDown(1))
-        {
-
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            Physics.Raycast(ray, out RaycastHit hit);
-            _agent.SetDestination(hit.point);
-            Debug.Log($"TPS 이동 : {hit.collider.name} , {hit.point}");
-        }
     }
 
     public void Exit()
     {
-        
-        _agent.velocity = Vector3.zero;
-        _agent.isStopped = true;
-        _agent.ResetPath();
-        _agent.enabled = false;
+        _agent.AgentStop(true);
+        _agent.SetEnable(false);
     }
 
     public Vector3 GetFireDirection(Transform firePos)
