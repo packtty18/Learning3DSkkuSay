@@ -9,6 +9,7 @@ public class PlayerMove : MonoBehaviour
     [ReadOnly, SerializeField] private CharacterController _characterController;
     [ReadOnly, SerializeField] private AgentController _agent;
     [SerializeField] private PlayerStat _stat;
+    [SerializeField] private Animator _animator;
 
     private MovementDataSO _data => _stat.MoveData;
     private ConsumableStat<float> _stamina => _stat.Stemina;
@@ -70,13 +71,15 @@ public class PlayerMove : MonoBehaviour
             _yVelocity += Util.GRAVITY * Time.deltaTime;
         }
     }
-
+    
     private void HandleFPSSimpleMove()
     {
         float h = Input.GetAxisRaw("Horizontal");
         float v = Input.GetAxisRaw("Vertical");
 
         Vector3 direction = new Vector3(h, 0f, v).normalized;
+        _animator.SetFloat("Speed", direction.magnitude);
+
 
         if (_cameraController.CurrentMode == CameraMode.FPS)
         {

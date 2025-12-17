@@ -54,6 +54,7 @@ public class IdleState : EnemyBaseState
         if (distance <= _controller.Stat.DetectDistance.Value)
         {
             _controller.TransitionToState(new TraceState());
+            _controller.Animator.SetBool("Run", true);
             return;
         }
 
@@ -61,6 +62,7 @@ public class IdleState : EnemyBaseState
         if (_controller.PatrolPoints.Length > 0 && idleTimer >= _controller.Stat.IdleWaitTime)
         {
             _controller.TransitionToState(new PatrolState());
+            _controller.Animator.SetBool("Run", true);
         }
     }
 }
@@ -91,6 +93,7 @@ public class PatrolState : EnemyBaseState
         {
             patrolIndex = (patrolIndex + 1) % _controller.PatrolPoints.Length;
             _controller.TransitionToState(new IdleState());
+            _controller.Animator.SetBool("Run", false);
         }
 
         // 플레이어 발견 시 Trace 상태
@@ -123,6 +126,7 @@ public class TraceState : EnemyBaseState
         if (distance <= _controller.Stat.AttackDistance.Value)
         {
             _controller.TransitionToState(new AttackState());
+            _controller.Animator.SetBool("Attack",true);
         }
 
         if (distance > _controller.Stat.DetectDistance.Value * 1.2f)
@@ -157,6 +161,7 @@ public class ComebackState : EnemyBaseState
         {
             _controller.LastTracePosition = Vector3.zero;
             _controller.TransitionToState(new IdleState());
+            _controller.Animator.SetBool("Run", false);
         }
 
         float playerDistance = Vector3.Distance(_controller.transform.position, _controller.Player.transform.position);
@@ -187,23 +192,24 @@ public class AttackState : EnemyBaseState
         if (distance > _controller.Stat.AttackDistance.Value)
         {
             _controller.TransitionToState(new TraceState());
+            _controller.Animator.SetBool("Attack", false);
             return;
         }
 
-        attackTimer += Time.deltaTime;
-        if (attackTimer >= _controller.Stat.AttackSpeed.Value)
-        {
-            attackTimer = 0f;
+        //attackTimer += Time.deltaTime;
+        //if (attackTimer >= _controller.Stat.AttackSpeed.Value)
+        //{
+        //    attackTimer = 0f;
 
-            var data = new AttackData
-            {
-                Damage = _controller.Stat.AttackDamage.Value,
-                HitDirection = _controller.transform.forward,
-                Attacker = _controller.gameObject
-            };
+        //    var data = new AttackData
+        //    {
+        //        Damage = _controller.Stat.AttackDamage.Value,
+        //        HitDirection = _controller.transform.forward,
+        //        Attacker = _controller.gameObject
+        //    };
 
-            _controller.Attack.Attack(data);
-        }
+        //    _controller.Attack.Attack(data);
+        //}
     }
 }
 

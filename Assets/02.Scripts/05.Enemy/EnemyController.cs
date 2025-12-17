@@ -1,19 +1,19 @@
 ﻿using ArtificeToolkit.Attributes;
 using System;
 using UnityEngine;
-using static UnityEngine.EventSystems.EventTrigger;
 
-[RequireComponent(typeof(EnemyStat))]
-[RequireComponent(typeof(EnemyMove))]
-[RequireComponent(typeof(EnemyAttack))]
+
 public class EnemyController : MonoBehaviour, IDamageable, IPoolable
 {
     [Header("References")]
-    [ReadOnly] public EnemyStat Stat;
     [ReadOnly] public PlayerController Player;
+
+
+    [ReadOnly] public EnemyStat Stat;
     [ReadOnly] public EnemyMove Move;
     [ReadOnly] public EnemyAttack Attack;
     [ReadOnly] public AgentController Agent;
+    [ReadOnly] public Animator Animator;
 
     public GameObject UICanvas;
     // 상태 관리
@@ -30,8 +30,9 @@ public class EnemyController : MonoBehaviour, IDamageable, IPoolable
     {
         Stat=GetComponent<EnemyStat>();
         Move = GetComponent<EnemyMove>();
-        Attack = GetComponent<EnemyAttack>();
+        Attack = GetComponentInChildren<EnemyAttack>();
         Agent = GetComponent<AgentController>();
+        Animator = GetComponentInChildren<Animator>();
     }
 
     #region Pool
@@ -58,7 +59,7 @@ public class EnemyController : MonoBehaviour, IDamageable, IPoolable
         _spawnPosition = Vector3.zero;
         _patrolPoints = null;
         SetComplete = false;
-
+        Animator.SetTrigger("Reset");
         OnReturnedToPool?.Invoke(this);
         UICanvas.SetActive(false);
     }
@@ -109,10 +110,12 @@ public class EnemyController : MonoBehaviour, IDamageable, IPoolable
         {
             Agent.AgentStop();
             TransitionToState(new DeathState());
+            Animator.SetTrigger("Dead");
         }
         else
         {
             TransitionToState(new HitState(data.HitDirection, data.Knockback.Power));
+            Animator.SetTrigger("Hit");
         }
 
         DebugManager.Instance.Log($"피격 발생 : {data.Attacker.name}가 {gameObject.name}에게 {data.Damage} 데미지. 남은체력 : {Stat.Health.Current}/{Stat.Health.Max}");
