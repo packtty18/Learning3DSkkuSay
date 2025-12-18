@@ -22,6 +22,8 @@ MonoBehaviour:
       Value: 1
     - Key: FeelMMProgressBar
       Value: 1
+    - Key: _scene
+      Value: 1
   validatorTypesMap:
     list:
     - Key: Artifice_ValidatorModule_ScriptableObject_CustomAttributeChecker

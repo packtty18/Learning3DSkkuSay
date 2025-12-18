@@ -5,9 +5,10 @@ using ArtificeToolkit.Attributes;
 public class GunWeapon : WeaponBase
 {
     [Required, SerializeField] private Transform _fireTransform;
+    [Required,SerializeField] private Transform _muzzleTransform;
     [SerializeField] private LayerMask _targetLayer;
     [Required, SerializeField] private FireRebound _rebound;
-
+    
     private GunDataSO Data => Stat.CurrentGunData;
     private ValueStat<int> Inventory => Stat.InventoryBullet;
     private ConsumableStat<int> Loaded => Stat.LoadedBullet;
@@ -28,16 +29,13 @@ public class GunWeapon : WeaponBase
 
         _canFire = false;
         Loaded.Consume(1);
-
-        Animator.SetBool("IsAttack", true);
         _rebound.PlayRebound();
-
+        Animator.SetTrigger("Attack");
         StartCoroutine(FireDelay());
     }
 
     public override void AttackEnd()
     {
-        Animator.SetBool("IsAttack", false);
     }
 
     public override void Reload()
@@ -50,12 +48,24 @@ public class GunWeapon : WeaponBase
 
     public void GunFire()
     {
+        Muzzle muzzle = PoolManager.Instance.Get(EPoolType.Muzzle).GetComponent<Muzzle>();
+        muzzle.transform.position = _muzzleTransform.position;
+        muzzle.transform.rotation = _muzzleTransform.rotation;
+
         Ray ray = new Ray(
             _fireTransform.position,
             CameraController.Instance.GetFireDirection(_fireTransform));
 
         if (!Physics.Raycast(ray, out RaycastHit hit, Data.Range, _targetLayer))
             return;
+
+        ParticleSystem hitEffect = ParticleManager.Instance.Get(EParticleType.BulletEnvironmentHit);
+        ParticleSystem.EmitParams emit = new ParticleSystem.EmitParams
+        {
+            position = hit.point,
+            rotation3D = Quaternion.LookRotation(hit.normal).eulerAngles
+        };
+        hitEffect.Emit(emit, 1);
 
         if (hit.collider.TryGetComponent(out IDamageable damageable))
         {

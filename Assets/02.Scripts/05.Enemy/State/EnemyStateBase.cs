@@ -127,7 +127,6 @@ public class TraceState : EnemyBaseState
         if (distance <= _controller.Stat.AttackDistance.Value)
         {
             _controller.TransitionToState(new AttackState());
-            _controller.Animator.SetBool("IsMoving", false);
             _controller.Animator.SetTrigger("Attack");
         }
 
@@ -196,6 +195,7 @@ public class AttackState : EnemyBaseState
         if (distance > _controller.Stat.AttackDistance.Value)
         {
             _controller.TransitionToState(new TraceState());
+            _controller.Animator.SetBool("IsMoving", true);
             return;
         }
 

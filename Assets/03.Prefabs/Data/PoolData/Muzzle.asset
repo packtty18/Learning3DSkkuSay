@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60a4226aac5ce1141a2a7aa046e04e69, type: 3}
+  m_Name: Muzzle
+  m_EditorClassIdentifier: 
+  PoolType: 4
+  PoolPrefab: {fileID: 199458, guid: ea9f3ea1e25f36d478d475ded71078e7, type: 3}
+  DefaultInstantCount: 5
+  DefaultCapacity: 10
+  MaxSize: 20
