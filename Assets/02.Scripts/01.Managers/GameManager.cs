@@ -37,10 +37,10 @@ public class GameManager : Singleton<GameManager>
 
     private IEnumerator GameStartRoutine()
     {
-        _mainTextUI.ShowText("<wave a=2 s=1>레디...</wave>");
+        _mainTextUI.ShowText("<wave a=2 s=1>Ready...</wave>");
         yield return new WaitForSeconds(2f);
 
-        _mainTextUI.ShowText("<bounce a=15>시작!!</bounce>");
+        _mainTextUI.ShowText("<bounce a=15>Start!!</bounce>");
         yield return new WaitForSeconds(1f);
 
         _mainTextUI.HideText();
@@ -66,6 +66,6 @@ public class GameManager : Singleton<GameManager>
 
         DebugManager.Instance.Log("[GameManager] GameOver");
 
-        _mainTextUI.ShowText("<slideh>게임 오버...</slideh>");
+        _mainTextUI.ShowText("<slideh>Game Over...</slideh>");
     }
 }

@@ -74,12 +74,15 @@ public class PlayerMove : MonoBehaviour
     
     private void HandleFPSSimpleMove()
     {
-        float h = Input.GetAxisRaw("Horizontal");
-        float v = Input.GetAxisRaw("Vertical");
+        float h = Input.GetAxis("Horizontal");
+        float v = Input.GetAxis("Vertical");
 
-        Vector3 direction = new Vector3(h, 0f, v).normalized;
+        Vector3 direction = new Vector3(h, 0f, v);
         _animator.SetFloat("Speed", direction.magnitude);
 
+        Debug.Log($"h : {h}, v : {v}, {direction.magnitude} ");
+
+        _animator.SetBool("IsGround", _characterController.isGrounded);
 
         if (_cameraController.CurrentMode == CameraMode.FPS)
         {
@@ -134,6 +137,7 @@ public class PlayerMove : MonoBehaviour
         {
             if (_characterController.isGrounded)
             {
+                _animator.SetTrigger("Jump");
                 _yVelocity = _data.JumpPower;
             }
             else if (_canDoubleJump && _stamina.Current >= _data.DoubleJumpConsume)
