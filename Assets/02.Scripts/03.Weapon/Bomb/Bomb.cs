@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 using UnityEngine.Assertions.Must;
 
 public class Bomb : MonoBehaviour, IPoolable
@@ -9,11 +10,12 @@ public class Bomb : MonoBehaviour, IPoolable
 
     [SerializeField] private GameObject _explosionPrefab;
     [SerializeField] private LayerMask _explosionLayer;
-
+    [SerializeField] private float _delayTime = 3f;
     private float _explosionRadius;
     private float _damage;
     private KnockbackData _knockback;
 
+    private Coroutine _coroutine;
     
     public void Init(BombDataSO data)
     {
@@ -28,6 +30,8 @@ public class Bomb : MonoBehaviour, IPoolable
         {
             _type = type;
         }
+
+        _coroutine = StartCoroutine(Explosion());
     }
 
     public void Release()
@@ -37,17 +41,21 @@ public class Bomb : MonoBehaviour, IPoolable
             rigid.linearVelocity = Vector3.zero;
             rigid.angularVelocity = Vector3.zero;
         }
+
+        if (_coroutine != null)
+        {
+            StopCoroutine(_coroutine);
+            _coroutine = null;
+        }
     }
 
-    private void OnCollisionEnter(Collision collision)
+    private IEnumerator Explosion()
     {
-        if (collision.transform.CompareTag("Player"))
-            return;
-
+        yield return new WaitForSeconds( _delayTime );  
         ParticleSystem effect = ParticleManager.Instance.Get(EParticleType.BombExplosion);
-        var emit = new ParticleSystem.EmitParams 
-        { 
-            position = transform.position 
+        var emit = new ParticleSystem.EmitParams
+        {
+            position = transform.position,
         };
         effect.Emit(emit, 1);
 

@@ -17,7 +17,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable
             return;
 
         Health.Consume(data.Damage);
-        _animator.SetLayerWeight(3, Health.Current / Health.Max);
+        _animator.SetLayerWeight(3, (1- Health.Current / Health.Max));
         if (Health.IsEmpty())
         {
             _animator.SetTrigger("Dead");

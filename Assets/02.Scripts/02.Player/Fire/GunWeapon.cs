@@ -56,25 +56,42 @@ public class GunWeapon : WeaponBase
             _fireTransform.position,
             CameraController.Instance.GetFireDirection(_fireTransform));
 
-        if (!Physics.Raycast(ray, out RaycastHit hit, Data.Range, _targetLayer))
-            return;
+        BulletTrail trail = PoolManager.Instance.Get(EPoolType.BulletTrail).GetComponent<BulletTrail>();
+        trail.transform.position = _muzzleTransform.position;
+        trail.transform.rotation = _muzzleTransform.rotation;
 
-        ParticleSystem hitEffect = ParticleManager.Instance.Get(EParticleType.BulletEnvironmentHit);
-        ParticleSystem.EmitParams emit = new ParticleSystem.EmitParams
+        if (Physics.Raycast(ray, out RaycastHit hit, Data.Range, _targetLayer))
         {
-            position = hit.point,
-            rotation3D = Quaternion.LookRotation(hit.normal).eulerAngles
-        };
-        hitEffect.Emit(emit, 1);
+            trail.SetDestination(hit.point);
 
-        if (hit.collider.TryGetComponent(out IDamageable damageable))
+            // Hit effect
+            ParticleSystem hitEffect =
+                ParticleManager.Instance.Get(EParticleType.BulletEnvironmentHit);
+
+            ParticleSystem.EmitParams emit = new ParticleSystem.EmitParams
+            {
+                position = hit.point,
+                rotation3D = Quaternion.LookRotation(hit.normal).eulerAngles
+            };
+            hitEffect.Emit(emit, 1);
+
+            // Damage
+            if (hit.collider.TryGetComponent(out IDamageable damageable))
+            {
+                Vector3 dir =
+                    (hit.collider.transform.position - _fireTransform.position).normalized;
+
+                damageable.ApplyDamage(new AttackData(
+                    Data.Damage,
+                    dir,
+                    gameObject,
+                    Data.KnockbackData));
+            }
+        }
+        else
         {
-            Vector3 dir = (hit.collider.transform.position - _fireTransform.position).normalized;
-            damageable.ApplyDamage(new AttackData(
-                Data.Damage,
-                dir,
-                gameObject,
-                Data.KnockbackData));
+            Vector3 missPoint = ray.origin + ray.direction * Data.Range;
+            trail.SetDestination(missPoint);
         }
     }
 
