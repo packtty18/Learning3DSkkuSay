@@ -59,7 +59,10 @@ public class EnemyController : MonoBehaviour, IDamageable, IPoolable
         _spawnPosition = Vector3.zero;
         _patrolPoints = null;
         SetComplete = false;
+
+        Animator.SetBool("IsMoving", false);
         Animator.SetTrigger("Reset");
+
         OnReturnedToPool?.Invoke(this);
         UICanvas.SetActive(false);
     }

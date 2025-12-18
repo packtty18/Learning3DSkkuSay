@@ -14,6 +14,8 @@ public class PlayerController : Singleton<PlayerController>
     public PlayerHealth Health;
     public PlayerAttack Attack;
 
+    public Animator Animator;
+
     public override void Init()
     {
         CacheComponents();
@@ -26,6 +28,7 @@ public class PlayerController : Singleton<PlayerController>
         Move = GetComponent<PlayerMove>();
         Rotate = GetComponent<PlayerRotate>();
         Health = GetComponent<PlayerHealth>();
-        Attack = GetComponent<PlayerAttack>();
+        Attack = GetComponentInChildren<PlayerAttack>();
+        Animator.GetComponentInChildren<Animator>();
     }
 }

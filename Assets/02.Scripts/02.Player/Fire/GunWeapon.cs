@@ -1,69 +1,54 @@
-﻿using ArtificeToolkit.Attributes;
+﻿using UnityEngine;
 using System.Collections;
-using UnityEditor.PackageManager;
-using UnityEngine;
+using ArtificeToolkit.Attributes;
 
-public class GunWeapon : MonoBehaviour, IWeapon
+public class GunWeapon : WeaponBase
 {
-    [Title("Components")]
     [Required, SerializeField] private Transform _fireTransform;
     [SerializeField] private LayerMask _targetLayer;
     [Required, SerializeField] private FireRebound _rebound;
 
-    [Title("Gun Stat")]
-    [SerializeField] private PlayerStat _stat;
-    private GunDataSO Data => _stat.CurrentGunData;
-    private ValueStat<int> Inventory => _stat.InventoryBullet;
-    private ConsumableStat<int> Loaded => _stat.LoadedBullet;
-    private ConsumableStat<float> ReloadTimer => _stat.ReloadTimer;
+    private GunDataSO Data => Stat.CurrentGunData;
+    private ValueStat<int> Inventory => Stat.InventoryBullet;
+    private ConsumableStat<int> Loaded => Stat.LoadedBullet;
+    private ConsumableStat<float> ReloadTimer => Stat.ReloadTimer;
 
-    [Title("State")]
-    [ReadOnly] private bool _canFire = true;
-    [ReadOnly] private bool _isReloading;
+    private bool _canFire = true;
+    private bool _isReloading;
 
-    private Coroutine _fireDelayRoutine;
-    private Coroutine _reloadRoutine;
-
-    #region IWeapon
-    public void Select()
-    {
-        DebugManager.Instance.Log("Gun Selected");
-    }
-
-    public void Deselect()
-    {
-        DebugManager.Instance.Log("Gun Deselected");
-    }
-
-    public bool CanAttack()
+    public override bool CanAttack()
     {
         return _canFire && !_isReloading && !Loaded.IsEmpty();
     }
 
-    public void Attack()
+    public override void Attack()
     {
         if (!CanAttack())
             return;
 
         _canFire = false;
-        _fireDelayRoutine = StartCoroutine(FireDelay());
-
         Loaded.Consume(1);
-        Fire();
+
+        Animator.SetBool("IsAttack", true);
         _rebound.PlayRebound();
+
+        StartCoroutine(FireDelay());
     }
 
-    public void Reload()
+    public override void AttackEnd()
+    {
+        Animator.SetBool("IsAttack", false);
+    }
+
+    public override void Reload()
     {
         if (_isReloading || Inventory.Value <= 0)
             return;
 
-        _reloadRoutine = StartCoroutine(ReloadRoutine());
+        StartCoroutine(ReloadRoutine());
     }
-    #endregion
 
-    #region Internal Logic
-    private void Fire()
+    public void GunFire()
     {
         Ray ray = new Ray(
             _fireTransform.position,
@@ -72,18 +57,6 @@ public class GunWeapon : MonoBehaviour, IWeapon
         if (!Physics.Raycast(ray, out RaycastHit hit, Data.Range, _targetLayer))
             return;
 
-        DebugManager.Instance.Log($"Hit : {hit.collider.name}");
-
-        //파티클 로직
-        ParticleSystem hitEffect = ParticleManager.Instance.Get(EParticleType.BulletEnvironmentHit);
-        ParticleSystem.EmitParams emit = new ParticleSystem.EmitParams
-        {
-            position = hit.point,
-            rotation3D = Quaternion.LookRotation(hit.normal).eulerAngles
-        };
-        hitEffect.Emit(emit, 1);
-
-        //데미지 로직
         if (hit.collider.TryGetComponent(out IDamageable damageable))
         {
             Vector3 dir = (hit.collider.transform.position - _fireTransform.position).normalized;
@@ -99,7 +72,6 @@ public class GunWeapon : MonoBehaviour, IWeapon
     {
         yield return new WaitForSeconds(Data.FireDelay);
         _canFire = true;
-        _fireDelayRoutine = null;
     }
 
     private IEnumerator ReloadRoutine()
@@ -120,10 +92,6 @@ public class GunWeapon : MonoBehaviour, IWeapon
         Inventory.Decrease(need);
         Loaded.SetCurrent(Loaded.Current + need);
 
-        DebugManager.Instance.Log($"Reloaded +{need}");
-
         _isReloading = false;
-        _reloadRoutine = null;
     }
-    #endregion
 }
