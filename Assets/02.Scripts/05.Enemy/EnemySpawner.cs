@@ -14,6 +14,8 @@ public class EnemySpawner : MonoBehaviour
     private readonly HashSet<EnemyController> _aliveEnemies = new();
     private Coroutine _respawnCoroutine;
 
+    public EPoolType PoolType = EPoolType.Enemy1;
+
     private void Start()
     {
         _respawnCoroutine = StartCoroutine(RespawnAfterDelay());
@@ -21,9 +23,13 @@ public class EnemySpawner : MonoBehaviour
 
     private void SpawnEnemy()
     {
-        EnemyController enemy =
-            PoolManager.Instance.Get(EPoolType.Enemy)
-            .GetComponent<EnemyController>();
+        GameObject pool = PoolManager.Instance.Get(PoolType);
+
+        if(!pool.TryGetComponent(out EnemyController enemy))
+        {
+            return;
+        }
+        
         enemy.SetSpawnPoint(transform.position);
         enemy.SetPatrolPoints(_patrolPoints);
 

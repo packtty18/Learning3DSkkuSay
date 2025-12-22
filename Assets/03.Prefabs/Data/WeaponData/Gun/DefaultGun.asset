@@ -15,7 +15,7 @@ MonoBehaviour:
   MaxBullet: 30
   Damage: 10
   FireDelay: 0.1
-  Range: 30
+  Range: 200
   ReloadTime: 1.6
   KnockbackData:
     Power: 1

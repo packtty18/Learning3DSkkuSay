@@ -44,13 +44,15 @@ public class EnemyMove : MonoBehaviour
 
     #region Normal Move
 
-    public void MoveTo(Vector3 targetPos, float speed)
+    public void MoveTo(Vector3 targetPos)
     {
         if (_isKnockback)
             return;
 
         _agent.SetAgentDestination(targetPos);
     }
+
+    
 
     
     #endregion

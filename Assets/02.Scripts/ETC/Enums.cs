@@ -15,4 +15,7 @@ public enum EEnemyState
     Attack,
     Hit,
     Death,
+    RageOn,
+    RageMove,
+    RageAttack
 }

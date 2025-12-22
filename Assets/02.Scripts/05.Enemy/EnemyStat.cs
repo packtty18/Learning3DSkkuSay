@@ -29,6 +29,9 @@ public class EnemyStat : MonoBehaviour
     [Header("Patrol")]
     public float ArrivalThreshold = 2f;
 
+    [Header("Rage")]
+    public ValueStat<float> RageRate;
+
     public void Init()
     {
         Health.Init(Data.Health);
@@ -38,5 +41,10 @@ public class EnemyStat : MonoBehaviour
         AttackSpeed.Init(Data.AttackSpeed);
         AttackDistance.Init(Data.AttackDistance);
         DetectDistance.Init(Data.DetectDistance);
+
+        if(Data.CanRage)
+        {
+            RageRate.Init(Data.RageRate);
+        }
     }
 }

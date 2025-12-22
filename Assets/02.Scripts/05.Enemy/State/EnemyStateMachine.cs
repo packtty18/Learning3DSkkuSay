@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
+using static UnityEditorInternal.VersionControl.ListControl;
 
 public class EnemyStateMachine
 {
-    private IEnemyState _current; 
+    private IEnemyState _current;
+    public EEnemyState LastState;
     private readonly Dictionary<EEnemyState, IEnemyState> _states = new Dictionary<EEnemyState, IEnemyState>();
 
     public void Register(EEnemyState key, IEnemyState state)
@@ -15,7 +17,7 @@ public class EnemyStateMachine
     {
         if (!_states.ContainsKey(key))
             return;
-
+        
         Change(_states[key]);
     }
 

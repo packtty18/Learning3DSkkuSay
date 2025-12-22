@@ -17,7 +17,7 @@ public class AgentController : MonoBehaviour
 
     public void SetAgent( float moveSpeed, bool InitActive = true)
     {
-        _agent.speed = moveSpeed;
+        ChangeSpeed( moveSpeed);
 
         SetEnable(InitActive);
     }
@@ -32,6 +32,11 @@ public class AgentController : MonoBehaviour
         _agent.isStopped = false;
         
         _agent.SetDestination(targetPos);
+    }
+
+    public void ChangeSpeed(float speed)
+    {
+        _agent.speed = speed;
     }
 
     public void AgentStop(bool stopImmediate = false)

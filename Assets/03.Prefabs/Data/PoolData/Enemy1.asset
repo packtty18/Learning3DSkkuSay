@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 60a4226aac5ce1141a2a7aa046e04e69, type: 3}
-  m_Name: Enemy
+  m_Name: Enemy1
   m_EditorClassIdentifier: 
   PoolType: 2
-  PoolPrefab: {fileID: 5297471746231701125, guid: 65cad473e48fd5a4d87082acc8c28f8f, type: 3}
+  PoolPrefab: {fileID: 4887380602773211214, guid: 7f3d7694d7c2f764eb48741e9541d2c2, type: 3}
   DefaultInstantCount: 5
   DefaultCapacity: 10
   MaxSize: 20

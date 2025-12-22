@@ -9,14 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4bb13d4946785d445bc1b2fb2d3509f4, type: 3}
+  m_Script: {fileID: 11500000, guid: 60a4226aac5ce1141a2a7aa046e04e69, type: 3}
   m_Name: Enemy2
   m_EditorClassIdentifier: 
-  Health: 200
-  MoveSpeed: 3
-  AttackDamage: 20
-  AttackSpeed: 2
-  AttackDistance: 4
-  DetectDistance: 30
-  CanRage: 1
-  RageRate: 0.5
+  PoolType: 7
+  PoolPrefab: {fileID: 192823606487655242, guid: 65cad473e48fd5a4d87082acc8c28f8f, type: 3}
+  DefaultInstantCount: 5
+  DefaultCapacity: 10
+  MaxSize: 20

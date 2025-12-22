@@ -9,4 +9,7 @@ public class EnemyStatDataSO :ScriptableObject
     public float AttackSpeed;
     public float AttackDistance;
     public float DetectDistance;
+
+    public bool CanRage;
+    public float RageRate;
 }

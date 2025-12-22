@@ -6,11 +6,12 @@ public enum EPoolType
 {
     None,
     Bomb,
-    Enemy,
+    Enemy1,
     Barrel,
     Muzzle,
     BulletTrail,
     Coin,
+    Enemy2
 }
 
 public class PoolManager : Singleton<PoolManager>

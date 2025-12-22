@@ -2,7 +2,7 @@
 
 public class EnemyPoolReactor : MonoBehaviour, IPoolable
 {
-    private EPoolType _poolType = EPoolType.Enemy;
+    private EPoolType _poolType = EPoolType.Enemy1;
     public EPoolType PoolType => _poolType;
 
     private EnemyController _controller;
