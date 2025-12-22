@@ -42,6 +42,16 @@ public class ConsumableStat<T> : StatBase<T> where T : struct, IConvertible
     {
         return ToDouble(_current) <= 0.00001;
     }
+
+    public float GetRatio()
+    {
+        double max = ToDouble(_max);
+
+        if (max <= 0.00001)
+            return 0f;
+
+        return (float)(ToDouble(_current) / max);
+    }
     #endregion
 
     #region Max
