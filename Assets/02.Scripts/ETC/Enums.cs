@@ -4,3 +4,15 @@
     Playing,
     GameOver
 }
+
+public enum EEnemyState
+{ 
+    Spawn,
+    Idle,
+    Patrol,
+    Trace,
+    Comeback,
+    Attack,
+    Hit,
+    Death,
+}

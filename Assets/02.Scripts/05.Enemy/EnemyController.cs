@@ -1,105 +1,92 @@
 ﻿using ArtificeToolkit.Attributes;
 using System;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.AI;
 
-
-public class EnemyController : MonoBehaviour, IDamageable, IPoolable
+public class EnemyController : MonoBehaviour, IDamageable
 {
-    [Header("References")]
-    [ReadOnly] public PlayerController Player;
+    [Title("Core References")]
+    public PlayerController Player;
+
+    
+    [Title("Enemy Components")]
+
+    [Required]public EnemyStat Stat;
+    [Required]public EnemyMove Move;
+    [Required]public EnemyAttack Attack;
+    [Required]public EnemyDetector Detector;
+    [Required]public Animator Animator;
+    [Required]public AgentController Agent;
+
+    [Title("UI")]
+    [Required]public GameObject EnemyUI;
+    [ReadOnly]private EnemyStateMachine _stateMachine;
 
 
-    [ReadOnly] public EnemyStat Stat;
-    [ReadOnly] public EnemyMove Move;
-    [ReadOnly] public EnemyAttack Attack;
-    [ReadOnly] public AgentController Agent;
-    [ReadOnly] public Animator Animator;
-
-    public GameObject UICanvas;
-    // 상태 관리
-    [ReadOnly,SerializeField] private EnemyBaseState _currentState;
-    [ReadOnly, SerializeField] private Transform[] _patrolPoints;
-    [ReadOnly, SerializeField] private Vector3 _spawnPosition;
-    public Transform[] PatrolPoints => _patrolPoints;
-    public Vector3 SpawnPosition => _spawnPosition;
-
-    public bool SetComplete = false;
-
-    [ReadOnly] public Vector3 LastTracePosition;
-    private void Awake()
-    {
-        Stat=GetComponent<EnemyStat>();
-        Move = GetComponent<EnemyMove>();
-        Attack = GetComponentInChildren<EnemyAttack>();
-        Agent = GetComponent<AgentController>();
-        Animator = GetComponentInChildren<Animator>();
-    }
-
-    #region Pool
-    public EPoolType PoolType => EPoolType.Enemy;
+    #region 디버그
     public event Action<EnemyController> OnReturnedToPool;
+    public Vector3 SpawnPoint { get; private set; }
+    public Transform[] PatrolPoint { get; private set; }
 
-    public void Get(EPoolType type)
+    public void SetSpawnPoint(Vector3 position)
     {
-        Player = PlayerController.Instance;
-        Stat.Init();
-        Stat.Health.OnCurrentChanged += JudgeDeathInHealthChange;
-        Agent.SetAgent(Stat.MoveSpeed.Value);
-        TransitionToState(new SpawnState());
-
-        UICanvas.SetActive(true);
-    }
-
-    public void Release()
-    {
-        Stat.Health.OnCurrentChanged -= JudgeDeathInHealthChange;
-
-        transform.position = _spawnPosition;
-
-        _spawnPosition = Vector3.zero;
-        _patrolPoints = null;
-        SetComplete = false;
-
-        Animator.SetBool("IsMoving", false);
-        Animator.SetTrigger("Reset");
-
-        OnReturnedToPool?.Invoke(this);
-        UICanvas.SetActive(false);
+        SpawnPoint = position;
+        transform.position = SpawnPoint;
     }
 
     public void SetPatrolPoints(Transform[] patrolPoints)
     {
-        _patrolPoints = patrolPoints;
-    }
-
-    public void SetSpawnPoint(Vector3 position)
-    {
-        _spawnPosition = position;
-        transform.position = _spawnPosition;
+        PatrolPoint = patrolPoints;
     }
     #endregion
-
-    
+    private void Awake()
+    {
+        _stateMachine = new EnemyStateMachine();
+        RegisterStates();
+    }
 
     private void Update()
     {
-        _currentState?.Update();
-        Stat.Health?.Regenerate(Time.deltaTime);
+        _stateMachine.Update();
     }
 
-    public void TransitionToState(EnemyBaseState newState)
+    public void OnSpawned()
     {
-        _currentState?.Exit();
-        _currentState = newState;
-        _currentState.Enter(this);
+        DebugManager.Instance.Log("EnemyController OnSpawned");
+
+        Player = PlayerController.Instance;
+
+        Stat.Init();
+        Agent.SetAgent(Stat.MoveSpeed.Value);
+        _stateMachine.Change(EEnemyState.Spawn);
+
+        EnemyUI.SetActive(true);
     }
 
-    private void JudgeDeathInHealthChange(float value)
+    public void OnDespawned()
     {
-        if (value <= 0)
-        {
-            TransitionToState(new DeathState());
-        }
+        DebugManager.Instance.Log("EnemyController OnDespawned");
+        transform.position = SpawnPoint;
+        SpawnPoint = Vector3.zero;
+        PatrolPoint = null;
+
+        Animator.SetBool("IsMoving", false);
+        Animator.SetTrigger("Reset");
+        OnReturnedToPool?.Invoke(this);
+        EnemyUI.SetActive(false);
+    }
+
+    private void RegisterStates()
+    {
+        _stateMachine.Register(EEnemyState.Spawn, new SpawnState(this, _stateMachine));
+        _stateMachine.Register(EEnemyState.Idle, new IdleState(this, _stateMachine));
+        _stateMachine.Register(EEnemyState.Patrol, new PatrolState(this, _stateMachine));
+        _stateMachine.Register(EEnemyState.Trace, new TraceState(this, _stateMachine)); //타겟을 지정하도록 수정
+        _stateMachine.Register(EEnemyState.Attack, new AttackState(this, _stateMachine));
+        _stateMachine.Register(EEnemyState.Comeback, new ComebackState(this, _stateMachine));
+        _stateMachine.Register(EEnemyState.Death, new DeathState(this));
+        _stateMachine.Change(EEnemyState.Spawn);
     }
 
     public void ApplyDamage(AttackData data)
@@ -112,16 +99,15 @@ public class EnemyController : MonoBehaviour, IDamageable, IPoolable
         if (Stat.Health.IsEmpty())
         {
             Agent.AgentStop();
-            TransitionToState(new DeathState());
+            _stateMachine.Change(EEnemyState.Death);
             Animator.SetTrigger("Dead");
         }
         else
         {
-            TransitionToState(new HitState(data.HitDirection, data.Knockback.Power));
+            _stateMachine.Change(new HitState(this, _stateMachine,data.HitDirection, data.Knockback.Power));
             Animator.SetTrigger("Hit");
         }
 
         DebugManager.Instance.Log($"피격 발생 : {data.Attacker.name}가 {gameObject.name}에게 {data.Damage} 데미지. 남은체력 : {Stat.Health.Current}/{Stat.Health.Max}");
     }
-    
 }

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Enemy
   m_EditorClassIdentifier: 
   PoolType: 2
-  PoolPrefab: {fileID: 4134234708078233301, guid: db00aee7c8f4b11488b898d6fddfe420, type: 3}
+  PoolPrefab: {fileID: 5297471746231701125, guid: 65cad473e48fd5a4d87082acc8c28f8f, type: 3}
   DefaultInstantCount: 5
   DefaultCapacity: 10
   MaxSize: 20

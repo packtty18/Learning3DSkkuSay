@@ -14,6 +14,8 @@ public abstract class WeaponBase : MonoBehaviour
     protected PlayerStat Stat => Controller.Stat;
     protected Animator Animator => Controller.Animator;
 
+    public bool IsZoomable = false;
+
     public virtual void Init(PlayerController controller)
     {
         Controller = controller;

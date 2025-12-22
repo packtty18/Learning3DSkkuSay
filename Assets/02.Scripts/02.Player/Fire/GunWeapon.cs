@@ -79,7 +79,7 @@ public class GunWeapon : WeaponBase
             if (hit.collider.TryGetComponent(out IDamageable damageable))
             {
                 Vector3 dir =
-                    (hit.collider.transform.position - _fireTransform.position).normalized;
+                    (hit.point - _fireTransform.position).normalized;
 
                 damageable.ApplyDamage(new AttackData(
                     Data.Damage,

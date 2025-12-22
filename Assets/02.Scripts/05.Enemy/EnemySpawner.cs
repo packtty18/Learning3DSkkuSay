@@ -27,8 +27,7 @@ public class EnemySpawner : MonoBehaviour
         enemy.SetSpawnPoint(transform.position);
         enemy.SetPatrolPoints(_patrolPoints);
 
-        enemy.SetComplete = true;
-        enemy.OnReturnedToPool += OnEnemyReturned;
+        enemy.OnReturnedToPool+= OnEnemyReturned;
         _aliveEnemies.Add(enemy);
 
         DebugManager.Instance.Log(

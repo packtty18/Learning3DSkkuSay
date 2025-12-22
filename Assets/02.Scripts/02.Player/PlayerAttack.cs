@@ -9,6 +9,8 @@ public class PlayerAttack : MonoBehaviour
     private WeaponBase _current;
     private int _index;
 
+    public WeaponZoom Zoom;
+
 
     private void Start()
     {
@@ -18,6 +20,12 @@ public class PlayerAttack : MonoBehaviour
     {
         if (GameManager.Instance.State != EGameState.Playing)
             return;
+
+        if (Input.GetMouseButtonDown(1) && _current.IsZoomable)
+        {
+            Zoom.ChangeZoom();
+        }
+            
 
         if (Input.GetMouseButton(0))
             TryAttack();
@@ -29,7 +37,7 @@ public class PlayerAttack : MonoBehaviour
             _current?.Reload();
 
         float scroll = Input.mouseScrollDelta.y;
-        if (scroll != 0)
+        if (scroll != 0 )
             ChangeWeapon((_index + (scroll > 0 ? 1 : -1) + _weapons.Length) % _weapons.Length);
     }
 
@@ -43,6 +51,10 @@ public class PlayerAttack : MonoBehaviour
     }
     private void ChangeWeapon(int idx)
     {
+        if(Zoom.ZoomMode == EZoomMode.ZoomIn)
+        {
+            Zoom.ChangeZoom();
+        }
         _index = idx;
         _current = _weapons[_index];
 

@@ -80,8 +80,6 @@ public class PlayerMove : MonoBehaviour
         Vector3 direction = new Vector3(h, 0f, v);
         _animator.SetFloat("Speed", direction.magnitude);
 
-        Debug.Log($"h : {h}, v : {v}, {direction.magnitude} ");
-
         _animator.SetBool("IsGround", _characterController.isGrounded);
 
         if (_cameraController.CurrentMode == CameraMode.FPS)

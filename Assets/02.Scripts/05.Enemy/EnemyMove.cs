@@ -31,6 +31,7 @@ public class EnemyMove : MonoBehaviour
     {
         if (GameManager.Instance.State != EGameState.Playing)
             return;
+
         if (_isJumping)
             return;
 

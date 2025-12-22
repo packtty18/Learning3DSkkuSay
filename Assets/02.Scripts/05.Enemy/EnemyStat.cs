@@ -1,8 +1,13 @@
-﻿using Unity.VisualScripting.Antlr3.Runtime.Misc;
+﻿using ArtificeToolkit.Attributes;
+using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
 
 public class EnemyStat : MonoBehaviour
 {
+    [Required]
+    public EnemyStatDataSO Data;
+
+
     [Header("Health")]
     public ConsumableStat<float> Health;
 
@@ -26,12 +31,12 @@ public class EnemyStat : MonoBehaviour
 
     public void Init()
     {
-        Health.Init(50);
-        MoveSpeed.Init(5);
+        Health.Init(Data.Health);
+        MoveSpeed.Init(Data.MoveSpeed);
 
-        AttackDamage.Init(10);
-        AttackSpeed.Init(1);
-        AttackDistance.Init(2f);
-        DetectDistance.Init(30);
+        AttackDamage.Init(Data.AttackDamage);
+        AttackSpeed.Init(Data.AttackSpeed);
+        AttackDistance.Init(Data.AttackDistance);
+        DetectDistance.Init(Data.DetectDistance);
     }
 }

@@ -24,13 +24,13 @@ public class EnemyGizmo : MonoBehaviour
         if (_showDetectRange)
         {
             Gizmos.color = _detectColor;
-            Gizmos.DrawWireSphere(transform.position, _stat.DetectDistance.Value);
+            Gizmos.DrawWireSphere(transform.position, _stat.Data.DetectDistance);
         }
 
         if (_showAttackRange)
         {
             Gizmos.color = _attackColor;
-            Gizmos.DrawWireSphere(transform.position, _stat.AttackDistance.Value);
+            Gizmos.DrawWireSphere(transform.position, _stat.Data.AttackDistance);
         }
     }
 }

@@ -56,7 +56,6 @@ public class FPSState : ICameraState
     }
 
     private float _xBound = 0f;
-    private float _recoilReturnSpeed = 8f;
     private void ApplyRecoil(RecoilData data)
     {
         // 상하 반동은 영구적 적용

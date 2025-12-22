@@ -10,6 +10,7 @@ public enum EPoolType
     Barrel,
     Muzzle,
     BulletTrail,
+    Coin,
 }
 
 public class PoolManager : Singleton<PoolManager>
