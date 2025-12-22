@@ -1,4 +1,5 @@
 ﻿using ArtificeToolkit.Attributes;
+using DG.Tweening;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
@@ -17,12 +18,14 @@ public class Coin : MonoBehaviour, IPoolable
     [SerializeField] private float _attractDistance = 10f;
     [SerializeField] private float _attractSpeed = 8f;
 
-    private Transform _player;
+    [Header("State")]
+    [ReadOnly] public bool IsGround;
 
-    private float _detectTimer;
-    private bool _canDetect;
+    private Transform _player;
+    private float _spawnTime;
+
     private bool _isAttracting;
-    private bool _isCollected;
+    private Tween _attractTween;
 
     private void Awake()
     {
@@ -38,15 +41,21 @@ public class Coin : MonoBehaviour, IPoolable
         ResetState();
         AddSpawnForce();
 
-        _detectTimer = 0f;
-        _canDetect = false;
+        _spawnTime = Time.time;
+        IsGround = false;
 
         Debug.Log("Coin Get");
     }
 
     public void Release()
     {
+        KillTween();
+
+        _isAttracting = false;
+        IsGround = false;
+
         ResetPhysics();
+
         Debug.Log("Coin Release");
     }
 
@@ -54,71 +63,100 @@ public class Coin : MonoBehaviour, IPoolable
 
     private void Update()
     {
-        if (_player == null || _isCollected)
+        if (_player == null)
             return;
 
-        // 1️⃣ 감지 지연
-        if (!_canDetect)
-        {
-            _detectTimer += Time.deltaTime;
-            if (_detectTimer >= _detectDelay)
-            {
-                _canDetect = true;
-            }
+        if (_isAttracting)
             return;
-        }
 
-        // 2️⃣ 흡수 시작
-        if (!_isAttracting &&
-            Vector3.Distance(transform.position, _player.position) <= _attractDistance)
+        if (!IsGround)
+            return;
+
+        // 스폰 직후 바로 끌려오지 않도록 딜레이
+        if (Time.time - _spawnTime < _detectDelay)
+            return;
+
+        float distance = Vector3.Distance(transform.position, _player.position);
+
+        if (distance <= _attractDistance)
         {
             StartAttract();
         }
-
-        // 3️⃣ 흡수 이동
-        if (_isAttracting)
-        {
-            Vector3 dir = (_player.position - transform.position).normalized;
-            transform.position += dir * _attractSpeed * Time.deltaTime;
-        }
     }
 
-    private void StartAttract()
+    #region Collision / Trigger
+
+    private void OnCollisionEnter(Collision collision)
     {
-        if (_isAttracting)
+        if (!collision.gameObject.CompareTag("Ground"))
             return;
 
-        _isAttracting = true;
-
-        // 물리 중단
-        _rb.linearVelocity = Vector3.zero;
-        _rb.angularVelocity = Vector3.zero;
-        _rb.isKinematic = true;
-
-        Debug.Log("Coin Start Attract");
+        IsGround = true;
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (_isCollected)
-            return;
-
         if (!other.CompareTag("Player"))
             return;
 
         Collect();
     }
 
-    private void Collect()
+    #endregion
+
+    #region Attract Logic
+
+    private void StartAttract()
     {
-        if (_isCollected)
+        _isAttracting = true;
+
+        // 물리 영향 제거
+        _rb.isKinematic = true;
+
+        Debug.Log("Coin Attract Start");
+
+        AttractStep();
+    }
+
+    private void AttractStep()
+    {
+        if (_player == null)
             return;
 
-        _isCollected = true;
+        float distance = Vector3.Distance(transform.position, _player.position);
 
-        // 점수 / 사운드 / 이펙트 처리 지점
+        float duration = Mathf.Clamp(
+            distance / _attractSpeed,
+            0.05f,
+            0.15f
+        );
+
+        _attractTween = transform
+            .DOMove(_player.position, duration)
+            .SetEase(Ease.InQuad)
+            .OnComplete(() =>
+            {
+                if (_isAttracting)
+                {
+                    AttractStep();
+                }
+            });
+    }
+
+    #endregion
+
+    #region Collect
+
+    private void Collect()
+    {
+        KillTween();
+
         Util.ObjectDestroy(gameObject);
     }
+
+    #endregion
+
+    #region Utility
 
     [Button]
     private void AddSpawnForce()
@@ -132,9 +170,7 @@ public class Coin : MonoBehaviour, IPoolable
 
     private void ResetState()
     {
-        _isCollected = false;
-        _isAttracting = false;
-
+        KillTween();
         ResetPhysics();
     }
 
@@ -144,4 +180,15 @@ public class Coin : MonoBehaviour, IPoolable
         _rb.linearVelocity = Vector3.zero;
         _rb.angularVelocity = Vector3.zero;
     }
+
+    private void KillTween()
+    {
+        if (_attractTween != null)
+        {
+            _attractTween.Kill();
+            _attractTween = null;
+        }
+    }
+
+    #endregion
 }
