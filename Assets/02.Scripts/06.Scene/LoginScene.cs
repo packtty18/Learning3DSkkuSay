@@ -7,100 +7,103 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class LoginScene : MonoBehaviour
+public static class Validator
 {
-    private enum SceneMode
-    { 
-        Login,
-        Register
+    private static readonly Regex EmailRegex = new(@"^[\w.-]+@[\w.-]+\.\w+$");
+    private static readonly Regex PasswordRegex = new(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*[^A-Za-z0-9])(?!.*\d)\S{7,20}$");
+
+    public static bool IsValidEmail(string email)
+    {
+        return !string.IsNullOrEmpty(email) && EmailRegex.IsMatch(email);
     }
 
+    public static bool IsValidPassword(string password)
+    {
+        return !string.IsNullOrEmpty(password) && PasswordRegex.IsMatch(password);
+    }
+}
+
+public static class PasswordUtility
+{
+    public static string Hash(string password)
+    {
+        using SHA256 sha = SHA256.Create();
+        byte[] bytes = Encoding.UTF8.GetBytes(password);
+        byte[] hash = sha.ComputeHash(bytes);
+
+        StringBuilder sb = new();
+        foreach (byte b in hash)
+            sb.Append(b.ToString("x2"));
+
+        return sb.ToString();
+    }
+}
+
+public class LoginScene : MonoBehaviour
+{
+    private enum SceneMode { Login, Register }
     private SceneMode _mode = SceneMode.Login;
 
+    [Header("UI References")]
     [SerializeField] private GameObject _passwordConfirmObject;
-
     [SerializeField] private Button _registerButton;
     [SerializeField] private Button _loginButton;
     [SerializeField] private Button _confirmButton;
     [SerializeField] private Button _cancelButton;
-
     [SerializeField] private TMP_InputField _idField;
     [SerializeField] private TMP_InputField _passwordField;
     [SerializeField] private TMP_InputField _confirmField;
-
     [SerializeField] private TextMeshProUGUI _messageText;
 
     private void Start()
     {
-        Refresh();
-        AddButtonEvent();
+        RefreshUI();
+        AddButtonEvents();
     }
 
-    private void AddButtonEvent()
+    private void AddButtonEvents()
     {
-        _registerButton.onClick.AddListener(RegisterButtonHanler);
-        _loginButton.onClick.AddListener(LoginButtonHanler);
-        _confirmButton.onClick.AddListener(ConfirmButtonHanler);
-        _cancelButton.onClick.AddListener(CancelButtonHanler);
+        _registerButton.onClick.AddListener(() => SwitchMode(SceneMode.Register));
+        _loginButton.onClick.AddListener(LoginHandler);
+        _confirmButton.onClick.AddListener(RegisterHandler);
+        _cancelButton.onClick.AddListener(() => SwitchMode(SceneMode.Login));
     }
 
-    private void Refresh()
+    private void SwitchMode(SceneMode mode)
     {
-        //로그인 모드
+        _mode = mode;
+        RefreshUI();
+    }
+
+    private void RefreshUI()
+    {
         _registerButton.gameObject.SetActive(_mode == SceneMode.Login);
         _loginButton.gameObject.SetActive(_mode == SceneMode.Login);
-        //레지스터 모드
         _passwordConfirmObject.SetActive(_mode == SceneMode.Register);
         _confirmButton.gameObject.SetActive(_mode == SceneMode.Register);
         _cancelButton.gameObject.SetActive(_mode == SceneMode.Register);
 
-        string lastId = PlayerPrefs.GetString("LastId");
-
-        _idField.text = string.IsNullOrEmpty(lastId) ? "":lastId;
+        _idField.text = PlayerPrefs.GetString("LastId", "");
         _passwordField.text = "";
         _confirmField.text = "";
-
         _messageText.text = "";
     }
 
-
-    private void RegisterButtonHanler()
-    {
-        _mode = SceneMode.Register;
-        Refresh();
-    }
-
-    private void LoginButtonHanler()
+    private void LoginHandler()
     {
         string id = _idField.text;
         string password = _passwordField.text;
 
-        bool isIdEmpty = string.IsNullOrEmpty(id);
-        bool isPasswordEmpty = string.IsNullOrEmpty(password);
-
-        bool isInvalidEmail = !Regex.IsMatch(id,
-            @"^[\w.-]+ @ [\w.-]+ \. \w+ $"); 
-
-        bool isInvalidPassword = !Regex.IsMatch(password,
-            @"^(?=.*[a-z])(?=.*[A-Z])(?=.*[^A-Za-z0-9])(?!.*\d)\S{7,20}$");
-
-        bool isUserNotFound = !PlayerPrefs.HasKey(id);
-
-        if (isIdEmpty || isPasswordEmpty || isInvalidEmail || isInvalidPassword || isUserNotFound)
+        if (!Validator.IsValidEmail(id) || !Validator.IsValidPassword(password) || !PlayerPrefs.HasKey(id))
         {
-            Debug.LogWarning($"Login Failed | Email:{id}");
-
-            Refresh();
-            _messageText.text = "아이디와 비밀번호를 확인해주세요";
+            ShowMessage("아이디와 비밀번호를 확인해주세요");
             return;
         }
 
-        string savedHash = PlayerPrefs.GetString(id);
-        string inputHash = PasswordUtility.Hash(password);
-        if (savedHash != inputHash)
+        string savedHash = PlayerPrefs.GetString(id, "");
+        if (PasswordUtility.Hash(password) != savedHash)
         {
-            Refresh();
-            _messageText.text = "아이디와 비밀번호를 확인해주세요";
+            ShowMessage("아이디와 비밀번호를 확인해주세요");
             return;
         }
 
@@ -108,85 +111,64 @@ public class LoginScene : MonoBehaviour
         SceneManager.LoadScene(1);
     }
 
-    private void ConfirmButtonHanler()
+    private void RegisterHandler()
     {
         string id = _idField.text;
-        bool isInvalidEmail = !Regex.IsMatch(id,
-            @"^[\w.-]+@[\w.-]+\.\w+$");
-        if (string.IsNullOrEmpty(id) || isInvalidEmail)
+        string password = _passwordField.text;
+        string confirm = _confirmField.text;
+
+        if (!ValidateRegisterInputs(id, password, confirm)) return;
+
+        PlayerPrefs.SetString(id, PasswordUtility.Hash(password));
+        PlayerPrefs.SetString("LastId", id);
+
+        SwitchMode(SceneMode.Login);
+        ShowMessage("생성이 완료되었습니다");
+    }
+
+    private bool ValidateRegisterInputs(string id, string password, string confirm)
+    {
+        if (!Validator.IsValidEmail(id))
         {
-            Refresh();
-            _messageText.text = "아이디가 적절하지 않습니다.";
-            return;
+            ShowMessage("아이디가 적절하지 않습니다.");
+            return false;
         }
 
         if (PlayerPrefs.HasKey(id))
         {
-            Refresh();
-            _messageText.text = "이미 아이디가 존재합니다";
-            return;
+            ShowMessage("이미 아이디가 존재합니다");
+            return false;
         }
 
-        string password = _passwordField.text;
-        bool isInvalidPassword = !Regex.IsMatch(password,
-            @"^(?=.*[a-z])(?=.*[A-Z])(?=.*[^A-Za-z0-9])(?!.*\d)\S{7,20}$");
-        if (string.IsNullOrEmpty(password) || isInvalidPassword)
+        if (!Validator.IsValidPassword(password))
         {
-            Refresh();
-            _messageText.text = "패스워드가 적절하지 않습니다.";
-            return;
+            ShowMessage("패스워드가 적절하지 않습니다.");
+            return false;
         }
 
-        string checkPassword = _confirmField.text;
-        if (string.IsNullOrEmpty(checkPassword))
+        if (string.IsNullOrEmpty(confirm))
         {
-            Refresh();
-            _messageText.text = "패스워드 확인란을 입력해주세요";
-            return;
+            ShowMessage("패스워드 확인란을 입력해주세요");
+            return false;
         }
 
-        if (checkPassword != password)
+        if (password != confirm)
         {
-            Refresh();
-            _messageText.text = "패스워드가 다릅니다";
-            return;
+            ShowMessage("패스워드가 다릅니다");
+            return false;
         }
 
-        string hashedPassword = PasswordUtility.Hash(password);
-        PlayerPrefs.SetString(id, hashedPassword);
-        PlayerPrefs.SetString("LastId", id);
-        _mode = SceneMode.Login;
-        Refresh();
-
-        _messageText.text = "생성이 완료되었습니다";
+        return true;
     }
 
-    private void CancelButtonHanler()
+    private void ShowMessage(string message)
     {
-        _mode = SceneMode.Login;
-        Refresh();
+        _messageText.text = message;
     }
 
     [Button]
     public void ResetPlayerPrefs()
     {
         PlayerPrefs.DeleteAll();
-    }
-}
-
-public static class PasswordUtility
-{
-    // Simple SHA256 hash (one-way)
-    public static string Hash(string password)
-    {
-        using SHA256 sha = SHA256.Create();
-        byte[] bytes = Encoding.UTF8.GetBytes(password);
-        byte[] hash = sha.ComputeHash(bytes);
-
-        StringBuilder sb = new StringBuilder();
-        foreach (byte b in hash)
-            sb.Append(b.ToString("x2"));
-
-        return sb.ToString();
     }
 }
