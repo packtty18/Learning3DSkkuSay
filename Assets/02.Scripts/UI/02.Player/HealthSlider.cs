@@ -4,9 +4,7 @@ using UnityEngine;
 public class HealthSlider : DoubleSliderUI
 {
     [Header("Health Reference")]
-    [SerializeField] private PlayerStat _stat;
-
-    private ConsumableStat<float> Health => _stat.Health;
+    private IReadOnlyConsumable<float> Health;
 
     private float _lastValue;
     private Tween _delayTween;
@@ -22,8 +20,8 @@ public class HealthSlider : DoubleSliderUI
         if (Health == null)
             return;
 
-        Health.OnCurrentChanged += OnHealthChanged;
-        Health.OnMaxChanged += OnMaxHealthChanged;
+        Health.Subscribe(OnHealthChanged);
+        Health.Subscribe(OnMaxHealthChanged);
 
         Sync(Health.Current);
     }
@@ -33,8 +31,8 @@ public class HealthSlider : DoubleSliderUI
         if (Health == null)
             return;
 
-        Health.OnCurrentChanged -= OnHealthChanged;
-        Health.OnMaxChanged -= OnMaxHealthChanged;
+        Health.Unsubscribe(OnHealthChanged);
+        Health.Unsubscribe(OnMaxHealthChanged);
 
         _delayTween?.Kill();
         _delayTween = null;
@@ -60,7 +58,6 @@ public class HealthSlider : DoubleSliderUI
 
         if (isIncrease)
         {
-            // 증가: 뒤 → 앞 (딜레이)
             BehindIncrease(current);
 
             _delayTween = DOVirtual.DelayedCall(1f, () =>
@@ -70,7 +67,6 @@ public class HealthSlider : DoubleSliderUI
         }
         else
         {
-            // 감소: 앞 → 뒤 (딜레이)
             FrontDecrease(current);
 
             _delayTween = DOVirtual.DelayedCall(1f, () =>

@@ -2,7 +2,8 @@
 using UnityEngine;
 
 [Serializable]
-public class ConsumableStat<T> : StatBase<T> where T : struct, IConvertible
+public class ConsumableStat<T> : StatBase<T>, IReadOnlyConsumable<T>
+    where T : struct, IConvertible
 {
     [SerializeField] private T _max;
     [SerializeField] private T _current;
@@ -13,11 +14,12 @@ public class ConsumableStat<T> : StatBase<T> where T : struct, IConvertible
 
     public T Max => _max;
     public T Current => _current;
-    public float RegenValue => _regen;
+    public float Regen => _regen;
 
-    public event Action<T> OnMaxChanged;
-    public event Action<T> OnCurrentChanged;
-    public event Action<float> OnRegenChanged;
+    //백업
+    //public readonly SafeEvent<T> OnMaxChanged = new();
+    //public readonly SafeEvent<T> OnCurrentChanged = new();
+    //public readonly SafeEvent<float> OnRegenChanged = new();
 
     public void Init(T max, T current = default, float regen = 0f)
     {
@@ -66,8 +68,6 @@ public class ConsumableStat<T> : StatBase<T> where T : struct, IConvertible
 
         // current 자동 보정
         SetCurrent(_current);
-
-        OnMaxChanged?.Invoke(_max);
     }
     #endregion
 
@@ -85,7 +85,7 @@ public class ConsumableStat<T> : StatBase<T> where T : struct, IConvertible
             return;
 
         _current = newValue;
-        OnCurrentChanged?.Invoke(_current);
+        Notify(_current);
     }
 
     public void Consume(T amount)
@@ -103,7 +103,6 @@ public class ConsumableStat<T> : StatBase<T> where T : struct, IConvertible
             return;
 
         _regen = clamped;
-        OnRegenChanged?.Invoke(_regen);
     }
 
     public void Regenerate(float deltaTime)

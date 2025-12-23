@@ -1,35 +1,46 @@
-using System;
+ï»¿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 [Serializable]
 public abstract class StatBase<T> where T : struct, IConvertible
 {
-    public event Action<T> OnValueChanged;
+    private readonly SafeEvent<T> _onValueChanged = new();
+
+    public void Subscribe(Action<T> action)
+    {
+        _onValueChanged.Subscribe(action);
+    }
+
+    public void Unsubscribe(Action<T> action)
+    {
+        _onValueChanged.Unsubscribe(action);
+    }
 
     protected void Notify(T value)
     {
-        OnValueChanged?.Invoke(value);
+        _onValueChanged?.Invoke(value);
     }
 
-    //´õºíÇü½ÄÀ¸·Î ¹Ù²Û´Ù
+    //ë”ë¸”í˜•ì‹ìœ¼ë¡œ ë°”ê¾¼ë‹¤
     protected double ToDouble(T value)
     {
         return Convert.ToDouble(value);
     }
 
-    //TÇü½ÄÀ¸·Î ¹Ù²Û´Ù
+    //Tí˜•ì‹ìœ¼ë¡œ ë°”ê¾¼ë‹¤
     protected T FromDouble(double value)
     {
         return (T)Convert.ChangeType(value, typeof(T));
     }
 
-    //µÎ°³ÀÇ °ªÀÌ °°ÀºÁö Ã¼Å©ÇÑ´Ù.
+    //ë‘ê°œì˜ ê°’ì´ ê°™ì€ì§€ ì²´í¬í•œë‹¤.
     protected bool EqualsValue(T a, T b, double epsilon = 0.00001)
     {
         return Math.Abs(ToDouble(a) - ToDouble(b)) < epsilon;
     }
 
-    //À½¼öÀÇ °æ¿ì 0À¸·Î
+    //ìŒìˆ˜ì˜ ê²½ìš° 0ìœ¼ë¡œ
     protected T ClampMinZero(T value)
     {
         return FromDouble(Math.Max(0, ToDouble(value)));

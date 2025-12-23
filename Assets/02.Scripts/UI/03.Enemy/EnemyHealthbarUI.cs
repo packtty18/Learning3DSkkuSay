@@ -34,15 +34,15 @@ public class EnemyHealthbarUI : MonoBehaviour
         _frontOriginalColor = _frontGuage.color;
         _backOriginalColor = _backGuage.color;
 
-        _frontGuage.fillAmount = _enemy.Stat.Health.Current / _enemy.Stat.Health.Max;
+        _frontGuage.fillAmount = _enemy.Stat.Health.GetRatio();
         _backGuage.fillAmount = _frontGuage.fillAmount;
 
-        _enemy.Stat.Health.OnCurrentChanged += UpdateForCurrent;
+        _enemy.Stat.Health.Subscribe(UpdateForCurrent);
     }
 
     private void OnDisable()
     {
-        _enemy.Stat.Health.OnCurrentChanged -= UpdateForCurrent;
+        _enemy.Stat.Health.Unsubscribe(UpdateForCurrent);
     }
 
     private void UpdateForCurrent(float current)

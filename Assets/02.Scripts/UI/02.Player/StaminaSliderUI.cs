@@ -11,7 +11,7 @@ public class StaminaSliderUI : DoubleSliderUI
     private float _cachedChunkIndex;
     private float _lastValue;
 
-    private ConsumableStat<float> Stamina => _stat.Stemina;
+    private IReadOnlyConsumable<float> Stamina => _stat.Stamina;
 
     private void Start()
     {
@@ -24,8 +24,8 @@ public class StaminaSliderUI : DoubleSliderUI
         if (Stamina == null)
             return;
 
-        Stamina.OnCurrentChanged += OnStaminaChanged;
-        Stamina.OnMaxChanged += OnMaxStaminaChanged;
+        Stamina.Subscribe(OnStaminaChanged);
+        Stamina.Subscribe(OnMaxStaminaChanged);
 
         SyncInitialState();
     }
@@ -35,8 +35,8 @@ public class StaminaSliderUI : DoubleSliderUI
         if (Stamina == null)
             return;
 
-        Stamina.OnCurrentChanged -= OnStaminaChanged;
-        Stamina.OnMaxChanged -= OnMaxStaminaChanged;
+        Stamina.Unsubscribe(OnStaminaChanged);
+        Stamina.Unsubscribe(OnMaxStaminaChanged);
     }
 
     private void SyncInitialState()

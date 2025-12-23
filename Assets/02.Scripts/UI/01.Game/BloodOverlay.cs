@@ -9,7 +9,7 @@ public class BloodOverlay : MonoBehaviour
     private Image OverlayUI;
     [Required, SerializeField] 
     private PlayerStat _stat;
-    private ConsumableStat<float> _health => _stat.Health;
+    private IReadOnlyConsumable<float> _health => _stat.Health;
 
     [SerializeField]
     private float fadeDuration = 0.5f;
@@ -22,14 +22,14 @@ public class BloodOverlay : MonoBehaviour
 
     private void OnEnable()
     {
-        _health.OnCurrentChanged += ChangedWithEffect;
-        _health.OnMaxChanged += ChangedWithoutEffect;
+        _health.Subscribe(ChangedWithEffect);
+        _health.Subscribe(ChangedWithoutEffect);
     }
 
     private void OnDisable()
     {
-        _health.OnCurrentChanged -= ChangedWithEffect;
-        _health.OnMaxChanged -= ChangedWithoutEffect;
+        _health.Unsubscribe(ChangedWithEffect);
+        _health.Unsubscribe(ChangedWithoutEffect);
     }
 
     private void ChangedWithEffect(float notUse)

@@ -11,8 +11,8 @@ public class PlayerMove : MonoBehaviour
     [SerializeField] private PlayerStat _stat;
     [SerializeField] private Animator _animator;
 
-    private MovementDataSO _data => _stat.MoveData;
-    private ConsumableStat<float> _stamina => _stat.Stemina;
+    private MovementDataSO _data => _stat.CurrentMove;
+    private IReadOnlyConsumable<float> _stamina => _stat.Stamina;
 
     private CameraController _cameraController => CameraController.Instance;
     private PlayerRotate _playerRotate => PlayerController.Instance.Rotate;
@@ -34,7 +34,7 @@ public class PlayerMove : MonoBehaviour
 
     private void Start()
     {
-        _agent.SetAgent(_stat.MoveData.MoveSpeed, false);
+        _agent.SetAgent(_stat.CurrentMove.MoveSpeed, false);
     }
 
     private void Update()

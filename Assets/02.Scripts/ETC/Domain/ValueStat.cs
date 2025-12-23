@@ -1,12 +1,13 @@
 ﻿using System;
+using Unity.VisualScripting;
 using UnityEngine;
 
 [Serializable]
-public class ValueStat<T> : StatBase<T> where T : struct, IConvertible
+public class ValueStat<T> : StatBase<T> , IReadOnlyValue<T>
+    where T : struct, IConvertible
 {
     [SerializeField] private T _value;
     public T Value => _value;
-
     public void Init(T value)
     {
         Set(value);

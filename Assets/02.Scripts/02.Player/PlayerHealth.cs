@@ -9,7 +9,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     [SerializeField] private PlayerController _controller;
     private Animator _animator => _controller.Animator;
      private PlayerStat _stat => _controller.Stat;
-    private ConsumableStat<float> Health => _stat.Health;
+    private IReadOnlyConsumable<float> Health => _stat.Health;
 
     public void ApplyDamage(AttackData data)
     {

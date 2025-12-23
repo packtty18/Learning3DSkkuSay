@@ -5,14 +5,12 @@ public class BombWeapon : WeaponBase
 {
     [Required, SerializeField] private Transform _firePoint;
 
-    private BombDataSO Data => Stat.CurrentBombData;
-    private ConsumableStat<int> Count => Stat.BombCount;
-
+    private BombDataSO _data => Stat.CurrentBomb;
     private float _coolTimer;
 
     public override bool CanAttack()
     {
-        return Count.Current > 0 && _coolTimer <= 0f;
+        return Stat.BombCount.Current > 0 && _coolTimer <= 0f;
     }
 
     public override void Attack()
@@ -20,8 +18,8 @@ public class BombWeapon : WeaponBase
         if (!CanAttack())
             return;
 
-        _coolTimer = Data.Delay;
-        Count.Consume(1);
+        _coolTimer = _data.Delay;
+        Stat.BombCount.Consume(1);
         Animator.SetTrigger("Throw");
     }
 
@@ -41,12 +39,12 @@ public class BombWeapon : WeaponBase
         bomb.transform.position = _firePoint.position;
 
         if (bomb.TryGetComponent(out Bomb b))
-            b.Init(Data);
+            b.Init(_data);
 
         if (bomb.TryGetComponent(out Rigidbody rb))
         {
             rb.AddForce(
-                CameraController.Instance.GetFireDirection(_firePoint) * Data.Force,
+                CameraController.Instance.GetFireDirection(_firePoint) * _data.Force,
                 ForceMode.Impulse);
         }
     }
@@ -56,7 +54,7 @@ public class BombWeapon : WeaponBase
         if (_coolTimer > 0f)
             _coolTimer -= Time.deltaTime;
 
-        if (!Count.IsFull())
-            Count.Regenerate(Time.deltaTime);
+        if (!Stat.BombCount.IsFull())
+            Stat.BombCount.Regenerate(Time.deltaTime);
     }
 }

@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 using ArtificeToolkit.Attributes;
+using Unity.Android.Gradle.Manifest;
+using UnityEditor.ShaderGraph.Internal;
 
 public class GunWeapon : WeaponBase
 {
@@ -9,14 +11,20 @@ public class GunWeapon : WeaponBase
     [SerializeField] private LayerMask _targetLayer;
     [Required, SerializeField] private FireRebound _rebound;
     
-    private GunDataSO Data => Stat.CurrentGunData;
-    private ValueStat<int> Inventory => Stat.InventoryBullet;
-    private ConsumableStat<int> Loaded => Stat.LoadedBullet;
-    private ConsumableStat<float> ReloadTimer => Stat.ReloadTimer;
+    private GunDataSO Data => Stat.CurrentGun;
+    private IReadOnlyValue<int> Inventory => Stat.InventoryBullet;
+    private IReadOnlyConsumable<int> Loaded => Stat.LoadedBullet;
+
+    private float _reloadTime => Data.ReloadTime;
+    private float _reloadTimer = 0;
+
+    public float ReloadTime => _reloadTime;
+    public float ReloadTimer => _reloadTimer;
 
     private bool _canFire = true;
     private bool _isReloading;
 
+    public SafeEvent<float> OnReloadTimerChange;
     public override bool CanAttack()
     {
         return _canFire && !_isReloading && !Loaded.IsEmpty();
@@ -104,20 +112,22 @@ public class GunWeapon : WeaponBase
     private IEnumerator ReloadRoutine()
     {
         _isReloading = true;
-        ReloadTimer.SetCurrent(0);
+        _reloadTimer = ReloadTime;
+        
 
         int need = Mathf.Min(
             Loaded.Max - Loaded.Current,
             Inventory.Value);
 
-        while (!ReloadTimer.IsFull())
+        while (_reloadTimer > 0)
         {
-            ReloadTimer.Regenerate(Time.deltaTime);
+            _reloadTimer -= Time.deltaTime;
+            OnReloadTimerChange.Invoke(_reloadTimer);
             yield return null;
         }
 
-        Inventory.Decrease(need);
-        Loaded.SetCurrent(Loaded.Current + need);
+        _reloadTimer = 0;
+        Stat.SetReloadBullet(need, Loaded.Current + need);
 
         _isReloading = false;
     }
