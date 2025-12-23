@@ -389,10 +389,10 @@ MonoBehaviour:
   IsZoomable: 1
   _fireTransform: {fileID: 1576513385}
   _muzzleTransform: {fileID: 1591553671}
+  _rebound: {fileID: 1695678113}
   _targetLayer:
     serializedVersion: 2
     m_Bits: 576
-  _rebound: {fileID: 1695678113}
 --- !u!1 &41650932
 GameObject:
   m_ObjectHideFlags: 0
@@ -4668,6 +4668,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _stat: {fileID: 1695678110}
+  _gunWeapon: {fileID: 40317378}
   _ammoTextView: {fileID: 1264184705}
   _reloadUIView: {fileID: 1214339623}
 --- !u!1 &907102668
@@ -5276,7 +5277,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ZoomMode: 0
-  Camera: {fileID: 0}
+  Camera: {fileID: 1311723960}
   Normal: {fileID: 1345262738}
   Zoom: {fileID: 804496722}
 --- !u!1 &1050569598
@@ -8554,8 +8555,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97f24f0d6a852124292b5313f8f6c700, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _characterController: {fileID: 1695678107}
-  _agent: {fileID: 0}
   _stat: {fileID: 1695678110}
   _animator: {fileID: 1024816962}
 --- !u!114 &1695678109
@@ -8583,31 +8582,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 22d44db9fa9efa04fb625a35ecdc798f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Health:
-    _max: 0
-    _current: 0
-    _regen: 0
-  MoveData: {fileID: 11400000, guid: 36d53bc37fc625549afb8f72bf7f4298, type: 2}
-  Stemina:
-    _max: 0
-    _current: 0
-    _regen: 0
-  CurrentBombData: {fileID: 11400000, guid: fee8ace35e335af448c50ca506cfb37b, type: 2}
-  BombCount:
-    _max: 0
-    _current: 0
-    _regen: 0
-  CurrentGunData: {fileID: 11400000, guid: efdf1005089e2f54291e0a7dc49162f8, type: 2}
-  InventoryBullet:
-    _value: 0
-  LoadedBullet:
-    _max: 0
-    _current: 0
-    _regen: 0
-  ReloadTimer:
-    _max: 0
-    _current: 0
-    _regen: 0
+  _moveData: {fileID: 11400000, guid: 36d53bc37fc625549afb8f72bf7f4298, type: 2}
+  _currentBombData: {fileID: 11400000, guid: fee8ace35e335af448c50ca506cfb37b, type: 2}
+  _currentGunData: {fileID: 11400000, guid: efdf1005089e2f54291e0a7dc49162f8, type: 2}
 --- !u!114 &1695678113
 MonoBehaviour:
   m_ObjectHideFlags: 0

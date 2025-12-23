@@ -24,7 +24,8 @@ public class GameManager : Singleton<GameManager>
     public override void Init()
     {
         Player.Init();
-        Player.Stat.OnDead += OnPlayerDead;
+
+        Player.Stat.OnDead.Subscribe(OnPlayerDead);
 
         StartCoroutine(GameStartRoutine());
     }
@@ -32,7 +33,7 @@ public class GameManager : Singleton<GameManager>
     private void OnDestroy()
     {
         if (Player != null && Player.Stat != null)
-            Player.Stat.OnDead -= OnPlayerDead;
+            Player.Stat.OnDead.Unsubscribe(OnPlayerDead);
     }
 
     private IEnumerator GameStartRoutine()

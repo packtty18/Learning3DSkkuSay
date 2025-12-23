@@ -2,14 +2,7 @@
 using UnityEngine;
 using ArtificeToolkit.Attributes;
 using System.Collections.Generic;
-using JetBrains.Annotations;
-using Unity.VisualScripting;
 
-
-
-/*
- *  다음 과제 : 인덱서를 적용해보기
- */
 public class PlayerStat : MonoBehaviour
 {
     [Title("Data")]
@@ -17,34 +10,25 @@ public class PlayerStat : MonoBehaviour
     [Required, SerializeField, PreviewScriptable] private BombDataSO _currentBombData;
     [Required, SerializeField, PreviewScriptable] private GunDataSO _currentGunData;
 
-    //Gun
-    [ReadOnly]
-    private ValueStat<int> _inventoryBullet;
-
     private Dictionary<EConsumableFloat, ConsumableStat<float>> _floatConsumableStat = new Dictionary<EConsumableFloat, ConsumableStat<float>>();
     private Dictionary<EConsumableInt, ConsumableStat<int>> _intConsumableStat = new Dictionary<EConsumableInt, ConsumableStat<int>>();
     private Dictionary<EValueFloat, ValueStat<float>> _floatValueStat = new Dictionary<EValueFloat, ValueStat<float>>();
     private Dictionary<EValueInt, ValueStat<int>> _intValueStat = new Dictionary<EValueInt, ValueStat<int>>();
 
 
-
     public MovementDataSO CurrentMove => _moveData;
     public BombDataSO CurrentBomb => _currentBombData;
     public GunDataSO CurrentGun => _currentGunData;
 
-    public IReadOnlyConsumable<float> Health => _floatConsumableStat[EConsumableFloat.Health];
-    public IReadOnlyConsumable<float> Stamina => _floatConsumableStat[EConsumableFloat.Stamina];
-    public IReadOnlyConsumable<int> BombCount => _intConsumableStat[EConsumableInt.BombCount];
-    public IReadOnlyConsumable<int> LoadedBullet => _intConsumableStat[EConsumableInt.LoadedBulletCount];
-
-    public IReadOnlyValue<int> InventoryBullet => _inventoryBullet;
     public bool IsDead { get; private set; } = false;
 
-    public event Action OnDead;
+    public SafeEvent OnDead = new SafeEvent();
+    public SafeEvent OnStatInitEnd = new SafeEvent();
 
 
     public void Awake()
     {
+        InitDictionaries();
         //Value 우선 처리
         _floatValueStat[EValueFloat.MaxHealth].Init(100);
         _floatValueStat[EValueFloat.HealthRegenPerSecond].Init(1);
@@ -72,11 +56,25 @@ public class PlayerStat : MonoBehaviour
         _intConsumableStat[EConsumableInt.InvenBulletCount].Init(150, default); //임시 => 인벤 제작후 추가
 
         _intConsumableStat[EConsumableInt.LoadedBulletCount].Init(_intValueStat[EValueInt.GunMaxBullet].Value, default);
-
+        OnStatInitEnd?.Invoke();
         Debug.Log("[PlayerStat] Initialized");
     }
 
-   
+    private void InitDictionaries()
+    {
+        foreach (EConsumableFloat type in Enum.GetValues(typeof(EConsumableFloat)))
+            _floatConsumableStat[type] = new ConsumableStat<float>();
+
+        foreach (EConsumableInt type in Enum.GetValues(typeof(EConsumableInt)))
+            _intConsumableStat[type] = new ConsumableStat<int>();
+
+        foreach (EValueFloat type in Enum.GetValues(typeof(EValueFloat)))
+            _floatValueStat[type] = new ValueStat<float>();
+
+        foreach (EValueInt type in Enum.GetValues(typeof(EValueInt)))
+            _intValueStat[type] = new ValueStat<int>();
+    }
+
 
     private void SetMoveData(MovementDataSO data)
     {
@@ -96,7 +94,7 @@ public class PlayerStat : MonoBehaviour
         _intValueStat[EValueInt.GunMaxBullet].Init(data.MaxBullet);
 
         _floatValueStat[EValueFloat.GunDamage].Init(data.Damage);
-        _floatValueStat[EValueFloat.GunFireDelay].Init(data.Damage);
+        _floatValueStat[EValueFloat.GunFireDelay].Init(data.FireDelay);
         _floatValueStat[EValueFloat.GunMaxRange].Init(data.Range);
         _floatValueStat[EValueFloat.GunReloadTime].Init(data.ReloadTime);
 
@@ -136,24 +134,37 @@ public class PlayerStat : MonoBehaviour
 
     public IReadOnlyConsumable<float> GetConsumable(EConsumableFloat type)
     {
+        if(_floatConsumableStat.Count == 0)
+        {
+            return null;
+        }
         return _floatConsumableStat[type];
     }
 
     public IReadOnlyConsumable<int> GetConsumable(EConsumableInt type)
     {
+        if (_intConsumableStat.Count == 0)
+        {
+            return null;
+        }
         return _intConsumableStat[type];
     }
 
     public IReadOnlyValue<float> GetValue(EValueFloat type)
     {
+        if (_floatValueStat.Count == 0)
+        {
+            return null;
+        }
         return _floatValueStat[type];
     }
 
     public IReadOnlyValue<int> GetValue(EValueInt type)
     {
+        if (_intValueStat.Count == 0)
+        {
+            return null;
+        }
         return _intValueStat[type];
     }
-
-
-
 }

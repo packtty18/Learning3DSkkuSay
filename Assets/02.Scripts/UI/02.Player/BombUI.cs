@@ -1,25 +1,38 @@
-﻿using UnityEngine;
+﻿using ArtificeToolkit.Attributes;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class BombUI : MonoBehaviour
 {
-    [SerializeField] private PlayerStat _stat;
-    [SerializeField] private Image[] _bombIcons;
+    [Title("Player Reference")]
+    [Required, SerializeField]
+    private PlayerStat _stat;
 
-    private IReadOnlyConsumable<int> _bombCount => _stat.BombCount;
-    private void Start()
-    {
-        SetCount(_stat.BombCount.Current);
-    }
+    [Title("UI")]
+    [Required, SerializeField]
+    private Image[] _bombIcons;
+    private IReadOnlyConsumable<int> _bombCount => _stat.GetConsumable(EConsumableInt.BombCount);
 
     private void OnEnable()
     {
-        _stat.BombCount.Subscribe(SetCount);
+        if(_bombCount == null)
+        {
+            _stat.OnStatInitEnd.Subscribe(UIEnable);
+            return;
+        }
+
+        UIEnable();
+    }
+
+    public void UIEnable()
+    {
+        _bombCount.Subscribe(SetCount);
+        SetCount(_bombCount.Current);
     }
 
     private void OnDisable()
     {
-        _stat.BombCount.Unsubscribe(SetCount);
+        _bombCount.Unsubscribe(SetCount);
     }
 
     private void SetCount(int current)

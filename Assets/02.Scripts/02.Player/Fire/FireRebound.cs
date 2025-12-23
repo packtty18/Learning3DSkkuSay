@@ -6,14 +6,16 @@ public class FireRebound : MonoBehaviour
 {
     [Header("Recoil Settings")]
     [SerializeField] private PlayerStat _stat;
-    RecoilData recoil => _stat.CurrentGun.RecoilData;
+
+    private float _recoilX => _stat.GetValue(EValueFloat.GunRecoilX).Value;
+    private float _recoilY => _stat.GetValue(EValueFloat.GunRecoilY).Value;
 
 
     public static event Action<RecoilData> OnRecoil;
 
     public void PlayRebound()
     {
-        OnRecoil?.Invoke(recoil);
+        OnRecoil?.Invoke(new RecoilData(_recoilY, _recoilX));
     }
 }
 

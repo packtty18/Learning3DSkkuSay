@@ -6,35 +6,37 @@ using ArtificeToolkit.Attributes;
 public class PlayerMove : MonoBehaviour
 {
     [Title("Components")]
-    [ReadOnly, SerializeField] private CharacterController _characterController;
-    [ReadOnly, SerializeField] private AgentController _agent;
-    [SerializeField] private PlayerStat _stat;
-    [SerializeField] private Animator _animator;
+    [ReadOnly] private CharacterController _characterController;
+    [ReadOnly] private AgentController _agent;
 
-    private MovementDataSO _data => _stat.CurrentMove;
-    private IReadOnlyConsumable<float> _stamina => _stat.Stamina;
+    [Required, SerializeField] private PlayerStat _stat;
+    [Required, SerializeField] private Animator _animator;
 
-    private CameraController _cameraController => CameraController.Instance;
-    private PlayerRotate _playerRotate => PlayerController.Instance.Rotate;
+    private IReadOnlyConsumable<float> _stamina => _stat.GetConsumable(EConsumableFloat.Stamina);
+    private IReadOnlyValue<float> _moveSpeed => _stat.GetValue(EValueFloat.MoveSpeed);
+    private IReadOnlyValue<float> _dashSpeed => _stat.GetValue(EValueFloat.DashSpeed);
+    private IReadOnlyValue<float> _dashConsumeStamina => _stat.GetValue(EValueFloat.DashConsumeStaminaPerSecond);
+    private IReadOnlyValue<float> _jumpPower => _stat.GetValue(EValueFloat.JumpPower);
+    private IReadOnlyValue<float> _doubleJumpConsumeStamina => _stat.GetValue(EValueFloat.DoubleJumpConsumeStaminaPerOnce);
+    private IReadOnlyValue<float> _staminaRegenDelay => _stat.GetValue(EValueFloat.StaminaRegenDelay);
 
+    [Title("Runtime")]
     [ReadOnly] private float _yVelocity;
     [ReadOnly] private bool _canDoubleJump = true;
     [ReadOnly] private float _recoveryTimer = 0f;
 
+    private CameraController _cameraController => CameraController.Instance;
     private bool _isDash => Input.GetKey(KeyCode.LeftShift);
 
     private void Awake()
     {
         _characterController = GetComponent<CharacterController>();
         _agent = GetComponent<AgentController>();
-
-        //_agent.updateRotation = false; // NavMeshAgent 회전은 직접 처리
-        //_agent.updateUpAxis = true;
     }
 
     private void Start()
     {
-        _agent.SetAgent(_stat.CurrentMove.MoveSpeed, false);
+        _agent.SetAgent(_moveSpeed.Value, false);
     }
 
     private void Update()
@@ -50,6 +52,7 @@ public class PlayerMove : MonoBehaviour
             case CameraMode.BackView:
                 HandleFPSSimpleMove();
                 break;
+
             case CameraMode.TPS:
                 HandleTPSMove();
                 break;
@@ -58,7 +61,6 @@ public class PlayerMove : MonoBehaviour
         HandleStaminaRecovery();
     }
 
-    // 중력 처리
     private void HandleGravity()
     {
         if (_characterController.isGrounded)
@@ -71,7 +73,7 @@ public class PlayerMove : MonoBehaviour
             _yVelocity += Util.GRAVITY * Time.deltaTime;
         }
     }
-    
+
     private void HandleFPSSimpleMove()
     {
         float h = Input.GetAxis("Horizontal");
@@ -79,37 +81,36 @@ public class PlayerMove : MonoBehaviour
 
         Vector3 direction = new Vector3(h, 0f, v);
         _animator.SetFloat("Speed", direction.magnitude);
-
         _animator.SetBool("IsGround", _characterController.isGrounded);
 
         if (_cameraController.CurrentMode == CameraMode.FPS)
         {
             Vector3 camForward = Camera.main.transform.forward;
             Vector3 camRight = Camera.main.transform.right;
-            camForward.y = 0f; 
+            camForward.y = 0f;
             camRight.y = 0f;
             direction = (camForward * v + camRight * h).normalized;
         }
-        else if (_cameraController.CurrentMode == CameraMode.BackView)
+        else
         {
             direction = transform.TransformDirection(direction);
             direction.y = 0f;
         }
 
-        float speed = _data.MoveSpeed;
+        float speed = _moveSpeed.Value;
+
         if (_isDash && !_stamina.IsEmpty() && direction.sqrMagnitude > 0.01f)
         {
-            speed = _data.DashSpeed;
-            ConsumeStamina(_data.DashConsume * Time.deltaTime);
+            speed = _dashSpeed.Value;
+            ConsumeStamina(_dashConsumeStamina.Value * Time.deltaTime);
         }
 
         HandleJump();
-        direction.y = _yVelocity;
 
+        direction.y = _yVelocity;
         _characterController.Move(direction * speed * Time.deltaTime);
     }
 
-    // TPS 이동 (NavMesh)
     private void HandleTPSMove()
     {
         if (Input.GetMouseButtonDown(1))
@@ -118,38 +119,34 @@ public class PlayerMove : MonoBehaviour
             if (Physics.Raycast(ray, out RaycastHit hit, 500f))
             {
                 _agent.SetAgentDestination(hit.point);
-                Debug.Log($"TPS 이동: {hit.point}");
+                Debug.Log($"[PlayerMove] TPS Move To {hit.point}");
             }
         }
-
-        //Vector3 horizontalVelocity = new Vector3(_agent.velocity.x, 0, _agent.velocity.z);
-        //if (horizontalVelocity.sqrMagnitude > 0.01f)
-        //{
-        //    _playerRotate.SetDirection(horizontalVelocity.normalized);
-        //}
     }
 
     private void HandleJump()
     {
-        if (Input.GetButtonDown("Jump"))
+        if (!Input.GetButtonDown("Jump"))
+            return;
+
+        if (_characterController.isGrounded)
         {
-            if (_characterController.isGrounded)
-            {
-                _animator.SetTrigger("Jump");
-                _yVelocity = _data.JumpPower;
-            }
-            else if (_canDoubleJump && _stamina.Current >= _data.DoubleJumpConsume)
-            {
-                _yVelocity = _data.JumpPower;
-                _canDoubleJump = false;
-                ConsumeStamina(_data.DoubleJumpConsume);
-            }
+            _animator.SetTrigger("Jump");
+            _yVelocity = _jumpPower.Value;
+        }
+        else if (_canDoubleJump && _stamina.Current >= _doubleJumpConsumeStamina.Value)
+        {
+            _yVelocity = _jumpPower.Value;
+            _canDoubleJump = false;
+            ConsumeStamina(_doubleJumpConsumeStamina.Value);
         }
     }
+
 
     private void HandleStaminaRecovery()
     {
         float dt = Time.deltaTime;
+
         if (_recoveryTimer > 0f)
         {
             _recoveryTimer -= dt;
@@ -165,6 +162,6 @@ public class PlayerMove : MonoBehaviour
     private void ConsumeStamina(float amount)
     {
         _stamina.Consume(amount);
-        _recoveryTimer = _data.RegenDelay;
+        _recoveryTimer = _staminaRegenDelay.Value;
     }
 }

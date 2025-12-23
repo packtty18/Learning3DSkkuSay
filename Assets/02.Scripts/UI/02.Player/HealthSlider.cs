@@ -1,28 +1,36 @@
-﻿using DG.Tweening;
+﻿using ArtificeToolkit.Attributes;
+using DG.Tweening;
 using UnityEngine;
 
 public class HealthSlider : DoubleSliderUI
 {
-    [Header("Health Reference")]
-    private IReadOnlyConsumable<float> Health;
+    [Title("Player Reference")]
+    [Required, SerializeField]
+    private PlayerStat _stat;
+
+    private IReadOnlyConsumable<float> Health => _stat.GetConsumable(EConsumableFloat.Health);
 
     private float _lastValue;
     private Tween _delayTween;
 
-    private void Start()
-    {
-        Init(Health.Max, Health.Current);
-        _lastValue = Health.Current;
-    }
-
     private void OnEnable()
     {
         if (Health == null)
+        {
+            _stat.OnStatInitEnd.Subscribe(UIEnable);
             return;
 
+        }
+        UIEnable();
+    }
+
+    private void UIEnable()
+    {
         Health.Subscribe(OnHealthChanged);
         Health.Subscribe(OnMaxHealthChanged);
 
+        Init(Health.Max, Health.Current);
+        _lastValue = Health.Current;
         Sync(Health.Current);
     }
 

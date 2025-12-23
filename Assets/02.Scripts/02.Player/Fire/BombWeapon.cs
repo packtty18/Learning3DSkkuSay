@@ -3,14 +3,24 @@ using ArtificeToolkit.Attributes;
 
 public class BombWeapon : WeaponBase
 {
-    [Required, SerializeField] private Transform _firePoint;
+    [Title("References")]
+    [Required, SerializeField]
+    private Transform _firePoint;
 
-    private BombDataSO _data => Stat.CurrentBomb;
+    private IReadOnlyConsumable<int> _bombCount => Stat.GetConsumable(EConsumableInt.BombCount);
+    private IReadOnlyValue<float> _damage => Stat.GetValue(EValueFloat.BombDamage);
+    private IReadOnlyValue<float> _radius => Stat.GetValue(EValueFloat.BombRadius);
+    private IReadOnlyValue<float> _force => Stat.GetValue(EValueFloat.BombThrowForce);
+    private IReadOnlyValue<float> _delay => Stat.GetValue(EValueFloat.BombThrowDelay);
+    private IReadOnlyValue<float> _knockbackPower => Stat.GetValue(EValueFloat.BombKnockbackPower);
+
+    [Title("Runtime")]
+    [ReadOnly]
     private float _coolTimer;
 
     public override bool CanAttack()
     {
-        return Stat.BombCount.Current > 0 && _coolTimer <= 0f;
+        return _bombCount.Current > 0 && _coolTimer <= 0f;
     }
 
     public override void Attack()
@@ -18,8 +28,8 @@ public class BombWeapon : WeaponBase
         if (!CanAttack())
             return;
 
-        _coolTimer = _data.Delay;
-        Stat.BombCount.Consume(1);
+        _coolTimer = _delay.Value;
+        _bombCount.Consume(1);
         Animator.SetTrigger("Throw");
     }
 
@@ -39,12 +49,12 @@ public class BombWeapon : WeaponBase
         bomb.transform.position = _firePoint.position;
 
         if (bomb.TryGetComponent(out Bomb b))
-            b.Init(_data);
+            b.Init(_radius.Value, _damage.Value, _knockbackPower.Value);
 
         if (bomb.TryGetComponent(out Rigidbody rb))
         {
             rb.AddForce(
-                CameraController.Instance.GetFireDirection(_firePoint) * _data.Force,
+                CameraController.Instance.GetFireDirection(_firePoint) * _force.Value,
                 ForceMode.Impulse);
         }
     }
@@ -54,7 +64,7 @@ public class BombWeapon : WeaponBase
         if (_coolTimer > 0f)
             _coolTimer -= Time.deltaTime;
 
-        if (!Stat.BombCount.IsFull())
-            Stat.BombCount.Regenerate(Time.deltaTime);
+        if (!_bombCount.IsFull())
+            _bombCount.Regenerate(Time.deltaTime);
     }
 }

@@ -1,32 +1,40 @@
 ﻿using UnityEngine;
+using ArtificeToolkit.Attributes;
 
 public class StaminaSliderUI : DoubleSliderUI
 {
-    [Header("Player Reference")]
-    [SerializeField] private PlayerStat _stat;
+    [Title("Player Reference")]
+    [Required, SerializeField]
+    private PlayerStat _stat;
 
-    [Header("Chunk Settings")]
-    [SerializeField] private float _chunkValue = 20f;
+    [Title("Chunk Settings")]
+    [SerializeField]
+    private float _chunkValue = 20f;
 
+    [Title("Runtime")]
+    [ReadOnly]
     private float _cachedChunkIndex;
+
+    [ReadOnly]
     private float _lastValue;
 
-    private IReadOnlyConsumable<float> Stamina => _stat.Stamina;
-
-    private void Start()
-    {
-        Init(Stamina.Max, Stamina.Current);
-        SyncInitialState();
-    }
+    private IReadOnlyConsumable<float> Stamina => _stat.GetConsumable(EConsumableFloat.Stamina);
 
     private void OnEnable()
     {
         if (Stamina == null)
+        {
+            _stat.OnStatInitEnd.Subscribe(UIEnable);
             return;
+        }
+            
+        UIEnable();
+    }
 
+    private void UIEnable()
+    {
+        Init(Stamina.Max, Stamina.Current);
         Stamina.Subscribe(OnStaminaChanged);
-        Stamina.Subscribe(OnMaxStaminaChanged);
-
         SyncInitialState();
     }
 
@@ -36,7 +44,6 @@ public class StaminaSliderUI : DoubleSliderUI
             return;
 
         Stamina.Unsubscribe(OnStaminaChanged);
-        Stamina.Unsubscribe(OnMaxStaminaChanged);
     }
 
     private void SyncInitialState()
@@ -80,8 +87,9 @@ public class StaminaSliderUI : DoubleSliderUI
         _lastValue = current;
     }
 
-    private void OnMaxStaminaChanged(float max)
-    {
-        SetMax(max);
-    }
+    //private void OnMaxStaminaChanged(float max)
+    //{
+    //    SetMax(max);
+    //}
 }
+

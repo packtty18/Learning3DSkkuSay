@@ -5,46 +5,54 @@ using UnityEngine.UI;
 
 public class BloodOverlay : MonoBehaviour
 {
+    [Title("Components")]
     [Required, SerializeField]
     private Image OverlayUI;
-    [Required, SerializeField] 
-    private PlayerStat _stat;
-    private IReadOnlyConsumable<float> _health => _stat.Health;
 
+    [Required, SerializeField]
+    private PlayerStat _stat;
+    private IReadOnlyConsumable<float> _health => _stat.GetConsumable(EConsumableFloat.Health);
+
+    [Title("Settings")]
     [SerializeField]
     private float fadeDuration = 0.5f;
 
-    private void Start()
-    {
-        float alpha = 1f - (_health.Current / _health.Max);
-        SetAlpha(alpha);
-    }
 
     private void OnEnable()
     {
-        _health.Subscribe(ChangedWithEffect);
-        _health.Subscribe(ChangedWithoutEffect);
+        if(_health == null)
+        {
+            _stat.OnStatInitEnd.Subscribe(UIEnable);
+            return;
+        }
+
+        UIEnable();
+    }
+
+    private void UIEnable()
+    {
+        _health.Subscribe(Sync);
+        SetAlpha(GetNextAlpha());
     }
 
     private void OnDisable()
     {
-        _health.Unsubscribe(ChangedWithEffect);
-        _health.Unsubscribe(ChangedWithoutEffect);
+        _health.Unsubscribe(Sync);
     }
 
-    private void ChangedWithEffect(float notUse)
+    private void Sync(float notUse)
     {
-        float targetAlpha = 1f;
-        SetAlpha(targetAlpha);
-        ChangedWithoutEffect(notUse);
-    }
-
-    private void ChangedWithoutEffect(float notUse)
-    {
-        float finalAlpha = 1f - (_health.Current / _health.Max);
-
+        float alpha = GetNextAlpha();
+        SetAlpha(alpha);
         OverlayUI.DOKill();
-        OverlayUI.DOFade(finalAlpha, fadeDuration).SetEase(Ease.OutQuad);
+        OverlayUI
+            .DOFade(alpha, fadeDuration)
+            .SetEase(Ease.OutQuad);
+    }
+
+    private float GetNextAlpha()
+    {
+        return 1f - (_health.Current / _health.Max);
     }
 
     private void SetAlpha(float alpha)

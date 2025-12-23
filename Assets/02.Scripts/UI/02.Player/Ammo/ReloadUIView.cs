@@ -13,6 +13,6 @@ public class ReloadUIView : MonoBehaviour
             return;
         }
 
-        _fillImage.fillAmount = Mathf.Clamp01(1f - current / max);
+        _fillImage.fillAmount = Mathf.Clamp01(current / max);
     }
 }

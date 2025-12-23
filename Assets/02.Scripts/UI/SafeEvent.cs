@@ -25,3 +25,25 @@ public class SafeEvent<T>
         _event?.Invoke(value);
     }
 }
+public class SafeEvent
+{
+    private event Action _event;
+    private HashSet<Action> _listeners = new();
+
+    public void Subscribe(Action listener)
+    {
+        if (_listeners.Add(listener))
+            _event += listener;
+    }
+
+    public void Unsubscribe(Action listener)
+    {
+        if (_listeners.Remove(listener))
+            _event -= listener;
+    }
+
+    public void Invoke()
+    {
+        _event?.Invoke();
+    }
+}

@@ -6,25 +6,43 @@ using UnityEditor.ShaderGraph.Internal;
 
 public class GunWeapon : WeaponBase
 {
-    [Required, SerializeField] private Transform _fireTransform;
-    [Required,SerializeField] private Transform _muzzleTransform;
-    [SerializeField] private LayerMask _targetLayer;
-    [Required, SerializeField] private FireRebound _rebound;
-    
-    private GunDataSO Data => Stat.CurrentGun;
-    private IReadOnlyValue<int> Inventory => Stat.InventoryBullet;
-    private IReadOnlyConsumable<int> Loaded => Stat.LoadedBullet;
+    [Title("References")]
+    [Required, SerializeField]
+    private Transform _fireTransform;
 
-    private float _reloadTime => Data.ReloadTime;
-    private float _reloadTimer = 0;
+    [Required, SerializeField]
+    private Transform _muzzleTransform;
+
+    [Required, SerializeField]
+    private FireRebound _rebound;
+
+    [Title("Settings")]
+    [SerializeField]
+    private LayerMask _targetLayer;
+    private IReadOnlyConsumable<int> Inventory => Stat.GetConsumable(EConsumableInt.InvenBulletCount);
+    private IReadOnlyConsumable<int> Loaded => Stat.GetConsumable(EConsumableInt.LoadedBulletCount);
+
+    private float _damage => Stat.GetValue(EValueFloat.GunDamage).Value;
+    private float _delay => Stat.GetValue(EValueFloat.GunFireDelay).Value;
+    private float _range => Stat.GetValue(EValueFloat.GunMaxRange).Value;
+    private float _reloadTime => Stat.GetValue(EValueFloat.GunReloadTime).Value;
+    private float _knockbackPower => Stat.GetValue(EValueFloat.GunKnockbackPower).Value;
+
+    [Title("Runtime")]
+    [ReadOnly]
+    private float _reloadTimer = 0f;
 
     public float ReloadTime => _reloadTime;
     public float ReloadTimer => _reloadTimer;
 
+    [ReadOnly]
     private bool _canFire = true;
+
+    [ReadOnly]
     private bool _isReloading;
 
-    public SafeEvent<float> OnReloadTimerChange;
+    public SafeEvent<float> OnReloadTimerChange = new SafeEvent<float>();
+
     public override bool CanAttack()
     {
         return _canFire && !_isReloading && !Loaded.IsEmpty();
@@ -48,7 +66,7 @@ public class GunWeapon : WeaponBase
 
     public override void Reload()
     {
-        if (_isReloading || Inventory.Value <= 0)
+        if (_isReloading || Inventory.Current <= 0)
             return;
 
         StartCoroutine(ReloadRoutine());
@@ -68,7 +86,7 @@ public class GunWeapon : WeaponBase
         trail.transform.position = _muzzleTransform.position;
         trail.transform.rotation = _muzzleTransform.rotation;
 
-        if (Physics.Raycast(ray, out RaycastHit hit, Data.Range, _targetLayer))
+        if (Physics.Raycast(ray, out RaycastHit hit, _range, _targetLayer))
         {
             trail.SetDestination(hit.point);
 
@@ -90,22 +108,22 @@ public class GunWeapon : WeaponBase
                     (hit.point - _fireTransform.position).normalized;
 
                 damageable.ApplyDamage(new AttackData(
-                    Data.Damage,
+                    _damage,
                     dir,
                     gameObject,
-                    Data.KnockbackData));
+                    new KnockbackData(_knockbackPower)));
             }
         }
         else
         {
-            Vector3 missPoint = ray.origin + ray.direction * Data.Range;
+            Vector3 missPoint = ray.origin + ray.direction * _range;
             trail.SetDestination(missPoint);
         }
     }
 
     private IEnumerator FireDelay()
     {
-        yield return new WaitForSeconds(Data.FireDelay);
+        yield return new WaitForSeconds(_delay);
         _canFire = true;
     }
 
@@ -117,7 +135,7 @@ public class GunWeapon : WeaponBase
 
         int need = Mathf.Min(
             Loaded.Max - Loaded.Current,
-            Inventory.Value);
+            Inventory.Current);
 
         while (_reloadTimer > 0)
         {

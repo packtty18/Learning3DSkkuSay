@@ -1,15 +1,15 @@
 ﻿using UnityEngine;
 using ArtificeToolkit.Attributes;
-using TMPro.EditorUtilities;
 
 public class PlayerHealth : MonoBehaviour, IDamageable
 {
-
     [Title("References")]
-    [SerializeField] private PlayerController _controller;
+    [Required, SerializeField]
+    private PlayerController _controller;
+
     private Animator _animator => _controller.Animator;
-     private PlayerStat _stat => _controller.Stat;
-    private IReadOnlyConsumable<float> Health => _stat.Health;
+    private PlayerStat _stat => _controller.Stat;
+    private IReadOnlyConsumable<float> Health => _stat.GetConsumable(EConsumableFloat.Health);
 
     public void ApplyDamage(AttackData data)
     {
@@ -17,7 +17,9 @@ public class PlayerHealth : MonoBehaviour, IDamageable
             return;
 
         Health.Consume(data.Damage);
-        _animator.SetLayerWeight(3, (1- Health.Current / Health.Max));
+
+        _animator.SetLayerWeight(3, 1f - (Health.Current / Health.Max));
+
         if (Health.IsEmpty())
         {
             _animator.SetTrigger("Dead");

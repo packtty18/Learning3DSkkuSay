@@ -13,15 +13,15 @@ public class Bomb : MonoBehaviour, IPoolable
     [SerializeField] private float _delayTime = 3f;
     private float _explosionRadius;
     private float _damage;
-    private KnockbackData _knockback;
+    private float _knockbackPower;
 
     private Coroutine _coroutine;
     
-    public void Init(BombDataSO data)
+    public void Init(float explosionRadius, float damage, float knockbackPower)
     {
-        _explosionRadius = data.ExplosionRadius;
-        _damage = data.Damage;
-        _knockback = data.Knockback;
+        _explosionRadius = explosionRadius;
+        _damage = damage;
+        _knockbackPower = knockbackPower;
     }
 
     public void Get(EPoolType type)
@@ -73,7 +73,7 @@ public class Bomb : MonoBehaviour, IPoolable
             if (hit.TryGetComponent(out IDamageable damage))
             {
                 Vector3 dir = (hit.transform.position - center).normalized;
-                AttackData data = new AttackData(_damage, dir, gameObject , _knockback);
+                AttackData data = new AttackData(_damage, dir, gameObject , new KnockbackData(_knockbackPower));
                 damage.ApplyDamage(data);
             }
         }
