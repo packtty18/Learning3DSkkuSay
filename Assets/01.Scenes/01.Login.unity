@@ -4743,6 +4743,59 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1254939080}
   m_CullTransparentMesh: 1
+--- !u!1 &1298587629
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1298587631}
+  - component: {fileID: 1298587630}
+  m_Layer: 0
+  m_Name: LoginScene
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1298587630
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1298587629}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 97e3535d66625334488dd24e7d0644c9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _passwordConfirmObject: {fileID: 643477112}
+  _registerButton: {fileID: 933803035}
+  _loginButton: {fileID: 1961800367}
+  _confirmButton: {fileID: 131634277}
+  _cancelButton: {fileID: 284947811}
+  _idField: {fileID: 638141693}
+  _passwordField: {fileID: 570040526}
+  _confirmField: {fileID: 349510826}
+  _messageText: {fileID: 757597911}
+--- !u!4 &1298587631
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1298587629}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -15.070473, y: 2.925116, z: 90}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1300876121
 GameObject:
   m_ObjectHideFlags: 0
@@ -6421,7 +6474,6 @@ GameObject:
   - component: {fileID: 1591085146}
   - component: {fileID: 1591085148}
   - component: {fileID: 1591085147}
-  - component: {fileID: 1591085149}
   m_Layer: 5
   m_Name: LogInUI
   m_TagString: Untagged
@@ -6489,27 +6541,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1591085145}
   m_CullTransparentMesh: 1
---- !u!114 &1591085149
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1591085145}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 97e3535d66625334488dd24e7d0644c9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _passwordConfirmObject: {fileID: 643477112}
-  _registerButton: {fileID: 933803035}
-  _loginButton: {fileID: 1961800367}
-  _confirmButton: {fileID: 131634277}
-  _cancelButton: {fileID: 284947811}
-  _idField: {fileID: 638141693}
-  _passwordField: {fileID: 570040526}
-  _confirmField: {fileID: 349510826}
-  _messageText: {fileID: 757597911}
 --- !u!1 &1759786230
 GameObject:
   m_ObjectHideFlags: 0
@@ -7505,4 +7536,5 @@ SceneRoots:
   - {fileID: 1035009979}
   - {fileID: 1372914621}
   - {fileID: 667643542}
+  - {fileID: 1298587631}
   - {fileID: 1233095416}
