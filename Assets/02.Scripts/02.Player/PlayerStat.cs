@@ -63,16 +63,24 @@ public class PlayerStat : MonoBehaviour
     private void InitDictionaries()
     {
         foreach (EConsumableFloat type in Enum.GetValues(typeof(EConsumableFloat)))
+        {
             _floatConsumableStat[type] = new ConsumableStat<float>();
+        }
 
         foreach (EConsumableInt type in Enum.GetValues(typeof(EConsumableInt)))
+        {
             _intConsumableStat[type] = new ConsumableStat<int>();
+        }
 
         foreach (EValueFloat type in Enum.GetValues(typeof(EValueFloat)))
+        {
             _floatValueStat[type] = new ValueStat<float>();
+        }
 
         foreach (EValueInt type in Enum.GetValues(typeof(EValueInt)))
+        {
             _intValueStat[type] = new ValueStat<int>();
+        }
     }
 
 

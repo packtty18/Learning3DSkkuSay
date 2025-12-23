@@ -14,15 +14,7 @@ public class CursorManager : Singleton<CursorManager>
         Cursor.lockState = CursorLockMode.Locked;
     }
 
-    private void Update()
-    {
-        if(Input.GetKeyDown(KeyCode.Escape))
-        {
-            SetCursurMode();
-        }
-    }
-
-    public void SetCursurMode()
+    public void ChangeMode()
     {
         _isUIActive = !_isUIActive;
 

@@ -1,10 +1,12 @@
-﻿using System;
+﻿using ArtificeToolkit.Attributes;
+using System;
 using System.Collections;
 using UnityEngine;
-using ArtificeToolkit.Attributes;
+using UnityEngine.SceneManagement;
 
 public class GameManager : Singleton<GameManager>
 {
+    
     [Title("Game State")]
     [ReadOnly, SerializeField]
     private EGameState _state = EGameState.Ready;
@@ -13,6 +15,10 @@ public class GameManager : Singleton<GameManager>
     [Title("UI")]
     [Required, SerializeField]
     private TextAnimatorBase _mainTextUI;
+
+    [Title("POP UP")]
+    [Required, SerializeField]
+    private OptionPopup _option;
 
     [Title("Player")]
     [Required, SerializeField]
@@ -28,12 +34,34 @@ public class GameManager : Singleton<GameManager>
         Player.Stat.OnDead.Subscribe(OnPlayerDead);
 
         StartCoroutine(GameStartRoutine());
+       
     }
 
     private void OnDestroy()
     {
         if (Player != null && Player.Stat != null)
             Player.Stat.OnDead.Unsubscribe(OnPlayerDead);
+    }
+
+    private void Update()
+    {
+        if(Input.GetKeyDown(KeyCode.Escape))
+        {
+            Pause();
+            _option.Show();
+        }
+    }
+
+    private void Pause()
+    {
+        Time.timeScale = 0;
+        CursorManager.Instance.ChangeMode();
+    }
+
+    public void Restart()
+    {
+        Time.timeScale = 1;
+        CursorManager.Instance.ChangeMode();
     }
 
     private IEnumerator GameStartRoutine()
@@ -69,4 +97,20 @@ public class GameManager : Singleton<GameManager>
 
         _mainTextUI.ShowText("<slideh>Game Over...</slideh>");
     }
+
+    public void RestartGame()
+    {
+        Restart();
+        SceneManager.LoadScene(1);
+    }
+
+    public void QuitGame()
+    {
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Application.Quit();
+#endif
+    }
+
 }

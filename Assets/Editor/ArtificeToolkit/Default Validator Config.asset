@@ -24,6 +24,16 @@ MonoBehaviour:
       Value: 1
     - Key: _scene
       Value: 1
+    - Key: Game
+      Value: 1
+    - Key: Login
+      Value: 1
+    - Key: 01.Login
+      Value: 1
+    - Key: 02.Loading
+      Value: 1
+    - Key: 03.Game
+      Value: 1
   validatorTypesMap:
     list:
     - Key: Artifice_ValidatorModule_ScriptableObject_CustomAttributeChecker
