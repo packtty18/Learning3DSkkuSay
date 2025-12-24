@@ -1,4 +1,5 @@
 ﻿using System;
+using Unity.VisualScripting;
 using UnityEngine;
 
 
@@ -12,12 +13,16 @@ public class ClickManager : Singleton<ClickManager>
     public int RightClickCount => _rightCount;
 
 
-    public event Action<int> OnLeftClick;
-    public event Action<int> OnRightClick;
-   
+    public SafeEvent<int> OnLeftClick = new SafeEvent<int>();
+    public SafeEvent<int> OnRightClick= new SafeEvent<int>();
+
+    [SerializeField] private GameObject _ui;
+    
     public override void Init()
     {
-        
+        OnRightClick ??= new SafeEvent<int>();
+        OnLeftClick ??= new SafeEvent<int>();
+        _ui.SetActive(true);
     }
 
     private void Update()
@@ -27,7 +32,7 @@ public class ClickManager : Singleton<ClickManager>
             _leftCount++;
             OnLeftClick?.Invoke(_leftCount);
         }
-        if(Input.GetMouseButtonDown(2))
+        if(Input.GetMouseButtonDown(1))
         {
             _rightCount++;
             OnRightClick?.Invoke(_rightCount);

@@ -1,12 +1,15 @@
-﻿using ArtificeToolkit.Attributes;
+﻿using Sirenix.OdinInspector;
 using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-
+/*
+ * 계층별 우선 Init이 완료되어야함
+ * 코어 매니저들 Init 완료 -> 씬 매니저들 Init 완료 -> 씬 객체들 Init -> UI Init
+ * 이것을 신경쓰면서 Init되어야함
+ */
 public class GameManager : Singleton<GameManager>
 {
-    
     [Title("Game State")]
     [ReadOnly, SerializeField]
     private EGameState _state = EGameState.Ready;
@@ -30,7 +33,6 @@ public class GameManager : Singleton<GameManager>
     public override void Init()
     {
         Player.Init();
-
         Player.Stat.OnDead.Subscribe(OnPlayerDead);
 
         StartCoroutine(GameStartRoutine());

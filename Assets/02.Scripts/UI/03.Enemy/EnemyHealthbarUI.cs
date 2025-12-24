@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
-using ArtificeToolkit.Attributes;
+using Sirenix.OdinInspector;
 
 public class EnemyHealthbarUI : MonoBehaviour
 {

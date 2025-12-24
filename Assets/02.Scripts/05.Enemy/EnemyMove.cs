@@ -1,4 +1,4 @@
-﻿using ArtificeToolkit.Attributes;
+﻿using Sirenix.OdinInspector;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.AI;

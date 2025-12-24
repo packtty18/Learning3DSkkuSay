@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
-using ArtificeToolkit.Attributes;
+using Sirenix.OdinInspector;
 using Unity.Android.Gradle.Manifest;
 using UnityEditor.ShaderGraph.Internal;
 

@@ -9,14 +9,29 @@ public class ClickCounterUI : MonoBehaviour
 
     private void OnEnable()
     {
-        ClickManager.Instance.OnLeftClick += CountLeft;
-        ClickManager.Instance.OnRightClick += CountRight;
+        Subscribing();
+    }
+
+    private void Subscribing()
+    {
+        if(!ClickManager.IsExist())
+        {
+            return;
+        }
+
+        ClickManager.Instance.OnLeftClick.Subscribe(CountLeft);
+        ClickManager.Instance.OnRightClick.Subscribe(CountRight);
     }
 
     private void OnDisable()
     {
-        ClickManager.Instance.OnLeftClick -= CountLeft;
-        ClickManager.Instance.OnRightClick -= CountRight;
+        UnsubScribing();
+    }
+
+    private void UnsubScribing()
+    {
+        ClickManager.Instance.OnLeftClick.Unsubscribe(CountLeft);
+        ClickManager.Instance.OnRightClick.Unsubscribe(CountRight);
     }
 
     private void Start()

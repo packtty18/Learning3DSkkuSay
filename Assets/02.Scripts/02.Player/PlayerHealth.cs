@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using ArtificeToolkit.Attributes;
+using Sirenix.OdinInspector;
 
 public class PlayerHealth : MonoBehaviour, IDamageable
 {

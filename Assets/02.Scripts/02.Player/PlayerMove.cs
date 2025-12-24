@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.AI;
-using ArtificeToolkit.Attributes;
+using Sirenix.OdinInspector;
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerMove : MonoBehaviour

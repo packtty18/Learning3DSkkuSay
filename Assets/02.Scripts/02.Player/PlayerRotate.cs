@@ -1,4 +1,4 @@
-﻿using ArtificeToolkit.Attributes;
+﻿using Sirenix.OdinInspector;
 using UnityEngine;
 
 public class PlayerRotate : MonoBehaviour

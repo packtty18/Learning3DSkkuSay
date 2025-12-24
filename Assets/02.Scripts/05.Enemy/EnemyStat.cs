@@ -1,4 +1,4 @@
-﻿using ArtificeToolkit.Attributes;
+﻿using Sirenix.OdinInspector;
 using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
 

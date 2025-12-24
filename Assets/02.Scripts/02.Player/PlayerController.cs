@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using ArtificeToolkit.Attributes;
+using Sirenix.OdinInspector;
 
 [RequireComponent(typeof(PlayerStat))]
 [RequireComponent(typeof(PlayerMove))]

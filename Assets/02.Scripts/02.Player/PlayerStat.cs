@@ -1,21 +1,26 @@
-﻿using System;
-using UnityEngine;
-using ArtificeToolkit.Attributes;
+﻿using Sirenix.OdinInspector;
+using Sirenix.Serialization;
+using System;
 using System.Collections.Generic;
+using UnityEngine;
 
-public class PlayerStat : MonoBehaviour
+public class PlayerStat : SerializedMonoBehaviour
 {
     [Title("Data")]
-    [Required, SerializeField, PreviewScriptable] private MovementDataSO _moveData;
-    [Required, SerializeField, PreviewScriptable] private BombDataSO _currentBombData;
-    [Required, SerializeField, PreviewScriptable] private GunDataSO _currentGunData;
+    [Required, SerializeField] private MovementDataSO _moveData;
+    [Required, SerializeField] private BombDataSO _currentBombData;
+    [Required, SerializeField] private GunDataSO _currentGunData;
 
+    [SerializeField]
     private Dictionary<EConsumableFloat, ConsumableStat<float>> _floatConsumableStat = new Dictionary<EConsumableFloat, ConsumableStat<float>>();
+    [SerializeField]
     private Dictionary<EConsumableInt, ConsumableStat<int>> _intConsumableStat = new Dictionary<EConsumableInt, ConsumableStat<int>>();
+    [SerializeField]
     private Dictionary<EValueFloat, ValueStat<float>> _floatValueStat = new Dictionary<EValueFloat, ValueStat<float>>();
+    [SerializeField]
     private Dictionary<EValueInt, ValueStat<int>> _intValueStat = new Dictionary<EValueInt, ValueStat<int>>();
 
-
+    [ShowInInspector]
     public MovementDataSO CurrentMove => _moveData;
     public BombDataSO CurrentBomb => _currentBombData;
     public GunDataSO CurrentGun => _currentGunData;
@@ -28,6 +33,10 @@ public class PlayerStat : MonoBehaviour
 
     public void Awake()
     {
+        OnDead ??= new SafeEvent();
+
+        OnStatInitEnd ??= new SafeEvent();
+
         InitDictionaries();
         //Value 우선 처리
         _floatValueStat[EValueFloat.MaxHealth].Init(100);
