@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: ad67e538e3773544ea467bea320c531a
+timeCreated: 1428426581
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 37462
+  packageName: HQ Apocalyptic Environment
+  packageVersion: 1.2
+  assetPath: Assets/ApocalypticEnvironment/ModelsAndTextures/Debris03/Materials/Debris03.mat
+  uploadId: 217025

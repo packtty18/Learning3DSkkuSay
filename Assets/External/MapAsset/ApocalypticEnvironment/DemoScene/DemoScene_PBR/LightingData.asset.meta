@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 20cec89f44e826b49a60c5be43f409bf
+timeCreated: 1512744030
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 37462
+  packageName: HQ Apocalyptic Environment
+  packageVersion: 1.2
+  assetPath: Assets/ApocalypticEnvironment/DemoScene/DemoScene_PBR/LightingData.asset
+  uploadId: 217025

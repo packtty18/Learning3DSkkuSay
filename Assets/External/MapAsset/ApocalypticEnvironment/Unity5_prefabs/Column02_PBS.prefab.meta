@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 523447ddade51184ba9f032f933a3ccf
+timeCreated: 1428594559
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 37462
+  packageName: HQ Apocalyptic Environment
+  packageVersion: 1.2
+  assetPath: Assets/ApocalypticEnvironment/Unity5_prefabs/Column02_PBS.prefab
+  uploadId: 217025

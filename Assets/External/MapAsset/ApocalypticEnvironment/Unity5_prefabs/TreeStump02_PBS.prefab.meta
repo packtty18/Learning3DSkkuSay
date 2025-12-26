@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: fdfc606222524d742b2e6d960b80774f
+timeCreated: 1426926968
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 37462
+  packageName: HQ Apocalyptic Environment
+  packageVersion: 1.2
+  assetPath: Assets/ApocalypticEnvironment/Unity5_prefabs/TreeStump02_PBS.prefab
+  uploadId: 217025

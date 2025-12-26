@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 8a390520cdaf0d04ab7ebcc2c43fd9b9
+timeCreated: 1427303797
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 37462
+  packageName: HQ Apocalyptic Environment
+  packageVersion: 1.2
+  assetPath: Assets/ApocalypticEnvironment/Unity5_prefabs/Tire_PBS.prefab
+  uploadId: 217025

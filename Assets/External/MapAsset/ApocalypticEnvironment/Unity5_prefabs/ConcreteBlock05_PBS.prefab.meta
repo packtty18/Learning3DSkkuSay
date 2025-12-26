@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 2ca8296b7e42d4a449a2d773c7944b30
+timeCreated: 1441626203
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 37462
+  packageName: HQ Apocalyptic Environment
+  packageVersion: 1.2
+  assetPath: Assets/ApocalypticEnvironment/Unity5_prefabs/ConcreteBlock05_PBS.prefab
+  uploadId: 217025

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: a51e9fb83b7cef54fa086ea1c8af4454
+timeCreated: 1425918743
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 37462
+  packageName: HQ Apocalyptic Environment
+  packageVersion: 1.2
+  assetPath: Assets/ApocalypticEnvironment/Unity5_prefabs/ConcreteFence01_PBS.prefab
+  uploadId: 217025

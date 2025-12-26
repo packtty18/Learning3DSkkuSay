@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 298295a7587bcd84494c4a779d46084f
+timeCreated: 1426321265
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 37462
+  packageName: HQ Apocalyptic Environment
+  packageVersion: 1.2
+  assetPath: Assets/ApocalypticEnvironment/Unity5_prefabs/DangerPyramid_PBS.prefab
+  uploadId: 217025

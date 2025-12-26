@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: e70676e6887cdf847aea47aebe41126b
+timeCreated: 1426926929
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 37462
+  packageName: HQ Apocalyptic Environment
+  packageVersion: 1.2
+  assetPath: Assets/ApocalypticEnvironment/Unity5_prefabs/Ventilation02_PBS.prefab
+  uploadId: 217025

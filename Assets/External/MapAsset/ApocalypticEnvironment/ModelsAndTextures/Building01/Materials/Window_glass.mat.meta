@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: ec4f63fa532b04e45bf433ff97bbc27d
+timeCreated: 1441632022
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 37462
+  packageName: HQ Apocalyptic Environment
+  packageVersion: 1.2
+  assetPath: Assets/ApocalypticEnvironment/ModelsAndTextures/Building01/Materials/Window_glass.mat
+  uploadId: 217025

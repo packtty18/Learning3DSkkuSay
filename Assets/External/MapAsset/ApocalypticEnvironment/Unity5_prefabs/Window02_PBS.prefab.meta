@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: ca7ded3d7715e76499357bf5aa1c2e70
+timeCreated: 1441632694
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 37462
+  packageName: HQ Apocalyptic Environment
+  packageVersion: 1.2
+  assetPath: Assets/ApocalypticEnvironment/Unity5_prefabs/Window02_PBS.prefab
+  uploadId: 217025

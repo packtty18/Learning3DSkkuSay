@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: a107c8ecb91937347841e446071ecbc7
+timeCreated: 1441477108
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 37462
+  packageName: HQ Apocalyptic Environment
+  packageVersion: 1.2
+  assetPath: Assets/ApocalypticEnvironment/ModelsAndTextures/PlaygroundStairs/Materials/PlaygroundStairs_D.mat
+  uploadId: 217025

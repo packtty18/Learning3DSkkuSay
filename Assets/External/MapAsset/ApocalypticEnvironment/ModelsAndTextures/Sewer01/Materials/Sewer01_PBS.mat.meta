@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 0c294db4e6a914d46bba70d9fd420571
+timeCreated: 1425751273
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 37462
+  packageName: HQ Apocalyptic Environment
+  packageVersion: 1.2
+  assetPath: Assets/ApocalypticEnvironment/ModelsAndTextures/Sewer01/Materials/Sewer01_PBS.mat
+  uploadId: 217025

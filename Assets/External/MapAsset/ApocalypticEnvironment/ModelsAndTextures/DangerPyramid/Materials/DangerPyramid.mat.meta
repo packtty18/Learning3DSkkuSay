@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: deccce391262c114b8a3b4ad6716a0ce
+timeCreated: 1426321028
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 37462
+  packageName: HQ Apocalyptic Environment
+  packageVersion: 1.2
+  assetPath: Assets/ApocalypticEnvironment/ModelsAndTextures/DangerPyramid/Materials/DangerPyramid.mat
+  uploadId: 217025

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 5dbd233d46071284384e53496d1b45b4
+timeCreated: 1428083106
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 37462
+  packageName: HQ Apocalyptic Environment
+  packageVersion: 1.2
+  assetPath: Assets/ApocalypticEnvironment/Unity5_prefabs/Sandbox_PBS.prefab
+  uploadId: 217025

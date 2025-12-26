@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: a4fb9fe74185cef4286744872842d13a
+timeCreated: 1426926947
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 37462
+  packageName: HQ Apocalyptic Environment
+  packageVersion: 1.2
+  assetPath: Assets/ApocalypticEnvironment/Unity5_prefabs/PhoneCabinet_PBS.prefab
+  uploadId: 217025

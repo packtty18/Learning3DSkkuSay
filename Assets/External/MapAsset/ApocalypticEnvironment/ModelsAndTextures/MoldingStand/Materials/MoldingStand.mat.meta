@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 74af0d7ed5192244782fdcab952328ca
+timeCreated: 1426953141
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 37462
+  packageName: HQ Apocalyptic Environment
+  packageVersion: 1.2
+  assetPath: Assets/ApocalypticEnvironment/ModelsAndTextures/MoldingStand/Materials/MoldingStand.mat
+  uploadId: 217025

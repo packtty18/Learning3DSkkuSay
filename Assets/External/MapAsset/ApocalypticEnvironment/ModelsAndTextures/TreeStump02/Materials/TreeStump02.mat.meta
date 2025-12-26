@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 89e12306506b065488d03bbca734648f
+timeCreated: 1426352942
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 37462
+  packageName: HQ Apocalyptic Environment
+  packageVersion: 1.2
+  assetPath: Assets/ApocalypticEnvironment/ModelsAndTextures/TreeStump02/Materials/TreeStump02.mat
+  uploadId: 217025

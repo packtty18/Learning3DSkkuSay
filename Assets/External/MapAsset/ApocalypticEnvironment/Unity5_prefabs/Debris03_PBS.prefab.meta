@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 622b66e505ca58546990344ea0ca8954
+timeCreated: 1428429623
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 37462
+  packageName: HQ Apocalyptic Environment
+  packageVersion: 1.2
+  assetPath: Assets/ApocalypticEnvironment/Unity5_prefabs/Debris03_PBS.prefab
+  uploadId: 217025

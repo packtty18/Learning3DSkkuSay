@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: d8d4d145ff4e85444aba231d11e5c8a3
+timeCreated: 1427563892
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 37462
+  packageName: HQ Apocalyptic Environment
+  packageVersion: 1.2
+  assetPath: Assets/ApocalypticEnvironment/Unity5_prefabs/Building01_PBS.prefab
+  uploadId: 217025

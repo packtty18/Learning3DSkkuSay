@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 0a2f42bc77cdb2648b3c7265bb66798c
+timeCreated: 1426614235
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 37462
+  packageName: HQ Apocalyptic Environment
+  packageVersion: 1.2
+  assetPath: Assets/ApocalypticEnvironment/ModelsAndTextures/Ventilation02/Materials/Ventilation02.mat
+  uploadId: 217025
