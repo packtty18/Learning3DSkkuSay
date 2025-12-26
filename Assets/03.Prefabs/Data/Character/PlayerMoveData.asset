@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MoveSpeed: 5
   DashSpeed: 10
-  JumpPower: 5
+  JumpPower: 3
   MaxStamina: 100
   StaminaRegen: 10
   RegenDelay: 3

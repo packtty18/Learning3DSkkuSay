@@ -310,7 +310,6 @@ MonoBehaviour:
   IdleWaitTime: 3
   KnockbackTime: 0.15
   ArrivalThreshold: 2
-  IsRage: 0
   RageRate:
     _value: 0
 --- !u!114 &8841694891917343016
@@ -333,7 +332,9 @@ MonoBehaviour:
   Animator: {fileID: 7177030931473968}
   Agent: {fileID: 6285757634157223584}
   EnemyUI: {fileID: 2956333890877439864}
+  IsRage: 0
   IsInvincible: 0
+  AnimationRunning: 0
 --- !u!114 &3786222594702134263
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -17,6 +17,6 @@ MonoBehaviour:
   AttackDamage: 20
   AttackSpeed: 2
   AttackDistance: 4
-  DetectDistance: 30
+  DetectDistance: 20
   CanRage: 1
   RageRate: 0.5
