@@ -144,7 +144,7 @@ public class Elite_Comeback : EnemyStateBase
 
     public override void Update()
     {
-        Vector3 target = _controller.SpawnPoint;
+        Vector3 target = _controller.SpawnPoint.position;
         _controller.Move.MoveTo(target);
 
         float dist = Vector3.Distance(

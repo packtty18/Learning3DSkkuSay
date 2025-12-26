@@ -27,7 +27,6 @@ public class HealthSlider : DoubleSliderUI
     private void UIEnable()
     {
         Health.Subscribe(OnHealthChanged);
-        Health.Subscribe(OnMaxHealthChanged);
 
         Init(Health.Max, Health.Current);
         _lastValue = Health.Current;
@@ -40,7 +39,6 @@ public class HealthSlider : DoubleSliderUI
             return;
 
         Health.Unsubscribe(OnHealthChanged);
-        Health.Unsubscribe(OnMaxHealthChanged);
 
         _delayTween?.Kill();
         _delayTween = null;

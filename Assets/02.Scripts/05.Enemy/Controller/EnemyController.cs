@@ -2,7 +2,7 @@
 using System;
 using UnityEngine;
 
-public abstract class EnemyController : MonoBehaviour, IDamageable
+public abstract class EnemyController : SerializedMonoBehaviour, IDamageable
 {
     [Title("Core References")]
     public PlayerController Player;
@@ -24,7 +24,9 @@ public abstract class EnemyController : MonoBehaviour, IDamageable
     public bool IsInvincible = false;
     public bool AnimationRunning = false;
 
-    public Vector3 SpawnPoint { get; private set; }
+    [ShowInInspector]
+    public Transform SpawnPoint { get; private set; }
+    [ShowInInspector]
     public Transform[] PatrolPoint { get; private set; }
 
     public event Action<EnemyController> OnReturnedToPool;
@@ -57,8 +59,9 @@ public abstract class EnemyController : MonoBehaviour, IDamageable
     {
         DebugManager.Instance.Log($"{GetType().Name} OnDespawned");
 
-        transform.position = SpawnPoint;
-        SpawnPoint = Vector3.zero;
+
+       SpawnPoint = null;
+
         PatrolPoint = null;
 
         Animator.SetBool("IsMoving", false);
@@ -71,10 +74,11 @@ public abstract class EnemyController : MonoBehaviour, IDamageable
         OnReturnedToPool?.Invoke(this);
     }
 
-    public void SetSpawnPoint(Vector3 position)
+    public void SetSpawnPoint(Transform data)
     {
-        SpawnPoint = position;
-        transform.position = position;
+        SpawnPoint = data;
+        transform.position = SpawnPoint.position;
+        transform.rotation = SpawnPoint.rotation;
     }
 
     public void SetPatrolPoints(Transform[] patrolPoints)

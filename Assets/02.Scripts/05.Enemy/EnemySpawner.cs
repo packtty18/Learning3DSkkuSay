@@ -1,8 +1,9 @@
-﻿using System.Collections;
+﻿using Sirenix.OdinInspector;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemySpawner : MonoBehaviour
+public class EnemySpawner : SerializedMonoBehaviour
 {
     [Header("Spawn Settings")]
     [SerializeField] private int _spawnCount = 3;
@@ -11,6 +12,7 @@ public class EnemySpawner : MonoBehaviour
     [Header("Patrol Points")]
     [SerializeField] private Transform[] _patrolPoints;
 
+    [SerializeField]
     private readonly HashSet<EnemyController> _aliveEnemies = new();
     private Coroutine _respawnCoroutine;
 
@@ -18,7 +20,7 @@ public class EnemySpawner : MonoBehaviour
 
     private void Start()
     {
-        _respawnCoroutine = StartCoroutine(RespawnAfterDelay());
+        StartCoroutine(SpawnAfterDelay());
     }
 
     private void SpawnEnemy()
@@ -29,8 +31,8 @@ public class EnemySpawner : MonoBehaviour
         {
             return;
         }
-        
-        enemy.SetSpawnPoint(transform.position);
+        enemy.transform.position = transform.position;
+        enemy.SetSpawnPoint(transform);
         enemy.SetPatrolPoints(_patrolPoints);
 
         enemy.OnReturnedToPool+= OnEnemyReturned;
@@ -50,12 +52,18 @@ public class EnemySpawner : MonoBehaviour
             _respawnCoroutine = StartCoroutine(RespawnAfterDelay());
         }
     }
-
-    private IEnumerator RespawnAfterDelay()
+    private IEnumerator SpawnAfterDelay()
     {
         yield return new WaitUntil(() => GameManager.Instance.State == EGameState.Playing);
 
-        
+        while (_aliveEnemies.Count < _spawnCount)
+        {
+            SpawnEnemy();
+        }
+    }
+    private IEnumerator RespawnAfterDelay()
+    {
+        yield return new WaitUntil(() => GameManager.Instance.State == EGameState.Playing);
 
         while (_aliveEnemies.Count < _spawnCount)
         {

@@ -481,7 +481,8 @@ MonoBehaviour:
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: a8eddd3cc21266548b0c6541a75899fe, type: 2}
   m_sharedMaterial: {fileID: -1872021783750812632, guid: a8eddd3cc21266548b0c6541a75899fe, type: 2}
-  m_fontSharedMaterials: []
+  m_fontSharedMaterials:
+  - {fileID: -1872021783750812632, guid: a8eddd3cc21266548b0c6541a75899fe, type: 2}
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
@@ -738,7 +739,8 @@ MonoBehaviour:
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: a8eddd3cc21266548b0c6541a75899fe, type: 2}
   m_sharedMaterial: {fileID: -1872021783750812632, guid: a8eddd3cc21266548b0c6541a75899fe, type: 2}
-  m_fontSharedMaterials: []
+  m_fontSharedMaterials:
+  - {fileID: -1872021783750812632, guid: a8eddd3cc21266548b0c6541a75899fe, type: 2}
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
@@ -874,7 +876,8 @@ MonoBehaviour:
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: a8eddd3cc21266548b0c6541a75899fe, type: 2}
   m_sharedMaterial: {fileID: -1872021783750812632, guid: a8eddd3cc21266548b0c6541a75899fe, type: 2}
-  m_fontSharedMaterials: []
+  m_fontSharedMaterials:
+  - {fileID: -1872021783750812632, guid: a8eddd3cc21266548b0c6541a75899fe, type: 2}
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
@@ -1707,7 +1710,8 @@ MonoBehaviour:
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: a8eddd3cc21266548b0c6541a75899fe, type: 2}
   m_sharedMaterial: {fileID: -1872021783750812632, guid: a8eddd3cc21266548b0c6541a75899fe, type: 2}
-  m_fontSharedMaterials: []
+  m_fontSharedMaterials:
+  - {fileID: -1872021783750812632, guid: a8eddd3cc21266548b0c6541a75899fe, type: 2}
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
@@ -2702,7 +2706,8 @@ MonoBehaviour:
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: a8eddd3cc21266548b0c6541a75899fe, type: 2}
   m_sharedMaterial: {fileID: -1872021783750812632, guid: a8eddd3cc21266548b0c6541a75899fe, type: 2}
-  m_fontSharedMaterials: []
+  m_fontSharedMaterials:
+  - {fileID: -1872021783750812632, guid: a8eddd3cc21266548b0c6541a75899fe, type: 2}
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
@@ -3264,7 +3269,8 @@ MonoBehaviour:
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: a8eddd3cc21266548b0c6541a75899fe, type: 2}
   m_sharedMaterial: {fileID: -1872021783750812632, guid: a8eddd3cc21266548b0c6541a75899fe, type: 2}
-  m_fontSharedMaterials: []
+  m_fontSharedMaterials:
+  - {fileID: -1872021783750812632, guid: a8eddd3cc21266548b0c6541a75899fe, type: 2}
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
@@ -5280,7 +5286,8 @@ MonoBehaviour:
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: a8eddd3cc21266548b0c6541a75899fe, type: 2}
   m_sharedMaterial: {fileID: -1872021783750812632, guid: a8eddd3cc21266548b0c6541a75899fe, type: 2}
-  m_fontSharedMaterials: []
+  m_fontSharedMaterials:
+  - {fileID: -1872021783750812632, guid: a8eddd3cc21266548b0c6541a75899fe, type: 2}
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
@@ -5865,7 +5872,8 @@ MonoBehaviour:
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: a8eddd3cc21266548b0c6541a75899fe, type: 2}
   m_sharedMaterial: {fileID: -1872021783750812632, guid: a8eddd3cc21266548b0c6541a75899fe, type: 2}
-  m_fontSharedMaterials: []
+  m_fontSharedMaterials:
+  - {fileID: -1872021783750812632, guid: a8eddd3cc21266548b0c6541a75899fe, type: 2}
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
@@ -6738,7 +6746,8 @@ MonoBehaviour:
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: a8eddd3cc21266548b0c6541a75899fe, type: 2}
   m_sharedMaterial: {fileID: -1872021783750812632, guid: a8eddd3cc21266548b0c6541a75899fe, type: 2}
-  m_fontSharedMaterials: []
+  m_fontSharedMaterials:
+  - {fileID: -1872021783750812632, guid: a8eddd3cc21266548b0c6541a75899fe, type: 2}
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
