@@ -15,6 +15,7 @@ public class AgentController : MonoBehaviour
         _agent = GetComponent<NavMeshAgent>();
     }
 
+
     public void SetAgent( float moveSpeed, bool InitActive = true)
     {
         ChangeSpeed( moveSpeed);
@@ -30,7 +31,6 @@ public class AgentController : MonoBehaviour
     public void SetAgentDestination(Vector3 targetPos)
     {
         _agent.isStopped = false;
-        
         _agent.SetDestination(targetPos);
     }
 

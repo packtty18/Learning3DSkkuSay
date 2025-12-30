@@ -1,13 +1,10 @@
 ﻿using Sirenix.OdinInspector;
 using System;
 using System.Collections;
+using System.Text;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-/*
- * 계층별 우선 Init이 완료되어야함
- * 코어 매니저들 Init 완료 -> 씬 매니저들 Init 완료 -> 씬 객체들 Init -> UI Init
- * 이것을 신경쓰면서 Init되어야함
- */
+
 public class GameManager : Singleton<GameManager>
 {
     [Title("Game State")]
@@ -30,13 +27,14 @@ public class GameManager : Singleton<GameManager>
     public event Action OnGameStart;
     public event Action OnGameOver;
 
+    private readonly StringBuilder _sb = new StringBuilder(64);
+
     public override void Init()
     {
         Player.Init();
         Player.Stat.OnDead.Subscribe(OnPlayerDead);
 
         StartCoroutine(GameStartRoutine());
-       
     }
 
     private void OnDestroy()
@@ -47,7 +45,7 @@ public class GameManager : Singleton<GameManager>
 
     private void Update()
     {
-        if(Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
             Pause();
             _option.Show();
@@ -68,10 +66,10 @@ public class GameManager : Singleton<GameManager>
 
     private IEnumerator GameStartRoutine()
     {
-        _mainTextUI.ShowText("<wave a=2 s=1>Ready...</wave>");
+        _mainTextUI.ShowText(BuildText("<wave a=2 s=1>", "Ready...", "</wave>"));
         yield return new WaitForSeconds(2f);
 
-        _mainTextUI.ShowText("<bounce a=15>Start!!</bounce>");
+        _mainTextUI.ShowText(BuildText("<bounce a=15>", "Start!!", "</bounce>"));
         yield return new WaitForSeconds(1f);
 
         _mainTextUI.HideText();
@@ -97,7 +95,7 @@ public class GameManager : Singleton<GameManager>
 
         DebugManager.Instance.Log("[GameManager] GameOver");
 
-        _mainTextUI.ShowText("<slideh>Game Over...</slideh>");
+        _mainTextUI.ShowText(BuildText("<slideh>", "Game Over...", "</slideh>"));
     }
 
     public void RestartGame()
@@ -115,4 +113,12 @@ public class GameManager : Singleton<GameManager>
 #endif
     }
 
+    private string BuildText(string prefix, string content, string suffix)
+    {
+        _sb.Clear();
+        _sb.Append(prefix);
+        _sb.Append(content);
+        _sb.Append(suffix);
+        return _sb.ToString();
+    }
 }

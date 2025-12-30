@@ -200,6 +200,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 600495006296877802}
+  - component: {fileID: 6250609048529418002}
   - component: {fileID: 4152057161358311031}
   - component: {fileID: 9083456566198788431}
   - component: {fileID: 2965080861423125824}
@@ -235,6 +236,33 @@ Transform:
   - {fileID: 1888950214634957190}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!205 &6250609048529418002
+LODGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 192823606487655242}
+  serializedVersion: 2
+  m_LocalReferencePoint: {x: -0.000005722046, y: 4.388439, z: 0}
+  m_Size: 11.423122
+  m_FadeMode: 0
+  m_AnimateCrossFading: 0
+  m_LastLODIsBillboard: 0
+  m_LODs:
+  - screenRelativeHeight: 0.799554
+    fadeTransitionWidth: 0
+    renderers:
+    - renderer: {fileID: 8437301415041582513}
+    - renderer: {fileID: 2298682350605653737}
+  - screenRelativeHeight: 0.1
+    fadeTransitionWidth: 0
+    renderers:
+    - renderer: {fileID: 8437301415041582513}
+  - screenRelativeHeight: 0.1
+    fadeTransitionWidth: 0
+    renderers: []
+  m_Enabled: 1
 --- !u!195 &4152057161358311031
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -242,7 +270,7 @@ NavMeshAgent:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 192823606487655242}
-  m_Enabled: 1
+  m_Enabled: 0
   m_AgentTypeID: -334000983
   m_Radius: 0.5
   m_Speed: 3.5
@@ -324,6 +352,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7acb2782604487b4a99705810351147a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
   Player: {fileID: 0}
   Stat: {fileID: 2965080861423125824}
   Move: {fileID: 3786222594702134263}
@@ -1440,7 +1477,7 @@ MonoBehaviour:
   m_BlockingObjects: 0
   m_BlockingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 8183
 --- !u!114 &6905181077763145404
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -1297,6 +1297,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4337809644129697455}
+  - component: {fileID: 6428168946833888180}
   - component: {fileID: 2711231511176080051}
   - component: {fileID: 8975906438306914850}
   - component: {fileID: 5493591291721054314}
@@ -1332,6 +1333,33 @@ Transform:
   - {fileID: 1216215481482662570}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!205 &6428168946833888180
+LODGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4887380602773211214}
+  serializedVersion: 2
+  m_LocalReferencePoint: {x: 0, y: 4.479734, z: 0}
+  m_Size: 11.240533
+  m_FadeMode: 0
+  m_AnimateCrossFading: 0
+  m_LastLODIsBillboard: 0
+  m_LODs:
+  - screenRelativeHeight: 0.799554
+    fadeTransitionWidth: 0
+    renderers:
+    - renderer: {fileID: 615657496190352439}
+    - renderer: {fileID: 2704129456111101776}
+  - screenRelativeHeight: 0.1
+    fadeTransitionWidth: 0
+    renderers:
+    - renderer: {fileID: 615657496190352439}
+  - screenRelativeHeight: 0.1
+    fadeTransitionWidth: 0
+    renderers: []
+  m_Enabled: 1
 --- !u!195 &2711231511176080051
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -1339,7 +1367,7 @@ NavMeshAgent:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4887380602773211214}
-  m_Enabled: 1
+  m_Enabled: 0
   m_AgentTypeID: -1372625422
   m_Radius: 0.5
   m_Speed: 3.5
@@ -1389,6 +1417,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 160ab757d5407f8409af94a380a97dce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
   Player: {fileID: 0}
   Stat: {fileID: 1605081016114145718}
   Move: {fileID: 4390410352983479339}
@@ -2219,7 +2256,7 @@ MonoBehaviour:
   m_BlockingObjects: 0
   m_BlockingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 8183
 --- !u!114 &3127749391497945535
 MonoBehaviour:
   m_ObjectHideFlags: 0

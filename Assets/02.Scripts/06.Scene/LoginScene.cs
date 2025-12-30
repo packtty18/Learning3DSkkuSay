@@ -31,13 +31,15 @@ public static class PasswordUtility
         byte[] bytes = Encoding.UTF8.GetBytes(password);
         byte[] hash = sha.ComputeHash(bytes);
 
-        StringBuilder sb = new();
-        foreach (byte b in hash)
-            sb.Append(b.ToString("x2"));
+        StringBuilder sb = new StringBuilder(64);
+
+        for (int i = 0; i < hash.Length; i++)
+            sb.Append(hash[i].ToString("x2"));
 
         return sb.ToString();
     }
 }
+
 
 public class LoginScene : MonoBehaviour
 {

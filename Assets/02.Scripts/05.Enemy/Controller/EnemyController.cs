@@ -49,7 +49,10 @@ public abstract class EnemyController : SerializedMonoBehaviour, IDamageable
         Player = PlayerController.Instance;
 
         Stat.Init();
+
+        Agent.SetEnable(true);
         Agent.SetAgent(Stat.MoveSpeed.Value);
+
         StateMachine.Change(EEnemyState.Spawn);
 
         EnemyUI.SetActive(true);
@@ -70,6 +73,7 @@ public abstract class EnemyController : SerializedMonoBehaviour, IDamageable
         IsInvincible = false;
         AnimationRunning = false;
 
+        Agent.SetEnable(false);
         EnemyUI.SetActive(false);
         OnReturnedToPool?.Invoke(this);
     }
@@ -77,6 +81,7 @@ public abstract class EnemyController : SerializedMonoBehaviour, IDamageable
     public void SetSpawnPoint(Transform data)
     {
         SpawnPoint = data;
+        Agent.AgentWarp(SpawnPoint.position);
         transform.position = SpawnPoint.position;
         transform.rotation = SpawnPoint.rotation;
     }
